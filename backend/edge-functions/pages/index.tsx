@@ -4,6 +4,7 @@ import { Inter } from "@next/font/google";
 import styles from "../styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import LoginTwitchButton from "../src/components/LoginTwitchButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,13 +47,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <button type="button" className="btn btn-twitch">
-          <a
-            href={`https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=${process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID}&redirect_uri=${process.env.BASE_URL}/api/auth/twitch/callback&scope=user_read`}
-          >
-            Connect With Twitch
-          </a>
-        </button>
+        <LoginTwitchButton></LoginTwitchButton>
         <p>Twitch token: {twitchToken}</p>
         <p>Twitch client: {process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID}</p>
         <p>Twitch user: {JSON.stringify(twitchUser?.["data"]?.[0]?.["display_name"])}</p>
