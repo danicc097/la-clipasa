@@ -5,6 +5,7 @@ import styles from "../styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import LoginTwitchButton from "../src/components/LoginTwitchButton";
+import Post from "../src/components/Posts";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,9 +30,7 @@ export default function Home() {
       await fetch("https://api.twitch.tv/helix/users", {
         headers: {
           Authorization: `Bearer ${token}`,
-          ...(process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID && {
-            "Client-Id": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
-          }),
+          "Client-Id": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID ?? "",
         },
       })
     ).json();
@@ -51,47 +50,7 @@ export default function Home() {
         <p>Twitch token: {twitchToken}</p>
         <p>Twitch client: {process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID}</p>
         <p>Twitch user: {JSON.stringify(twitchUser?.["data"]?.[0]?.["display_name"])}</p>
-        <div className={styles.description}>
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
+        <Post />
       </main>
     </>
   );
