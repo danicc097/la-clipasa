@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
+import { globalEdgeConfig } from '../../edgeConfig'
 
-export const config = {
-  runtime: 'edge',
-}
+export const config = globalEdgeConfig
 
 export default async (request: NextRequest, response: any) => {
   try {
