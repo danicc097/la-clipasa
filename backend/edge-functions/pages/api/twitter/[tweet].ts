@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
-import { globalEdgeConfig } from '../../edgeConfig'
 
-export const config = globalEdgeConfig
+// can't use shared import
+export const config = {
+  runtime: 'edge',
+  regions: ['cdg1', 'gru1', 'iad1'],
+}
 
 export default async (request: NextRequest, response: any) => {
   try {

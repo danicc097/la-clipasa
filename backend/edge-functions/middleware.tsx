@@ -7,5 +7,6 @@ export const config = {
 
 export default function middleware(request: NextRequest, event: NextFetchEvent) {
   console.log('executing middleware')
+
   return NextResponse.next()
 }

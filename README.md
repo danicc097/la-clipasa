@@ -6,8 +6,6 @@ See:
 - https://vercel.com/docs/concepts/limits/overview#typical-monthly-usage-guidelines
 - https://supabase.com/pricing
 - https://firebase.google.com/docs/firestore/quotas#free-quota
-- https://discord.com/developers/docs/topics/rate-limits
-  should log and avoid 401, 403, or 429.
 
 ## TODO
 
