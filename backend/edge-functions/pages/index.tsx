@@ -8,6 +8,8 @@ import LoginTwitchButton from '../src/components/LoginTwitchButton'
 import Post from '../src/components/Posts'
 import Cookies from 'js-cookie'
 import NavBar from '../src/components/NavBar'
+import { Code } from '@mantine/core'
+import { Prism } from '@mantine/prism'
 
 export default function Home() {
   const { asPath } = useRouter()
@@ -15,9 +17,9 @@ export default function Home() {
   const [twitchUser, setTwitchUser] = useState(null)
 
   useEffect(() => {
-    // the  URL hash is processed by the browser only. not available in edge function
+    // the URL hash is processed by the browser only. not available in edge function/backend
+    // so must parse in useEffect
     const hash = asPath.split('#')[1]
-    console.log(hash)
     const parsedHash = new URLSearchParams(hash)
     const token = parsedHash.get('access_token')
     if (token !== '' && token) {
@@ -28,6 +30,8 @@ export default function Home() {
         secure: true,
       })
       fetchTwitchUser(token).catch(console.error)
+      // remove hash
+      history.pushState('', document.title, window.location.pathname + window.location.search)
     }
   }, [asPath, setTwitchToken])
 
@@ -51,13 +55,12 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <NavBar avatarUrl={twitchUser?.['data']?.[0]?.['profile_image_url'] ?? ''} tabs={[]}></NavBar>
       <main className={styles.main}>
-        <NavBar avatarUrl={twitchUser?.['data']?.[0]?.['profile_image_url'] ?? ''}></NavBar>
-        <LoginTwitchButton></LoginTwitchButton>
-        <p>Twitch token: {twitchToken}</p>
-        <p>Twitch client: {process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID}</p>
-        <p>Twitch user: {JSON.stringify(twitchUser?.['data']?.[0]?.['display_name'])}</p>
-        {JSON.stringify(twitchUser?.['data']?.[0], undefined, 2)}
+        <p>Twitch user token: {twitchToken}</p>
+        <Prism language="json" scrollAreaComponent="div">
+          {JSON.stringify(twitchUser?.['data']?.[0] ?? '', undefined, 2)}
+        </Prism>
         <Post />
       </main>
     </>

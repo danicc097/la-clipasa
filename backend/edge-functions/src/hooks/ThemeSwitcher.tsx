@@ -1,39 +1,51 @@
-import { useState, useEffect } from 'react'
-import { Checkbox } from 'semantic-ui-react'
+import { createStyles, UnstyledButton, Text, Center, useMantineColorScheme, Group } from '@mantine/core'
+import { upperFirst } from '@mantine/hooks'
+import { IconMoon, IconSun } from '@tabler/icons'
+import { useEffect } from 'react'
 
-const ThemeSwitcher = () => {
-  const [inverted, setInverted] = useState<boolean>(false)
+const useStyles = createStyles((theme) => ({
+  control: {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 1000,
+    paddingLeft: theme.spacing.sm,
+    paddingRight: 4,
+    width: 136,
+    height: 36,
+  },
 
-  useEffect(() => {
-    const elements = Array.from(document.querySelectorAll('*'))
-    elements.forEach((element) => {
-      if (inverted) {
-        element.classList.add('inverted')
-      } else {
-        element.classList.remove('inverted')
-      }
-    })
-  }, [inverted])
+  iconWrapper: {
+    height: 28,
+    width: 28,
+    borderRadius: 28,
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.yellow[4] : theme.colors.dark[4],
+    color: theme.colorScheme === 'dark' ? theme.black : theme.colors.blue[2],
+  },
+
+  value: {
+    lineHeight: 1,
+  },
+}))
+
+export function ThemeSwitcher() {
+  const { classes } = useStyles()
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
+  const Icon = colorScheme === 'dark' ? IconSun : IconMoon
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignSelf: 'center',
-        justifyContent: 'space-evenly',
-        alignItems: 'center',
-      }}
-    >
-      <i className="sun icon"></i>
-      <Checkbox
-        toggle
-        onChange={() => {
-          setInverted(!inverted)
-        }}
-      />
-      <i className="moon icon"></i>
-    </div>
+    <Group position="center" my="sm">
+      <UnstyledButton aria-label="Toggle theme" className={classes.control} onClick={() => toggleColorScheme()}>
+        <Text size="sm" className={classes.value}>
+          {upperFirst(colorScheme === 'light' ? 'dark' : 'light')} theme
+        </Text>
+
+        <Center className={classes.iconWrapper}>
+          <Icon size={18} stroke={1.5} />
+          <i className="sun icon"></i>
+        </Center>
+      </UnstyledButton>
+    </Group>
   )
 }
-
-export default ThemeSwitcher
