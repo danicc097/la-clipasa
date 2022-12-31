@@ -98,3 +98,28 @@ a {
     color-scheme: dark;
   }
 }
+
+.link-hover {
+  position: relative;
+  top: 0;
+  transition: top ease 1s;
+}
+
+.link-hover:hover {
+  -webkit-transition: width 1s ease-in-out;
+  transition: width 1s ease-in-out;
+  background-color: rgba(241, 241, 241, 0.199) !important;
+}
+.link-hover:after {
+  position: absolute;
+  bottom: 0;
+  content: "";
+  display: block;
+  width: 0;
+  height: 3px;
+  background: #000;
+}
+
+.link-hover:hover:after {
+  width: 100%;
+}
