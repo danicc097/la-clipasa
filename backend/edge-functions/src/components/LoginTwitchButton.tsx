@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTwitch } from "@fortawesome/free-brands-svg-icons";
+import React, { ReactNode } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTwitch } from '@fortawesome/free-brands-svg-icons'
 
 const LoginTwitchButton = () => {
   return (
@@ -12,12 +12,12 @@ const LoginTwitchButton = () => {
         <button
           className="button ui positive"
           style={{
-            backgroundColor: "#a970ff",
-            display: "flex",
-            minWidth: "190px",
-            alignItems: "center",
-            gap: "10px",
-            whiteSpace: "nowrap",
+            backgroundColor: '#a970ff',
+            display: 'flex',
+            minWidth: '190px',
+            alignItems: 'center',
+            gap: '10px',
+            whiteSpace: 'nowrap',
           }}
         >
           <FontAwesomeIcon icon={faTwitch} size="xs" />
@@ -25,7 +25,7 @@ const LoginTwitchButton = () => {
         </button>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default LoginTwitchButton;
+export default LoginTwitchButton

@@ -1,8 +1,47 @@
 {
-  "extends": "next/core-web-vitals",
   "rules": {
+    "react/no-unknown-property": [
+      "error",
+      {
+        "ignore": [
+          "css"
+        ]
+      }
+    ],
+    "react/display-name": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "no-unused-expressions": "off",
+    "no-unused-vars": "off",
     "import/no-anonymous-default-export": [
       "off"
+    ],
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off",
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
     ]
-  }
+  },
+  "ignorePatterns": [
+    "build/**/*",
+    "dist/**/*",
+    ".next/**/*",
+    "node_modules/**/*"
+  ],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "plugin:react-hooks/recommended"
+  ]
 }

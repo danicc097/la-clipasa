@@ -1,35 +1,35 @@
-import Image from "next/image";
-import { Embed, Accordion, Card, Modal } from "semantic-ui-react";
-import { useEffect, useState } from "react";
+import Image from 'next/image'
+import { Embed, Accordion, Card, Modal } from 'semantic-ui-react'
+import { useEffect, useState } from 'react'
 
 function instagramVideoToEmbed(url: string) {
   const videoId = url
-    .replace(/(\/)*$/, "")
-    .split("/")
-    .slice(-1)[0];
+    .replace(/(\/)*$/, '')
+    .split('/')
+    .slice(-1)[0]
 
   return (
     <iframe
       style={{
-        border: "0px",
-        minWidth: "100%",
-        minHeight: "100vh",
+        border: '0px',
+        minWidth: '100%',
+        minHeight: '100vh',
       }}
       src={`https://www.instagram.com/p/${videoId}/embed`}
       allowFullScreen
     ></iframe>
-  );
+  )
 }
 
 export default function Post() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
-    const s = document.createElement("script");
-    s.setAttribute("src", "https://platform.twitter.com/widgets.js");
-    s.setAttribute("async", "true");
-    document.head.appendChild(s);
-  });
+    const s = document.createElement('script')
+    s.setAttribute('src', 'https://platform.twitter.com/widgets.js')
+    s.setAttribute('async', 'true')
+    document.head.appendChild(s)
+  })
 
   return (
     <div className="ui styled fluid">
@@ -40,11 +40,11 @@ export default function Post() {
             <p lang="zxx" dir="ltr">
               <a href="https://t.co/sREOG57Ms6">pic.twitter.com/sREOG57Ms6</a>
             </p>
-            &mdash; Strangest Media Online (@StrangestMedia){" "}
+            &mdash; Strangest Media Online (@StrangestMedia){' '}
             <a href="https://twitter.com/StrangestMedia/status/1608633970702389251?ref_src=twsrc%5Etfw">
               December 30, 2022
             </a>
-          </blockquote>{" "}
+          </blockquote>{' '}
           {/* {instagramVideoToEmbed("https://www.instagram.com/p/CjxXTbmISOd")} */}
           {/* <video width="100%" height="100%" controls>
             <source
@@ -64,17 +64,17 @@ export default function Post() {
           ></Embed> */}
         </Modal.Content>
       </Modal>
-      <div className="ui divided items link" style={{ minWidth: "80vw" }}>
+      <div className="ui divided items link" style={{ minWidth: '80vw' }}>
         <div
           className="item link-hover"
           onClick={() => {
-            setModalOpen(true);
+            setModalOpen(true)
           }}
         >
-          <div className="image" style={{ alignSelf: "center" }}>
+          <div className="image" style={{ alignSelf: 'center' }}>
             <Image
               alt=""
-              style={{ maxHeight: "100px", borderRadius: "5px" }}
+              style={{ maxHeight: '100px', borderRadius: '5px' }}
               src="https://www.instagram.com/p/CjxXTbmISOd/media/?size=l"
               height={100}
               width={100}
@@ -102,12 +102,12 @@ export default function Post() {
         <div
           className="item link-hover"
           onClick={() => {
-            setModalOpen(true);
+            setModalOpen(true)
           }}
         >
-          <div className="image" style={{ alignSelf: "center" }}>
+          <div className="image" style={{ alignSelf: 'center' }}>
             <Image
-              style={{ maxHeight: "100px", borderRadius: "5px" }}
+              style={{ maxHeight: '100px', borderRadius: '5px' }}
               alt=""
               src="https://img.youtube.com/vi/o_PBfLbd3zw/mqdefault.jpg"
               height={100}
@@ -130,5 +130,5 @@ export default function Post() {
         </div>
       </div>
     </div>
-  );
+  )
 }

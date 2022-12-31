@@ -1,29 +1,30 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server'
 
 export const config = {
-  runtime: "edge",
-};
+  runtime: 'edge',
+}
 
-export default async (request: NextRequest, response: any) => {
+export default async (req: NextRequest, res: any) => {
   try {
-    try {
-      const body = await request.json();
+    switch (req.method) {
+      case 'GET':
+        const res = await fetch(`https://discord.com/api/channels/${process.env.DISCORD_CHANNEL_ID}/messages`, {
+          headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` },
+        })
+        console.log(res.status)
+        const messages = await res.json()
 
-      console.log(body);
-    } catch (error) {}
+        return new Response(JSON.stringify({ messages }))
+      case 'POST':
+        try {
+          const body = await req.json()
 
-    const res = await fetch(
-      `https://discord.com/api/channels/${process.env.DISCORD_CHANNEL_ID}/messages`,
-      {
-        headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` },
-      }
-    );
-    console.log(res.status);
-    const messages = await res.json();
-
-    return new Response(JSON.stringify({ messages }));
+          console.log(body)
+        } catch (error) {}
+        break
+    }
   } catch (error: any) {
-    console.log(JSON.stringify(error));
-    return new Response(JSON.stringify(error?.message));
+    console.log(JSON.stringify(error))
+    return new Response(JSON.stringify(error?.message))
   }
-};
+}
