@@ -15,6 +15,8 @@ export default function Home() {
   const [twitchUser, setTwitchUser] = useState(null)
 
   useEffect(() => {
+    // TODO use     const tweet = url.hash and create searchparams in edge func
+    // then set cookie
     const hash = asPath.split('#')[1]
     console.log(hash)
     const parsedHash = new URLSearchParams(hash)
