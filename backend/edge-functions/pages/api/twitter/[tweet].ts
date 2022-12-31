@@ -7,7 +7,7 @@ export const config = {
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 
-export default async (request: NextRequest, response: any) => {
+export default async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url)
     const tweet = searchParams.get('tweet')

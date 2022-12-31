@@ -3,10 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTwitch } from '@fortawesome/free-brands-svg-icons'
 
 const LoginTwitchButton = () => {
+  const redirectURI = encodeURIComponent(`${process.env.NEXT_PUBLIC_URL}/api/auth/twitch/callback/`)
   return (
     <>
       <form
-        action={`https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=${process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID}&redirect_uri=${process.env.BASE_URL}/api/auth/twitch/callback&scope=user_read`}
+        action={`https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=${process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID}&redirect_uri=${redirectURI}&scope=user_read`}
         method="POST"
       >
         <button

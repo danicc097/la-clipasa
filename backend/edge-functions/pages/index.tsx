@@ -6,6 +6,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import LoginTwitchButton from '../src/components/LoginTwitchButton'
 import Post from '../src/components/Posts'
+import Cookies from 'js-cookie'
+import NavBar from '../src/components/NavBar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,14 +17,18 @@ export default function Home() {
   const [twitchUser, setTwitchUser] = useState(null)
 
   useEffect(() => {
-    // TODO use     const tweet = url.hash and create searchparams in edge func
-    // then set cookie
+    // the  URL hash is processed by the browser only. not available in edge function
     const hash = asPath.split('#')[1]
     console.log(hash)
     const parsedHash = new URLSearchParams(hash)
     const token = parsedHash.get('access_token')
     if (token !== '' && token) {
       setTwitchToken(token)
+      Cookies.set('twitchAccessToken', token, {
+        expires: 365,
+        sameSite: 'none',
+        secure: true,
+      })
       fetchTwitchUser(token).catch(console.error)
     }
   }, [asPath, setTwitchToken])
@@ -48,10 +54,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
+        <NavBar avatarUrl={twitchUser?.['data']?.[0]?.['profile_image_url'] ?? ''}></NavBar>
         <LoginTwitchButton></LoginTwitchButton>
         <p>Twitch token: {twitchToken}</p>
         <p>Twitch client: {process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID}</p>
         <p>Twitch user: {JSON.stringify(twitchUser?.['data']?.[0]?.['display_name'])}</p>
+        {JSON.stringify(twitchUser?.['data']?.[0], undefined, 2)}
         <Post />
       </main>
     </>

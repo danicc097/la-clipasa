@@ -6,7 +6,7 @@ export const config = {
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 
-export default async (req: NextRequest, response: any) => {
+export default async (req: NextRequest) => {
   try {
     switch (req.method) {
       // TODO setup cache for this edge function and retry with backoff on 429. This has x-ratelimit-limit of 5
@@ -41,11 +41,17 @@ export default async (req: NextRequest, response: any) => {
 
           NOTE: Bot needs embed permission on channel.
           curl -X POST http://localhost:3000/api/discord -H 'Content-Type: application/json' -d '{
-            "content": "<link>",
+            "content": "https://twitter.com/caliebre/status/1608936054819782660?cxt=HHwWiIDQ3ae0i9QsAAAA\n",
             "tts": false,
-            "type": "rich"
+            "type": "rich",
+            "embeds": [{
+            "description": "<username>, etc."
+          }]
           }'
-
+,
+            "embeds": [{
+            "description": "<username>, etc."
+          }]
 
           NOTE: not needed. bot message will also generate embed and let us use discord cdn.
             "embeds": [{
