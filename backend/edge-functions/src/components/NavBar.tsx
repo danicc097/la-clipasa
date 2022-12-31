@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Menu, Image, Label, MenuItemProps, Input, Icon } from 'semantic-ui-react'
 import useOnClickOutside from '../hooks/useClickOutside'
+import ThemeSwitcher from '../hooks/ThemeSwitcher'
 
 type NavBarProps = {
   avatarUrl: string
@@ -27,6 +28,13 @@ export default function NavBar({ avatarUrl }: NavBarProps) {
           )}
         </Menu.Item>
       </Menu.Menu>
+      {/* see https://react.semantic-ui.com/layouts/sticky
+       source: https://github.com/Semantic-Org/Semantic-UI-React/tree/master/docs/src/layouts
+        changes:
+         - banner image on top, keep navbar
+         - background image
+
+      */}
       {/* TODO  && isAuthenticated */}
       {menuVisible && (
         <Menu vertical ref={menuRef} style={{ position: 'absolute', top: '100%', right: 0 }}>
@@ -37,7 +45,9 @@ export default function NavBar({ avatarUrl }: NavBarProps) {
             <Label color="teal">1</Label>
             Inbox
           </Menu.Item>
-
+          <Menu.Item>
+            <ThemeSwitcher></ThemeSwitcher>
+          </Menu.Item>
           <Menu.Item name="spam" active={activeItem === 'spam'} onClick={handleItemClick}>
             <Label>51</Label>
             Spam

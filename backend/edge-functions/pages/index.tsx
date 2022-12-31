@@ -9,8 +9,6 @@ import Post from '../src/components/Posts'
 import Cookies from 'js-cookie'
 import NavBar from '../src/components/NavBar'
 
-const inter = Inter({ subsets: ['latin'] })
-
 export default function Home() {
   const { asPath } = useRouter()
   const [twitchToken, setTwitchToken] = useState('')
