@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Embed, Accordion, Card, Modal } from "semantic-ui-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function instagramVideoToEmbed(url: string) {
   const videoId = url
@@ -23,12 +23,37 @@ function instagramVideoToEmbed(url: string) {
 
 export default function Post() {
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const s = document.createElement("script");
+    s.setAttribute("src", "https://platform.twitter.com/widgets.js");
+    s.setAttribute("async", "true");
+    document.head.appendChild(s);
+  });
+
   return (
     <div className="ui styled fluid">
       <Modal onClose={() => setModalOpen(false)} onOpen={() => setModalOpen(true)} open={modalOpen}>
         <Modal.Header>Post #???</Modal.Header>
         <Modal.Content>
-          <Embed
+          <blockquote className="twitter-tweet" data-dnt="true">
+            <p lang="zxx" dir="ltr">
+              <a href="https://t.co/sREOG57Ms6">pic.twitter.com/sREOG57Ms6</a>
+            </p>
+            &mdash; Strangest Media Online (@StrangestMedia){" "}
+            <a href="https://twitter.com/StrangestMedia/status/1608633970702389251?ref_src=twsrc%5Etfw">
+              December 30, 2022
+            </a>
+          </blockquote>{" "}
+          {/* {instagramVideoToEmbed("https://www.instagram.com/p/CjxXTbmISOd")} */}
+          {/* <video width="100%" height="100%" controls>
+            <source
+              src="https://cdn.discordapp.com/attachments/1058424616726565007/1058546769199366204/file_example_MP4_480_1_5MG.mp4"
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video> */}
+          {/* <Embed
             className="fullscreen"
             id="QHbK9C5mA94"
             placeholder="https://img.youtube.com/vi/QHbK9C5mA94/mqdefault.jpg"
@@ -36,7 +61,7 @@ export default function Post() {
             iframe={{
               allowFullScreen: true,
             }}
-          ></Embed>
+          ></Embed> */}
         </Modal.Content>
       </Modal>
       <div className="ui divided items link" style={{ minWidth: "80vw" }}>
