@@ -1,5 +1,4 @@
-import { Modal } from '@mantine/core'
-import Image from 'next/image'
+import { Image, Modal } from '@mantine/core'
 import { useEffect, useState } from 'react'
 
 function instagramVideoToEmbed(url: string) {
@@ -76,7 +75,8 @@ export default function Post() {
             <Image
               alt=""
               style={{ maxHeight: '100px', borderRadius: '5px' }}
-              src="https://www.instagram.com/p/CjxXTbmISOd/media/?size=l"
+              // for instagram would need to retrieve from server-side then pass to client, else cors
+              // src="https://www.instagram.com/p/CjxXTbmISOd/media/?size=t"
               height={100}
               width={100}
             />

@@ -13,7 +13,7 @@ import {
   IconChevronDown,
 } from '@tabler/icons'
 import LoginTwitchButton from './LoginTwitchButton'
-import { ThemeSwitcher } from '../hooks/ThemeSwitcher'
+import { ThemeSwitcher } from './ThemeSwitcher'
 import Cookies from 'js-cookie'
 
 const useStyles = createStyles((theme) => ({

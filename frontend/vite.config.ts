@@ -12,17 +12,16 @@ export default ({ mode }) => {
   // import.meta.env.VITE_PORT available here with: process.env.VITE_PORT
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
-
   return defineConfig({
     base: '/',
     plugins: [
-      react({
-        jsxImportSource: '@emotion/react',
-        jsxRuntime: 'automatic',
-        babel: {
-          plugins: ['@emotion/babel-plugin'],
-        },
-      }),
+      // react({
+      //   jsxImportSource: '@emotion/react',
+      //   jsxRuntime: 'automatic',
+      //   babel: {
+      //     plugins: ['@emotion/babel-plugin'],
+      //   },
+      // }),
       tsconfigPaths({ root: '.' }),
       dynamicImport({}),
     ],

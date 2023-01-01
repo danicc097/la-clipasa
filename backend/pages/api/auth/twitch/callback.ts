@@ -8,7 +8,12 @@ export const config = {
 
 export default async (request: NextRequest, response: any) => {
   try {
-    return NextResponse.redirect(process.env.NEXT_PUBLIC_URL ?? '/')
+    // TODO previews URL will be broken
+    // but can extract slug and craft a sibling deployed package url from process.env.NEXT_PUBLIC_URL
+    // see:
+    // https://github.com/vercel/vercel/discussions/6045
+    // https://vercel.com/docs/concepts/deployments/generated-urls
+    return NextResponse.redirect(process.env.UI_URL ?? '/')
   } catch (error: any) {
     console.log(JSON.stringify(error))
     return new Response(JSON.stringify(error?.message))
