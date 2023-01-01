@@ -21,7 +21,7 @@ export default function Layout({ children }: LayoutProps) {
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
       {/*
-        TODO react-query
+        TODO from react-query
       <NavBar avatarUrl={twitchUser?.['data']?.[0]?.['profile_image_url'] ?? ''} tabs={[]}></NavBar> */}
       <NavBar avatarUrl={''} tabs={[]}></NavBar>
       <main
