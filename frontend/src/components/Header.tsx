@@ -1,5 +1,18 @@
 import { useState } from 'react'
-import { createStyles, Container, Avatar, UnstyledButton, Group, Text, Menu, Tabs, Burger, Loader } from '@mantine/core'
+import {
+  createStyles,
+  Container,
+  Avatar,
+  UnstyledButton,
+  Group,
+  Text,
+  Menu,
+  Tabs,
+  Burger,
+  Loader,
+  Header as MantineHeader,
+  Box,
+} from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown } from '@tabler/icons'
 import LoginTwitchButton from './LoginTwitchButton'
@@ -10,14 +23,10 @@ import { css } from '@emotion/react'
 
 const useStyles = createStyles((theme) => ({
   header: {
-    paddingTop: theme.spacing.sm,
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     borderBottom: `1px solid ${theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]}`,
     marginBottom: 120,
-  },
-
-  mainSection: {
-    paddingBottom: theme.spacing.sm,
+    padding: '5px',
   },
 
   user: {
@@ -71,11 +80,11 @@ const useStyles = createStyles((theme) => ({
   },
 }))
 
-interface NavBarProps {
+interface HeaderProps {
   tabs: string[]
 }
 
-export default function NavBar({ tabs }: NavBarProps) {
+export default function Header({ tabs }: HeaderProps) {
   const { classes, theme, cx } = useStyles()
   const [opened, { toggle }] = useDisclosure(false)
   const [userMenuOpened, setUserMenuOpened] = useState(false)
@@ -92,8 +101,8 @@ export default function NavBar({ tabs }: NavBarProps) {
   ))
 
   return (
-    <div className={classes.header}>
-      <Container className={classes.mainSection}>
+    <Box pb={120}>
+      <MantineHeader height={60} px="md" sx={{ height: '100%' }} className={classes.header}>
         <Group position="apart">
           <IconHeart size={28} color="red" fill="red" />
 
@@ -113,7 +122,7 @@ export default function NavBar({ tabs }: NavBarProps) {
               ) : avatarUrl ? (
                 <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
                   <Group spacing={7}>
-                    <Avatar src={avatarUrl} alt={username} radius="xl" size={20} />
+                    <Avatar src={avatarUrl} alt={username} radius="xl" size={25} />
                     <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
                       {username}
                     </Text>
@@ -143,20 +152,20 @@ export default function NavBar({ tabs }: NavBarProps) {
             </Menu.Dropdown>
           </Menu>
         </Group>
-      </Container>
-      <Container>
-        <Tabs
-          defaultValue="Home"
-          variant="outline"
-          classNames={{
-            root: classes.tabs,
-            tabsList: classes.tabsList,
-            tab: classes.tab,
-          }}
-        >
-          <Tabs.List>{items}</Tabs.List>
-        </Tabs>
-      </Container>
-    </div>
+        <Container>
+          <Tabs
+            defaultValue="Home"
+            variant="outline"
+            classNames={{
+              root: classes.tabs,
+              tabsList: classes.tabsList,
+              tab: classes.tab,
+            }}
+          >
+            <Tabs.List>{items}</Tabs.List>
+          </Tabs>
+        </Container>
+      </MantineHeader>
+    </Box>
   )
 }

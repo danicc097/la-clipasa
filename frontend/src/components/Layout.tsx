@@ -4,7 +4,7 @@ import { Code } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-import NavBar from 'src/components/NavBar'
+import Header from 'src/components/Header'
 import { css } from '@emotion/react'
 import { useTwitchUser } from 'src/slices/react-query/twitch'
 
@@ -21,7 +21,7 @@ export default function Layout({ children }: LayoutProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
-      <NavBar tabs={[]}></NavBar>
+      <Header tabs={[]}></Header>
       <main
         css={css`
           display: flex;

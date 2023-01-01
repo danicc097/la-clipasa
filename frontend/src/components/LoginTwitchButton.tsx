@@ -21,7 +21,7 @@ export default function LoginTwitchButton() {
           }}
           leftIcon={<FontAwesomeIcon icon={faTwitch} size="xl" />}
         >
-          Login with Twitch
+          Login
         </Button>
       </form>
     </>
