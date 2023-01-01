@@ -10,7 +10,7 @@ import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useUISlice } from 'src/slices/ui'
 import { useTwitchUser } from 'src/queries/twitch'
-import background from 'src/assets/background-la-clipassa.jpg'
+import homeBackground from 'src/assets/background-la-clipassa.jpg'
 import postDiamante from 'src/assets/post-diamante.png'
 
 export default function Home() {
@@ -44,7 +44,7 @@ export default function Home() {
   }, [error])
 
   useEffect(() => {
-    document.body.style.background = `url(${background}) no-repeat center/cover`
+    document.body.style.background = `url(${homeBackground}) no-repeat center/cover`
 
     return () => {
       document.body.style.background = ''

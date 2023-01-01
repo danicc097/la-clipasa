@@ -18,6 +18,13 @@ const useStyles = createStyles((theme) => ({
     marginTop: theme.spacing.md,
     borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
   },
+
+  action: {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    ...theme.fn.hover({
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
+    }),
+  },
 }))
 
 interface ArticleCardFooterProps {
@@ -52,9 +59,25 @@ export default function Post({ image, categories, title, footer, author }: Artic
   const { classes, theme } = useStyles()
 
   return (
-    <Card withBorder p="lg" className={classes.card}>
+    <Card
+      withBorder
+      p="lg"
+      className={classes.card}
+      css={css`
+        background-image: url(${image});
+        background-repeat: no-repeat;
+        background-size: 300px; // must change based on background image
+        background-position: right;
+      `}
+    >
       <Card.Section mb="sm">
-        <Image src={image} alt={title} height={180} />
+        {/* <Image
+          src={image}
+          alt={title}
+          height={180}
+          width={'30vw'}
+          // styles={{ image: { right: 0, position: 'absolute' } }}
+        /> */}
       </Card.Section>
 
       {categories.length > 0 && (
@@ -96,14 +119,14 @@ export default function Post({ image, categories, title, footer, author }: Artic
           <Text size="xs" color="dimmed">
             {footer}
           </Text>
-          <Group spacing={0}>
-            <ActionIcon>
+          <Group spacing={5}>
+            <ActionIcon className={classes.action}>
               <IconHeart size={18} color={theme.colors.red[6]} stroke={1.5} />
             </ActionIcon>
-            <ActionIcon>
+            <ActionIcon className={classes.action}>
               <IconBookmark size={18} color={theme.colors.yellow[6]} stroke={1.5} />
             </ActionIcon>
-            <ActionIcon>
+            <ActionIcon className={classes.action}>
               <IconShare size={16} color={theme.colors.blue[6]} stroke={1.5} />
             </ActionIcon>
           </Group>
