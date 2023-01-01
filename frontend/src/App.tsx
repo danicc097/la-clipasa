@@ -1,34 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import "./App.css";
+import { MantineProvider, ColorSchemeProvider, ColorScheme } from "@mantine/core";
+import { useEffect, useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [colorScheme, setColorScheme] = useState<ColorScheme>("light");
+  const toggleColorScheme = (value?: ColorScheme) => {
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+  };
+
+  useEffect(() => {
+    // useEffect has access to `window`
+    const newTheme = localStorage.getItem("theme") === "light" ? "light" : "dark";
+    toggleColorScheme(newTheme);
+  }, []);
+
+  useEffect(() => {
+    // useEffect has access to `window`
+    const newTheme = colorScheme === "dark" ? "light" : "dark";
+    localStorage.setItem("theme", newTheme);
+  }, [colorScheme]);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
+        theme={{
+          colorScheme,
+          shadows: {
+            md: "1px 1px 3px rgba(0, 0, 0, .25)",
+            xl: "5px 5px 3px rgba(0, 0, 0, .25)",
+          },
+        }}
+      >
+        <div className="App">test</div>
+      </MantineProvider>
+    </ColorSchemeProvider>
+  );
 }
-
-export default App
