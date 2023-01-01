@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { DiscordPostUpload, TwitchUser } from 'shared-types'
 
 // can't use shared import
 export const config = {
@@ -20,6 +21,7 @@ export default async (req: NextRequest) => {
       //
       // https://discord.com/developers/docs/topics/rate-limits
       // should log and avoid 401, 403, or 429.
+      // TODO GET could be a serverless func (lambda under the hood)
       case 'GET': {
         const res = await fetch(`https://discord.com/api/channels/${process.env.DISCORD_CHANNEL_ID}/messages`, {
           headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` },
@@ -31,8 +33,8 @@ export default async (req: NextRequest) => {
         return new Response(JSON.stringify({ messages }))
       }
       case 'POST': {
-        // need twitch "display_name" and a single url or nothing if its a file upload
-        let payload
+        // need twitch current "display_name", title, twitch id and a single url or nothing if its a file upload
+        let payload: DiscordPostUpload
         try {
           payload = await req.json()
           console.log(payload)
