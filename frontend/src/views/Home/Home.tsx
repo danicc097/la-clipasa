@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react'
 import LoginTwitchButton from '../../components/LoginTwitchButton'
-import Post from '../../components/Posts'
+import Posts from '../../components/Posts'
+import Post from '../../components/Post'
 import Cookies from 'js-cookie'
 import Header from '../../components/Header'
-import { Code } from '@mantine/core'
+import { Code, Space } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useUISlice } from 'src/slices/ui'
 import { useTwitchUser } from 'src/queries/twitch'
 import background from 'src/assets/background-la-clipassa.jpg'
+import postDiamante from 'src/assets/post-diamante.png'
 
 export default function Home() {
   const { hash } = useLocation()
@@ -55,7 +57,15 @@ export default function Home() {
       <Prism language="json" scrollAreaComponent="div">
         {JSON.stringify(twitchUser?.['data']?.[0] ?? '', undefined, 2)}
       </Prism>
-      <Post />
+      {/* <Posts /> */}
+      <Space />
+      <Post
+        author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
+        categories={['no sound', 'something']}
+        title={'Some title for this'}
+        footer={<div>footer div</div>}
+        image={postDiamante}
+      />
     </>
   )
 }
