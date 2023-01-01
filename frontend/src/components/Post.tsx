@@ -7,6 +7,11 @@ const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
     minWidth: '80vw',
+    border: `3px solid ${theme.colorScheme === 'dark' ? '#212327' : '#ddd8e4'}`,
+    boxShadow: `inset 0 0 10px ${
+      theme.colorScheme === 'dark' ? '#524f5461' : '#9993a493'
+    }, 0 4px 6px rgba(0, 0, 0, 0.1)`,
+    // boxShadow: `0 15px 10px -10px ${theme.colorScheme === 'dark' ? '#7d6e9335' : '#22212460'}`,
   },
 
   title: {
@@ -60,36 +65,32 @@ export default function Post({ image, categories, title, footer, author }: Artic
 
   return (
     <Card
-      withBorder
       p="lg"
+      radius={12}
       className={classes.card}
       css={css`
         background-image: url(${image});
         background-repeat: no-repeat;
-        background-size: 300px; // must change based on background image
+        background-size: 300px; // must adapt to height, or ensure all posts have the same height
         background-position: right;
+        -webkit-background-clip: padding-box; /* for Safari */
+        background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
       `}
     >
-      <Card.Section mb="sm">
-        {/* <Image
-          src={image}
-          alt={title}
-          height={180}
-          width={'30vw'}
-          // styles={{ image: { right: 0, position: 'absolute' } }}
-        /> */}
-      </Card.Section>
-
       {categories.length > 0 && (
         <Group position="left">
           {categories.map((category, i) => (
             <Badge
+              onClick={() => {
+                null
+              }}
               key={i}
               color="green"
               css={css`
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                cursor: pointer;
               `}
             >
               {categoryEmojis[category] && <img src={categoryEmojis[category]} height={16} width={16} />}
