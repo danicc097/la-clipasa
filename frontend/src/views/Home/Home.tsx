@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useUISlice } from 'src/slices/ui'
 import { useTwitchUser } from 'src/slices/react-query/twitch'
+import background from 'src/assets/background-la-clipassa.jpg'
 
 export default function Home() {
   const { hash } = useLocation()
@@ -41,6 +42,14 @@ export default function Home() {
       }
     }
   }, [error])
+
+  useEffect(() => {
+    document.body.style.background = `url(${background}) no-repeat center/cover`
+
+    return () => {
+      document.body.style.background = ''
+    }
+  }, [])
 
   return (
     <>

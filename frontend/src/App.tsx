@@ -1,12 +1,10 @@
-import { MantineProvider, ColorSchemeProvider, ColorScheme } from '@mantine/core'
 // import 'regenerator-runtime/runtime'
+import { MantineProvider, ColorSchemeProvider, ColorScheme, Image } from '@mantine/core'
 import ProtectedRoute from 'src/components/ProtectedRoute'
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-
 import Layout from 'src/components/Layout'
 import { ErrorPage } from 'src/components/ErrorPage/ErrorPage'
-
 import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'

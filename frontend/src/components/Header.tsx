@@ -12,6 +12,7 @@ import {
   Loader,
   Header as MantineHeader,
   Box,
+  Image,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown } from '@tabler/icons'
@@ -20,13 +21,15 @@ import { ThemeSwitcher } from './ThemeSwitcher'
 import { useTwitchUser } from 'src/slices/react-query/twitch'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
+import banner from 'src/assets/banner-la-clipassa.png'
 
 const useStyles = createStyles((theme) => ({
   header: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     borderBottom: `1px solid ${theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]}`,
-    marginBottom: 120,
-    padding: '5px',
+    padding: '30px',
+    display: 'grid',
+    alignContent: 'center',
   },
 
   user: {
@@ -101,71 +104,88 @@ export default function Header({ tabs }: HeaderProps) {
   ))
 
   return (
-    <Box pb={120}>
-      <MantineHeader height={60} px="md" sx={{ height: '100%' }} className={classes.header}>
-        <Group position="apart">
-          <IconHeart size={28} color="red" fill="red" />
-
-          <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
-          <Menu
-            width={260}
-            position="bottom-end"
-            transition="pop-top-right"
-            onClose={() => setUserMenuOpened(false)}
-            onOpen={() => {
-              if (twitchUser) setUserMenuOpened(true)
-            }}
+    <>
+      <Image alt="" src={banner} />
+      <Box
+        pb={120}
+        css={css`
+          position: sticky;
+          top: 0;
+          z-index: 1;
+        `}
+      >
+        <MantineHeader height={60} px="md" sx={{ height: '100%' }} className={classes.header}>
+          <Group
+            position="apart"
+            css={css`
+              align-self: center;
+            `}
           >
-            <Menu.Target>
-              {isLoading ? (
-                <Loader size={'sm'} />
-              ) : avatarUrl ? (
-                <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
-                  <Group spacing={7}>
-                    <Avatar src={avatarUrl} alt={username} radius="xl" size={25} />
-                    <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                      {username}
-                    </Text>
-                    <IconChevronDown size={12} stroke={1.5} />
-                  </Group>
-                </UnstyledButton>
-              ) : (
-                <LoginTwitchButton />
-              )}
-            </Menu.Target>
+            <IconHeart size={28} color="red" fill="red" />
 
-            <Menu.Dropdown>
-              <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>Liked posts</Menu.Item>
-              <Menu.Item icon={<IconStar size={14} color={theme.colors.yellow[6]} stroke={1.5} />}>
-                Saved posts
-              </Menu.Item>
+            <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
+            <Menu
+              width={260}
+              position="bottom-end"
+              transition="pop-top-right"
+              onClose={() => setUserMenuOpened(false)}
+              onOpen={() => {
+                if (twitchUser) setUserMenuOpened(true)
+              }}
+            >
+              <Menu.Target>
+                {isLoading ? (
+                  <Loader size={'sm'} />
+                ) : avatarUrl ? (
+                  <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
+                    <Group spacing={7}>
+                      <Avatar src={avatarUrl} alt={username} radius="xl" size={25} />
+                      <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
+                        {username}
+                      </Text>
+                      <IconChevronDown size={12} stroke={1.5} />
+                    </Group>
+                  </UnstyledButton>
+                ) : (
+                  <LoginTwitchButton />
+                )}
+              </Menu.Target>
 
-              <Menu.Divider />
-              <ThemeSwitcher />
-              <Menu.Divider />
-              <Menu.Label>Settings</Menu.Label>
-              <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>Account settings</Menu.Item>
-              <Menu.Divider />
-              <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} onClick={logout}>
-                Logout
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </Group>
-        <Container>
-          <Tabs
-            defaultValue="Home"
-            variant="outline"
-            classNames={{
-              root: classes.tabs,
-              tabsList: classes.tabsList,
-              tab: classes.tab,
-            }}
-          >
-            <Tabs.List>{items}</Tabs.List>
-          </Tabs>
-        </Container>
-      </MantineHeader>
-    </Box>
+              <Menu.Dropdown>
+                <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
+                  Liked posts
+                </Menu.Item>
+                <Menu.Item icon={<IconStar size={14} color={theme.colors.yellow[6]} stroke={1.5} />}>
+                  Saved posts
+                </Menu.Item>
+
+                <Menu.Divider />
+                <ThemeSwitcher />
+                <Menu.Divider />
+                <Menu.Label>Settings</Menu.Label>
+                <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>Account settings</Menu.Item>
+                <Menu.Divider />
+                <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} onClick={logout}>
+                  Logout
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
+          <Container>
+            <Tabs
+              defaultValue="Home"
+              variant="outline"
+              classNames={{
+                root: classes.tabs,
+                tabsList: classes.tabsList,
+                tab: classes.tab,
+              }}
+            >
+              <Tabs.List>{items}</Tabs.List>
+            </Tabs>
+          </Container>
+        </MantineHeader>
+      </Box>
+    </>
   )
 }
