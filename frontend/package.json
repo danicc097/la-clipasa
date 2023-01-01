@@ -9,8 +9,28 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.4",
+    "@fortawesome/fontawesome-svg-core": "^6.2.1",
+    "@fortawesome/free-brands-svg-icons": "^6.2.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@mantine/core": "^5.3.0",
+    "@mantine/form": "^5.9.6",
+    "@mantine/hooks": "^5.3.0",
+    "@mantine/notifications": "^5.3.0",
+    "@mantine/prism": "^5.9.6",
+    "@tabler/icons": "^1.119.0",
+    "@tanstack/react-query": "^4.20.4",
+    "@types/react-helmet": "^6.1.6",
+    "dotenv": "^16.0.3",
+    "js-cookie": "^3.0.1",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
+    "vite-plugin-dynamic-import": "^1.2.1",
+    "vite-tsconfig-paths": "^3.5.0",
+    "vitest": "*",
+    "zustand": "^4.1.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
