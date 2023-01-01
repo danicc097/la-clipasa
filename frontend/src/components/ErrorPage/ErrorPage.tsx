@@ -1,5 +1,5 @@
 import { createStyles, Title, Text, Button, Container, Group } from '@mantine/core'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useStyles } from 'src/components/ErrorPage/ErrorPage.styles'
 
 interface ErrorPageProps {
@@ -8,6 +8,7 @@ interface ErrorPageProps {
 
 export function ErrorPage({ status }: ErrorPageProps) {
   const { classes } = useStyles()
+  const navigate = useNavigate()
 
   let text = 'An unknown error ocurred.'
   switch (status) {
@@ -24,17 +25,16 @@ export function ErrorPage({ status }: ErrorPageProps) {
   }
   return (
     <Container className={classes.root}>
-      <div className={classes.label}>404</div>
+      <div className={classes.label}>{status}</div>
       <Title className={classes.title}>You have found a secret place.</Title>
       <Text color="dimmed" size="lg" align="center" className={classes.description}>
         {text}
       </Text>
       <Group position="center">
         <Button
-          variant="subtle"
           size="md"
           onClick={() => {
-            Navigate({ to: '/' })
+            navigate('/')
           }}
         >
           Take me back to the home page

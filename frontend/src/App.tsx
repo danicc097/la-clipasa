@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 import Layout from 'src/components/Layout'
+import { ErrorPage } from 'src/components/ErrorPage/ErrorPage'
 
 const Home = React.lazy(() => import('./views/Home/Home'))
 
@@ -71,6 +72,24 @@ export default function App() {
                       <ProtectedRoute>
                         <div>Analytics page</div>
                       </ProtectedRoute>
+                    </React.Suspense>
+                  }
+                />
+                <Route
+                  path="/analytics"
+                  element={
+                    <React.Suspense fallback={<div />}>
+                      <ProtectedRoute>
+                        <div>Analytics page</div>
+                      </ProtectedRoute>
+                    </React.Suspense>
+                  }
+                />
+                <Route
+                  path="*"
+                  element={
+                    <React.Suspense fallback={<div />}>
+                      <ErrorPage status={404} />
                     </React.Suspense>
                   }
                 />
