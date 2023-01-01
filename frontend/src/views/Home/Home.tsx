@@ -4,7 +4,7 @@ import Posts from '../../components/Posts'
 import Post from '../../components/Post'
 import Cookies from 'js-cookie'
 import Header from '../../components/Header'
-import { Code, Space } from '@mantine/core'
+import { Code, Space, useMantineTheme } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
@@ -17,6 +17,7 @@ export default function Home() {
   const { hash } = useLocation()
   const { twitchToken, setTwitchToken } = useUISlice()
   const { data: twitchUser, isLoading, error, refetch } = useTwitchUser()
+  const { colorScheme, primaryColor } = useMantineTheme()
 
   useEffect(() => {
     // the URL hash is processed by the browser only. not available in edge function/backend
@@ -53,8 +54,20 @@ export default function Home() {
 
   return (
     <>
+      {/* <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          width: '60vw',
+          minHeight: '100%',
+          height: '100%',
+          backgroundColor: colorScheme === 'dark' ? '#212327a4' : '#f7f3f35d',
+          // boxShadow: '2px 2px 5px 0px rgba(0, 0, 0, 0.3), -2px -2px 5px 0px rgba(0, 0, 0, 0.3)',
+          zIndex: -1,
+        }}
+      /> */}
       <p>Twitch user token: {twitchToken}</p>
-      <Prism language="json" scrollAreaComponent="div">
+      <Prism language="json" scrollAreaComponent="div" styles={{ root: { width: '50vw' } }}>
         {JSON.stringify(twitchUser?.['data']?.[0] ?? '', undefined, 2)}
       </Prism>
       {/* <Posts /> */}

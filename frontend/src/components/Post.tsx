@@ -6,11 +6,10 @@ import { css } from '@emotion/react'
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-    minWidth: '80vw',
-    border: `3px solid ${theme.colorScheme === 'dark' ? '#212327' : '#ddd8e4'}`,
-    boxShadow: `inset 0 0 10px ${
-      theme.colorScheme === 'dark' ? '#524f5461' : '#9993a493'
-    }, 0 4px 6px rgba(0, 0, 0, 0.1)`,
+    minWidth: '50vw',
+    // border: `6px solid ${theme.colorScheme === 'dark' ? '#212327' : '#ddd8e4'}`,
+    boxShadow: `inset 2px 2px 15px ${theme.colorScheme === 'dark' ? '#524f541d' : '#9993a436'},
+    0 2px 10px ${theme.colorScheme === 'dark' ? '#3f3c4025' : '#d5d0df1c'}`,
     // boxShadow: `0 15px 10px -10px ${theme.colorScheme === 'dark' ? '#7d6e9335' : '#22212460'}`,
   },
 
@@ -69,12 +68,13 @@ export default function Post({ image, categories, title, footer, author }: Artic
       radius={12}
       className={classes.card}
       css={css`
-        background-image: url(${image});
         background-repeat: no-repeat;
         background-size: 300px; // must adapt to height, or ensure all posts have the same height
         background-position: right;
         -webkit-background-clip: padding-box; /* for Safari */
         background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+
+        background-image: url(${image});
       `}
     >
       {categories.length > 0 && (
