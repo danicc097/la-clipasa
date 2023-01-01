@@ -11,13 +11,26 @@ import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { QueryCache } from '@tanstack/react-query'
+
+// const queryCache = new QueryCache({
+//   onError: (error) => {
+//     console.log(error)
+//   },
+//   onSuccess: (data) => {
+//     console.log(data)
+//   },
+// })
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      refetchOnWindowFocus: false,
+      staleTime: 300000,
     },
   },
+  // queryCache,
 })
 
 const persister = createSyncStoragePersister({

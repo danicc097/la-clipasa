@@ -10,7 +10,7 @@ type User = {
   /**
    * User’s broadcaster type: "partner", "affiliate", or "".
    */
-  broadcasterType: string
+  broadcaster_type: string
   /**
    * User's channel description.
    */
@@ -18,7 +18,7 @@ type User = {
   /**
    * User's display name.
    */
-  displayName: string
+  display_name: string
   /**
    * User’s email address. Returned if the request includes the user:read:edit scope.
    */
@@ -34,11 +34,11 @@ type User = {
   /**
    * URL of the user's offline image.
    */
-  offlineImageUrl: string
+  offline_image_url: string
   /**
    * URL of the user's profile image.
    */
-  profileImageUrl: string
+  profile_image_url: string
   /**
    * User’s type: "staff", "admin", "global_mod", or "".
    */
@@ -46,7 +46,7 @@ type User = {
   /**
    * Total number of views of the user’s channel.
    */
-  viewCount: number
+  view_count: number
 }
 
 export function useTwitchUser() {
@@ -54,10 +54,9 @@ export function useTwitchUser() {
   const queryClient = useQueryClient()
 
   queryClient.cancelQueries({ queryKey: ['twitchUser'] })
-  // TODO AbortSignal else retries will continue.
   return useQuery<TwitchUserResponse, AxiosError>({
     queryKey: ['twitchUser'],
-    retry: 1,
+    retry: 2,
     retryDelay: 3000,
     queryFn: async ({ signal }): Promise<TwitchUserResponse> => {
       const { data } = await axios.get('https://api.twitch.tv/helix/users', {

@@ -6,12 +6,15 @@ import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import NavBar from 'src/components/NavBar'
 import { css } from '@emotion/react'
+import { useTwitchUser } from 'src/slices/react-query/twitch'
 
 type LayoutProps = {
   children: React.ReactElement
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const { data: twitchUser, isLoading, error } = useTwitchUser()
+
   return (
     <>
       <Helmet>
@@ -20,10 +23,7 @@ export default function Layout({ children }: LayoutProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
-      {/*
-        TODO from react-query
-      <NavBar avatarUrl={twitchUser?.['data']?.[0]?.['profile_image_url'] ?? ''} tabs={[]}></NavBar> */}
-      <NavBar avatarUrl={''} tabs={[]}></NavBar>
+      <NavBar tabs={[]}></NavBar>
       <main
         css={css`
           display: flex;

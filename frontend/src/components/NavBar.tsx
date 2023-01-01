@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createStyles, Container, Avatar, UnstyledButton, Group, Text, Menu, Tabs, Burger } from '@mantine/core'
+import { createStyles, Container, Avatar, UnstyledButton, Group, Text, Menu, Tabs, Burger, Loader } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import {
   IconLogout,
@@ -15,6 +15,8 @@ import {
 import LoginTwitchButton from './LoginTwitchButton'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import Cookies from 'js-cookie'
+import { useTwitchUser } from 'src/slices/react-query/twitch'
+import { useQueryClient } from '@tanstack/react-query'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -81,13 +83,17 @@ const useStyles = createStyles((theme) => ({
 
 interface NavBarProps {
   tabs: string[]
-  avatarUrl: string
 }
 
-export default function NavBar({ tabs, avatarUrl }: NavBarProps) {
+export default function NavBar({ tabs }: NavBarProps) {
   const { classes, theme, cx } = useStyles()
   const [opened, { toggle }] = useDisclosure(false)
   const [userMenuOpened, setUserMenuOpened] = useState(false)
+  const { data: twitchUser, isLoading, error } = useTwitchUser()
+  const queryClient = useQueryClient()
+
+  const username = twitchUser?.data[0].display_name
+  const avatarUrl = twitchUser?.data[0].profile_image_url
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab} key={tab}>
@@ -102,7 +108,6 @@ export default function NavBar({ tabs, avatarUrl }: NavBarProps) {
           <IconHeart size={28} color="red" fill="red" />
 
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
-
           <Menu
             width={260}
             position="bottom-end"
@@ -111,20 +116,23 @@ export default function NavBar({ tabs, avatarUrl }: NavBarProps) {
             onOpen={() => setUserMenuOpened(true)}
           >
             <Menu.Target>
-              {avatarUrl === '' ? (
-                <LoginTwitchButton />
-              ) : (
+              {isLoading ? (
+                <Loader size={'sm'} />
+              ) : avatarUrl ? (
                 <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
                   <Group spacing={7}>
-                    <Avatar src={avatarUrl} alt={'twitch_username'} radius="xl" size={20} />
+                    <Avatar src={avatarUrl} alt={username} radius="xl" size={20} />
                     <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                      {'twitch_username'}
+                      {username}
                     </Text>
                     <IconChevronDown size={12} stroke={1.5} />
                   </Group>
                 </UnstyledButton>
+              ) : (
+                <LoginTwitchButton />
               )}
             </Menu.Target>
+
             <Menu.Dropdown>
               <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>Liked posts</Menu.Item>
               <Menu.Item icon={<IconStar size={14} color={theme.colors.yellow[6]} stroke={1.5} />}>
@@ -145,6 +153,7 @@ export default function NavBar({ tabs, avatarUrl }: NavBarProps) {
                     sameSite: 'none',
                     secure: true,
                   })
+                  queryClient.invalidateQueries()
                   window.location.reload()
                 }}
               >

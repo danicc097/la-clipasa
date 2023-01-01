@@ -22,7 +22,7 @@ export default function Home() {
     const token = parsedHash.get('access_token')
     if (token !== '' && token) {
       setTwitchToken(token)
-      fetchTwitchUser(token).catch(console.error)
+      // fetchTwitchUser(token).catch(console.error)
       // remove hash
       history.pushState('', document.title, window.location.pathname + window.location.search)
     }
@@ -36,21 +36,9 @@ export default function Home() {
     }
   }, [error])
 
-  async function fetchTwitchUser(token: string) {
-    const user = await (
-      await fetch('https://api.twitch.tv/helix/users', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Client-Id': import.meta.env.VITE_TWITCH_CLIENT_ID ?? '',
-        },
-      })
-    ).json()
-    setTwitchUser(user)
-  }
-
   return (
     <>
-      <NavBar avatarUrl={twitchUser?.['data']?.[0]?.['profile_image_url'] ?? ''} tabs={[]}></NavBar>
+      <NavBar tabs={[]}></NavBar>
       <p>Twitch user token: {twitchToken}</p>
       <Prism language="json" scrollAreaComponent="div">
         {JSON.stringify(twitchUser?.['data']?.[0] ?? '', undefined, 2)}
