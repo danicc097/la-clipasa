@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query'
 import { useUISlice } from 'src/slices/ui'
+import { useEffect } from 'react'
 
 type TwitchUserResponse = {
   data: User[]
@@ -51,13 +52,16 @@ type User = {
 
 export function useTwitchUser() {
   const { twitchToken } = useUISlice()
-  const queryClient = useQueryClient()
 
-  queryClient.cancelQueries({ queryKey: ['twitchUser'] })
+  useEffect(() => {
+    console.log('usetwitch token:', twitchToken)
+  }, [twitchToken])
+
+  // queryClient.cancelQueries({ queryKey: [`twitchUser-${twitchToken}`] })
   return useQuery<TwitchUserResponse, AxiosError>({
-    queryKey: ['twitchUser'],
-    retry: 2,
-    retryDelay: 3000,
+    // any state used inside the queryFn must be part of the queryKey
+    queryKey: [`twitchUser-${twitchToken}`],
+    retry: false,
     queryFn: async ({ signal }): Promise<TwitchUserResponse> => {
       const { data } = await axios.get('https://api.twitch.tv/helix/users', {
         headers: {

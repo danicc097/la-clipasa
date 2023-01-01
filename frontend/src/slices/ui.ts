@@ -9,20 +9,21 @@ interface UIState {
   setTwitchToken: (token: string) => void
 }
 
+export const UI_SLICE_PERSIST_KEY = 'ui-slice'
 // TODO https://tanstack.com/query/v4/docs/react/guides/ssr
 // probably wont need anything else
 
 const useUISlice = create<UIState>()(
   devtools(
-    // persist(
-    (set) => {
-      return {
-        twitchToken: Cookies.get('twitchAccessToken'),
-        setTwitchToken: (token: string) => set(setTwitchToken(token), false, `setTwitchToken`),
-      }
-    },
-    //   { version: 2, name: 'ui-slice' },
-    // ),
+    persist(
+      (set) => {
+        return {
+          twitchToken: Cookies.get('twitchAccessToken'),
+          setTwitchToken: (token: string) => set(setTwitchToken(token), false, `setTwitchToken`),
+        }
+      },
+      { version: 2, name: UI_SLICE_PERSIST_KEY },
+    ),
     { enabled: true },
   ),
 )

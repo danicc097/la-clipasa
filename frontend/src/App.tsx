@@ -28,19 +28,22 @@ const queryClient = new QueryClient({
       cacheTime: 1000 * 60 * 60 * 24, // 24 hours
       refetchOnWindowFocus: false,
       staleTime: 300000,
+      keepPreviousData: true,
     },
   },
   // queryCache,
 })
 
-const persister = createSyncStoragePersister({
+export const persister = createSyncStoragePersister({
   storage: window.localStorage,
 })
 
 const Home = React.lazy(() => import('./views/Home/Home'))
 
 export default function App() {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('light')
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(
+    localStorage.getItem('theme') === 'light' ? 'light' : 'dark',
+  )
   const toggleColorScheme = (value?: ColorScheme) => {
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
   }
@@ -51,8 +54,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const newTheme = colorScheme === 'dark' ? 'light' : 'dark'
-    localStorage.setItem('theme', newTheme)
+    localStorage.setItem('theme', colorScheme)
   }, [colorScheme])
 
   useEffect(() => {
@@ -133,7 +135,7 @@ export default function App() {
           </BrowserRouter>
         </MantineProvider>
       </ColorSchemeProvider>
-      <ReactQueryDevtools initialIsOpen />
+      {!import.meta.env.PROD && <ReactQueryDevtools initialIsOpen />}
     </PersistQueryClientProvider>
   )
 }

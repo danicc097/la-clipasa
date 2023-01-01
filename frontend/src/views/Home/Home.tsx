@@ -13,7 +13,7 @@ import { useTwitchUser } from 'src/slices/react-query/twitch'
 export default function Home() {
   const { hash } = useLocation()
   const { twitchToken, setTwitchToken } = useUISlice()
-  const { data: twitchUser, isLoading, error } = useTwitchUser()
+  const { data: twitchUser, isLoading, error, refetch } = useTwitchUser()
 
   useEffect(() => {
     // the URL hash is processed by the browser only. not available in edge function/backend
@@ -29,6 +29,12 @@ export default function Home() {
   }, [hash, setTwitchToken])
 
   useEffect(() => {
+    if (twitchToken !== '') {
+      refetch({ throwOnError: true })
+    }
+  }, [refetch, twitchToken])
+
+  useEffect(() => {
     if (error) {
       console.log(error.response.data)
       if (error.status === 401) {
@@ -38,7 +44,6 @@ export default function Home() {
 
   return (
     <>
-      <NavBar tabs={[]}></NavBar>
       <p>Twitch user token: {twitchToken}</p>
       <Prism language="json" scrollAreaComponent="div">
         {JSON.stringify(twitchUser?.['data']?.[0] ?? '', undefined, 2)}

@@ -1,22 +1,12 @@
 import { useState } from 'react'
 import { createStyles, Container, Avatar, UnstyledButton, Group, Text, Menu, Tabs, Burger, Loader } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import {
-  IconLogout,
-  IconHeart,
-  IconStar,
-  IconMessage,
-  IconSettings,
-  IconPlayerPause,
-  IconTrash,
-  IconSwitchHorizontal,
-  IconChevronDown,
-} from '@tabler/icons'
+import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown } from '@tabler/icons'
 import LoginTwitchButton from './LoginTwitchButton'
 import { ThemeSwitcher } from './ThemeSwitcher'
-import Cookies from 'js-cookie'
 import { useTwitchUser } from 'src/slices/react-query/twitch'
-import { useQueryClient } from '@tanstack/react-query'
+import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
+import { css } from '@emotion/react'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -90,7 +80,7 @@ export default function NavBar({ tabs }: NavBarProps) {
   const [opened, { toggle }] = useDisclosure(false)
   const [userMenuOpened, setUserMenuOpened] = useState(false)
   const { data: twitchUser, isLoading, error } = useTwitchUser()
-  const queryClient = useQueryClient()
+  const { logout } = useAuthenticatedUser()
 
   const username = twitchUser?.data[0].display_name
   const avatarUrl = twitchUser?.data[0].profile_image_url
@@ -113,7 +103,9 @@ export default function NavBar({ tabs }: NavBarProps) {
             position="bottom-end"
             transition="pop-top-right"
             onClose={() => setUserMenuOpened(false)}
-            onOpen={() => setUserMenuOpened(true)}
+            onOpen={() => {
+              if (twitchUser) setUserMenuOpened(true)
+            }}
           >
             <Menu.Target>
               {isLoading ? (
@@ -145,18 +137,7 @@ export default function NavBar({ tabs }: NavBarProps) {
               <Menu.Label>Settings</Menu.Label>
               <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>Account settings</Menu.Item>
               <Menu.Divider />
-              <Menu.Item
-                icon={<IconLogout size={14} stroke={1.5} />}
-                onClick={() => {
-                  Cookies.remove('twitchAccessToken', {
-                    expires: 365,
-                    sameSite: 'none',
-                    secure: true,
-                  })
-                  queryClient.invalidateQueries()
-                  window.location.reload()
-                }}
-              >
+              <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} onClick={logout}>
                 Logout
               </Menu.Item>
             </Menu.Dropdown>
