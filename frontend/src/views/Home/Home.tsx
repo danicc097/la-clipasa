@@ -8,7 +8,7 @@ import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useUISlice } from 'src/slices/ui'
-import { useTwitchUser } from 'src/slices/react-query/twitch'
+import { useTwitchUser } from 'src/queries/twitch'
 import background from 'src/assets/background-la-clipassa.jpg'
 
 export default function Home() {
@@ -36,10 +36,8 @@ export default function Home() {
   }, [refetch, twitchToken])
 
   useEffect(() => {
-    if (error) {
-      console.log(error.response.data)
-      if (error.status === 401) {
-      }
+    if (error?.response?.status === 401) {
+      console.log('unauthenticated: ', error.response.data)
     }
   }, [error])
 

@@ -31,6 +31,11 @@
       }
     ]
   },
+  "settings": {
+    "react": {
+      "version": "18"
+    }
+  },
   "ignorePatterns": [
     "build/**/*",
     "dist/**/*",

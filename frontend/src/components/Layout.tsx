@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import Header from 'src/components/Header'
 import { css } from '@emotion/react'
-import { useTwitchUser } from 'src/slices/react-query/twitch'
+import { useTwitchUser } from 'src/queries/twitch'
 
 type LayoutProps = {
   children: React.ReactElement

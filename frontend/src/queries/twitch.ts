@@ -59,9 +59,11 @@ export function useTwitchUser() {
 
   // queryClient.cancelQueries({ queryKey: [`twitchUser-${twitchToken}`] })
   return useQuery<TwitchUserResponse, AxiosError>({
-    // any state used inside the queryFn must be part of the queryKey
-    queryKey: [`twitchUser-${twitchToken}`],
-    retry: false,
+    queryKey: [`twitchUser-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
+    retry: (failureCount, error) => {
+      if (error.response.status !== 401 && failureCount < 3) return true
+    },
+    retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchUserResponse> => {
       const { data } = await axios.get('https://api.twitch.tv/helix/users', {
         headers: {
