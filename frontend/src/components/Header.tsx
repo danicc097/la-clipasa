@@ -22,8 +22,9 @@ import { useTwitchUser } from 'src/queries/twitch'
 import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
 import banner from 'src/assets/banner-la-clipassa.png'
-import subscriberIcon from 'src/assets/subscriber-icon.png'
+import subscriberIcon from 'src/assets/caliebre-logo.png'
 import { useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 
 const useStyles = createStyles((theme) => ({
   banner: {
@@ -106,6 +107,7 @@ interface HeaderProps {
 
 export default function Header({ tabs }: HeaderProps) {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const { classes, theme, cx } = useStyles()
   const [opened, { toggle }] = useDisclosure(false)
   const [userMenuOpened, setUserMenuOpened] = useState(false)
@@ -166,14 +168,24 @@ export default function Header({ tabs }: HeaderProps) {
                   <LoginTwitchButton />
                 )}
               </Menu.Target>
-
               <Menu.Dropdown>
-                <Menu.Item disabled>
-                  <Group position="center">
-                    <Avatar src={subscriberIcon} alt={username} variant="outline" size={15} />
-                    Subscribed!
-                  </Group>
-                </Menu.Item>
+                <div onClick={() => !isSubscriber && window.location.replace('https://www.twitch.tv/subs/caliebre')}>
+                  <Menu.Item disabled={isSubscriber}>
+                    <Group position="center">
+                      {isSubscriber ? (
+                        <>
+                          <Avatar radius="xl" src={subscriberIcon} alt={username} size={20} />
+                          Subscribed!
+                        </>
+                      ) : (
+                        <>
+                          <Avatar radius="xl" src={subscriberIcon} alt={username} size={20} />
+                          <strong style={{ color: '#b17cba' }}>Subscribe to caliebre</strong>
+                        </>
+                      )}
+                    </Group>
+                  </Menu.Item>
+                </div>
                 <Menu.Divider />
                 <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
                   Liked posts
