@@ -7,15 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
 model User {
   id           Int         @id @default(autoincrement())
   displayName  String
   login        String
   twitchId     String
   isSubscriber Boolean
+  role         Role
   isFollower   Boolean
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime    @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime    @updatedAt @db.Timestamptz(3)
   posts        Post[]
   likedPosts   LikedPost[]
   savedPosts   SavedPost[]
@@ -48,8 +55,8 @@ model Post {
   // much easier alternative: store discord message id here and fetch content individually (i.e. every time a post is clicked,
   // since content is NOT showed on the home page). this won't be too hard on the discord api.
   content    String
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
+  createdAt  DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime       @updatedAt @db.Timestamptz(3)
   categories PostCategory[]
   LikedPost  LikedPost[]
   SavedPost  SavedPost[]
@@ -62,6 +69,7 @@ model LikedPost {
   Post     Post @relation(fields: [postId], references: [id])
 
   @@id([authorId, postId])
+  @@index([postId])
 }
 
 model SavedPost {

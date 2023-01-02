@@ -1,0 +1,32 @@
+version: "3.8"
+x-logging: &default-logging
+  options:
+    max-size: "10m"
+    max-file: "2"
+  driver: json-file
+
+services:
+  db:
+    image: postgres:13.3
+    container_name: postgres_db_discord_twitch_app
+    shm_size: 2g
+    networks:
+      - internal
+    user: postgres
+    environment:
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - discord_twitch_app_pg_data:/var/lib/postgresql/data/
+    ports:
+      - 6543:5432
+    env_file:
+      - .env.development
+    restart: unless-stopped
+    logging: *default-logging
+
+networks:
+  internal:
+    internal: false
+
+volumes:
+  discord_twitch_app_pg_data:

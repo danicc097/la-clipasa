@@ -6,13 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "vercel-build": "pnpm run prisma:migrate && next build",
+    "prisma-dev": "dotenv -e .env.development -- prisma",
+    "prisma-dev:migrate": "dotenv -e .env.development -- prisma migrate deploy",
+    "prisma-dev:generate": "dotenv -e .env.development -- prisma generate",
+    "prisma-dev:create-migration": "dotenv -e .env.development -- prisma migrate dev --create-only",
     "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "eslint --config ./.eslintrc.json --ext .js,.jsx,.ts,.tsx --fix ."
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.8.0",

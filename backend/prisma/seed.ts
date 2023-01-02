@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export async function main() {
-  console.log('[Elevator Music Cue] 🎸')
   // for (const quote of quotes) {
   //   await prisma.quote.create({
   //     data: {
@@ -12,7 +11,6 @@ export async function main() {
   //     },
   //   })
   // }
-  console.log('Done 🎉')
 }
 
 main()
