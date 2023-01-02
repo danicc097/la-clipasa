@@ -2,7 +2,12 @@ import axios, { AxiosError } from 'axios'
 import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query'
 import { useUISlice } from 'src/slices/ui'
 import { useEffect } from 'react'
-import type { TwitchUserFollowResponse, TwitchUserResponse, TwitchUserSubscriptionResponse } from 'shared-types'
+import type {
+  TwitchUserFollowResponse,
+  TwitchUserResponse,
+  TwitchUserSubscriptionResponse,
+  TwitchTokenValidateResponse,
+} from 'shared-types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 
 const broadcasterId = 52341091 // alternatively check every time we log in. can GET more than user with &login=<loginname>
@@ -35,7 +40,6 @@ export function useTwitchUserSubscriber() {
   const { data: twitchUser } = useTwitchUser()
   const userId = twitchUser?.data[0].id
 
-  // queryClient.cancelQueries({ queryKey: [`twitchUser-${twitchToken}`] })
   return useQuery<TwitchUserSubscriptionResponse, AxiosError>({
     queryKey: [`twitchUserSubscriber-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
@@ -43,7 +47,7 @@ export function useTwitchUserSubscriber() {
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchUserSubscriptionResponse> => {
-      if (!userId) return
+      if (!userId) return null
 
       const { data } = await axios.get(
         formatURLWithQueryParams('https://api.twitch.tv/helix/subscriptions/user', {
@@ -68,7 +72,6 @@ export function useTwitchUserFollower() {
   const { data: twitchUser } = useTwitchUser()
   const userId = twitchUser?.data[0].id
 
-  // queryClient.cancelQueries({ queryKey: [`twitchUser-${twitchToken}`] })
   return useQuery<TwitchUserFollowResponse, AxiosError>({
     queryKey: [`twitchUserFollower-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
@@ -76,7 +79,7 @@ export function useTwitchUserFollower() {
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchUserFollowResponse> => {
-      if (!userId) return
+      if (!userId) return null
 
       const { data } = await axios.get(
         formatURLWithQueryParams('https://api.twitch.tv/helix/users/follows', {
@@ -91,6 +94,34 @@ export function useTwitchUserFollower() {
           signal,
         },
       )
+      return data
+    },
+  })
+}
+
+export function useTwitchValidateToken() {
+  const { twitchToken } = useUISlice()
+  const { data: twitchUser } = useTwitchUser()
+  const userId = twitchUser?.data[0].id
+
+  return useQuery<TwitchTokenValidateResponse, AxiosError>({
+    queryKey: [`twitchValidateToken-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
+    retry: (failureCount, error) => {
+      if (error.response.status !== 401 && failureCount < 3) return true
+    },
+    staleTime: 1000 * 3600, // 1h recommended
+    retryDelay: 1000,
+    queryFn: async ({ signal }): Promise<TwitchTokenValidateResponse> => {
+      if (!userId) return null
+
+      const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', {
+        headers: {
+          Authorization: `OAuth ${twitchToken}`,
+        },
+        signal,
+        method: 'POST',
+      })
+      console.log(data)
       return data
     },
   })

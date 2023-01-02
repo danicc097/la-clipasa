@@ -7,6 +7,14 @@ export const config = {
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 
+/**
+
+IMPORTANT:
+- Discord serves just as an embed generator.
+  Everything works even if discord is down. We will only use discord
+  to fetch the embeds it generates for twitter, etc. for every message.
+
+*/
 export default async (req: NextRequest) => {
   try {
     switch (req.method) {
@@ -23,6 +31,8 @@ export default async (req: NextRequest) => {
       // should log and avoid 401, 403, or 429.
       // TODO GET could be a serverless func (lambda under the hood)
       case 'GET': {
+        // IMPORTANT: we will not use discord for post fetching, will use db posts. Leaving this for convenience to check
+        // created messages
         const res = await fetch(`https://discord.com/api/channels/${process.env.DISCORD_CHANNEL_ID}/messages`, {
           headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` },
         })
@@ -46,27 +56,14 @@ export default async (req: NextRequest) => {
           console.log(payload)
         } catch (error) {}
         /*
-
           NOTE: Bot needs embed permission on channel.
+                Embeds are always generated a few seconds after it is posted as long as no other embed is sent.
+
           curl -X POST http://localhost:3000/api/discord -H 'Content-Type: application/json' -d '{
             "content": "https://twitter.com/caliebre/status/1608936054819782660?cxt=HHwWiIDQ3ae0i9QsAAAA\n",
             "tts": false,
-            "type": "rich",
-            "embeds": [{
-            "description": "<username>, etc."
-          }]
+            "type": "rich"
           }'
-,
-            "embeds": [{
-            "description": "<username>, etc."
-          }]
-
-          NOTE: not needed. bot message will also generate embed and let us use discord cdn.
-            "embeds": [{
-            "description": "[link](link)",
-            "url": "link"
-          }]
-
           */
         const res = await fetch(`https://discord.com/api/channels/${process.env.DISCORD_CHANNEL_ID}/messages`, {
           headers: {
@@ -79,6 +76,14 @@ export default async (req: NextRequest) => {
         const body = await res.json()
         console.log(res.status)
         console.log(body)
+
+        /**
+        To save up edge function calls:
+        wait a few seconds and fetch discord message, which will contain a generated embed
+        (we have 30s worth of edge function).
+        Retry discord call until GET /messages/{id} returns a non-empty embed field
+        */
+
         return new Response(JSON.stringify(body))
       }
       default:

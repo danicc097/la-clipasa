@@ -10,6 +10,8 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryCache } from '@tanstack/react-query'
+import { useUISlice } from 'src/slices/ui'
+import { useTwitchUser } from 'src/queries/twitch'
 
 // const queryCache = new QueryCache({
 //   onError: (error) => {
@@ -54,10 +56,6 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('theme', colorScheme)
   }, [colorScheme])
-
-  useEffect(() => {
-    // TODO if not user/isAuthneticated -> fetch twitch user using ui slice twitchToken (only on startup)
-  }, [])
 
   return (
     <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>

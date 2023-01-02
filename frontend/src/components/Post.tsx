@@ -127,7 +127,6 @@ export default function Post({ image, categories, title, footer, author, classNa
   const { classes, theme } = useStyles()
 
   const cardBackground = image ? image : uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
-  console.log(cardBackground)
 
   return (
     <Card

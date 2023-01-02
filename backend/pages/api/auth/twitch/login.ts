@@ -8,7 +8,8 @@ export const config = {
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 
-// login as twitch app client. In case we need to retrieve some twitch info without the need of an authenticated user.
+// login as twitch app client instead of user. In case we need to retrieve some twitch info without the need of an authenticated user.
+// route currently disabled, no use case yet.
 ;async (request: NextRequest) => {
   try {
     const res = await (

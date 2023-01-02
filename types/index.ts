@@ -10,9 +10,18 @@ export enum PostCategories {
   DIAMANTE = "DIAMANTE",
 }
 
+export type TwitchTokenValidateResponse= {
+  client_id: string
+  login: string
+  scopes: string[]
+  user_id: string
+  expires_in: number
+}
+
 export type TwitchUserFollowResponse = {
   data: TwitchUserFollow[]
 }
+
 export type TwitchUserSubscriptionResponse = {
   data: TwitchUserSubscription[]
 }

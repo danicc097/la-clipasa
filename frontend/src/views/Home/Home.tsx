@@ -9,7 +9,12 @@ import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useUISlice } from 'src/slices/ui'
-import { useTwitchUser, useTwitchUserFollower, useTwitchUserSubscriber } from 'src/queries/twitch'
+import {
+  useTwitchUser,
+  useTwitchUserFollower,
+  useTwitchUserSubscriber,
+  useTwitchValidateToken,
+} from 'src/queries/twitch'
 import homeBackground from 'src/assets/background-la-clipassa.jpg'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
@@ -28,7 +33,6 @@ export default function Home() {
     error: twitchUserFollowerError,
     refetch: twitchUserFollowerRefetch,
   } = useTwitchUserFollower()
-  const { colorScheme, primaryColor } = useMantineTheme()
 
   useEffect(() => {
     // the URL hash is processed by the browser only. not available in edge function/backend
@@ -37,7 +41,6 @@ export default function Home() {
     const token = parsedHash.get('access_token')
     if (token !== '' && token) {
       setTwitchToken(token)
-      // fetchTwitchUser(token).catch(console.error)
       // remove hash
       history.pushState('', document.title, window.location.pathname + window.location.search)
     }
