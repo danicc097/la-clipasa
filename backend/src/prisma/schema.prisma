@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int         @id @default(autoincrement())
+  displayName  String
+  login        String
+  twitchId     String
+  isSubscriber Boolean
+  isFollower   Boolean
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  posts        Post[]
+  likedPosts   LikedPost[]
+  savedPosts   SavedPost[]
+}
+
+model Category {
+  id    Int            @id @default(autoincrement())
+  name  String
+  posts PostCategory[]
+}
+
+model PostCategory {
+  post       Post     @relation(fields: [postId], references: [id])
+  postId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  @@id([postId, categoryId])
+}
+
+model Post {
+  id         Int            @id @default(autoincrement())
+  author     User           @relation(fields: [authorId], references: [id])
+  authorId   Int
+  title      String
+  content    String
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  categories PostCategory[]
+  LikedPost  LikedPost[]
+  SavedPost  SavedPost[]
+}
+
+model LikedPost {
+  postId   Int
+  authorId Int
+  User     User @relation(fields: [authorId], references: [id])
+  Post     Post @relation(fields: [postId], references: [id])
+
+  @@id([authorId, postId])
+}
+
+model SavedPost {
+  postId   Int
+  authorId Int
+  User     User @relation(fields: [authorId], references: [id])
+  Post     Post @relation(fields: [postId], references: [id])
+
+  @@id([authorId, postId])
+}

@@ -26,8 +26,14 @@ export default async (req: NextRequest) => {
         const res = await fetch(`https://discord.com/api/channels/${process.env.DISCORD_CHANNEL_ID}/messages`, {
           headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` },
         })
-        console.log(res.status)
-        console.log(res.headers)
+
+        const rateLimitHeaders: any = {}
+        for (const [key, value] of res.headers.entries()) {
+          if (key.startsWith('x-ratelimit')) {
+            rateLimitHeaders[key] = value
+          }
+        }
+        console.log(rateLimitHeaders)
         const messages = await res.json()
 
         return new Response(JSON.stringify({ messages }))
