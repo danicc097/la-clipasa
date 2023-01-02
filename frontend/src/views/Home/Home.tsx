@@ -4,7 +4,7 @@ import Posts from '../../components/Posts'
 import Post from '../../components/Post'
 import Cookies from 'js-cookie'
 import Header from '../../components/Header'
-import { Code, Space, useMantineTheme } from '@mantine/core'
+import { Code, Container, Group, Space, useMantineTheme } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
@@ -67,7 +67,7 @@ export default function Home() {
   }, [])
 
   return (
-    <>
+    <Container style={{ padding: 0 }}>
       {/* <div
         style={{
           position: 'absolute',
@@ -82,10 +82,6 @@ export default function Home() {
       /> */}
       <p>Is subscriber: {JSON.stringify(isSubscriber)}</p>
       <p>Is follower: {JSON.stringify(isFollower)}</p>
-      <p>Twitch user token: {twitchToken}</p>
-      <Prism language="json" scrollAreaComponent="div" styles={{ root: { width: '50vw' } }}>
-        {JSON.stringify(twitchUser?.['data']?.[0] ?? '', undefined, 2)}
-      </Prism>
       {/* <Posts /> */}
       <Space />
       <Post
@@ -94,6 +90,6 @@ export default function Home() {
         title={'Some title for this'}
         footer={<div>footer div</div>}
       />
-    </>
+    </Container>
   )
 }
