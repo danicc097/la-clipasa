@@ -1,7 +1,22 @@
-import { createStyles, Card, Image, ActionIcon, Group, Text, Avatar, Badge, DefaultMantineColor } from '@mantine/core'
+import {
+  createStyles,
+  Card,
+  Image,
+  ActionIcon,
+  Group,
+  Text,
+  Avatar,
+  Badge,
+  DefaultMantineColor,
+  MantineGradient,
+  Space,
+} from '@mantine/core'
 import { IconHeart, IconBookmark, IconShare } from '@tabler/icons'
 import emojiRana from 'src/assets/emoji-rana.png'
+import emojiOro from 'src/assets/emoji-oro.png'
+import emojiDiamante from 'src/assets/emoji-diamante.png'
 import { css } from '@emotion/react'
+import { ArrayElement, PostCategories, RequiredKeys } from 'shared-types'
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -37,7 +52,7 @@ const useStyles = createStyles((theme) => ({
 
 interface ArticleCardFooterProps {
   image: string
-  categories: string[]
+  categories: Array<keyof typeof PostCategories>
   title: string
   footer: JSX.Element
   author: {
@@ -47,21 +62,35 @@ interface ArticleCardFooterProps {
   }
 }
 
-type Categories = 'Rana' | 'Oro' | 'Diamante' | 'Meme artesanal'
-
-const categoryEmojis: Record<Categories, string> = {
-  'Meme artesanal': emojiRana,
-  Diamante: emojiRana,
-  Rana: emojiRana,
-  Oro: emojiRana,
+const categoryEmojis: Record<PostCategories, string> = {
+  'MEME ARTESANAL': emojiRana,
+  DIAMANTE: emojiDiamante,
+  RANA: emojiRana,
+  ORO: emojiOro,
+  'SIN SONIDO': emojiRana,
+  'NO SÉ YO': emojiRana,
 }
 
-const categoryColor: Record<Categories, DefaultMantineColor> = {
-  'Meme artesanal': 'green',
-  Diamante: 'cyan',
-  Rana: 'green',
-  Oro: 'yellow',
+const categoryColorGradient: Record<PostCategories, MantineGradient> = {
+  'MEME ARTESANAL': { from: 'teal', to: 'lime' },
+  DIAMANTE: { from: '#1c95b1', to: '#16758b' },
+  RANA: { from: 'teal', to: 'lime' },
+  ORO: { from: 'yellow', to: 'yellow' },
+  'SIN SONIDO': { from: 'gray', to: 'gray' },
+  'NO SÉ YO': { from: 'red', to: 'red' },
 }
+
+/**
+ * Restricted to 1 per post.
+ */
+const uniqueCategories: Array<Partial<keyof typeof PostCategories>> = ['DIAMANTE', 'ORO', 'RANA']
+
+// TODO backgrounds restricted to uniqueCategories
+// const uniqueCategoryBackground: Record<ArrayElement<typeof uniqueCategories>, string> = {
+//   DIAMANTE: emojiDiamante,
+//   RANA: emojiRana,
+//   ORO: emojiOro,
+// }
 
 /**
  * Interesting possiblities:
@@ -94,7 +123,8 @@ export default function Post({ image, categories, title, footer, author }: Artic
                 null
               }}
               key={i}
-              color="green"
+              variant="gradient"
+              gradient={categoryColorGradient[category] ?? null}
               css={css`
                 display: flex;
                 justify-content: space-between;
@@ -102,9 +132,19 @@ export default function Post({ image, categories, title, footer, author }: Artic
                 cursor: pointer;
               `}
             >
-              {categoryEmojis[category] && <img src={categoryEmojis[category]} height={16} width={16} />}
-              {category}
-              {categoryEmojis[category] && <img src={categoryEmojis[category]} height={16} width={16} />}
+              <div
+                css={css`
+                  display: flex;
+                  justify-content: center;
+                  *:not(:first-child) {
+                    margin-left: 3px;
+                  }
+                `}
+              >
+                {categoryEmojis[category] && <img src={categoryEmojis[category]} height={16} width={16} />}
+                <div>{PostCategories[category] ?? category}</div>
+                {categoryEmojis[category] && <img src={categoryEmojis[category]} height={16} width={16} />}
+              </div>
             </Badge>
           ))}
         </Group>

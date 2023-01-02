@@ -91,7 +91,7 @@ export default function Home() {
       <Space />
       <Post
         author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
-        categories={['no sound', 'something']}
+        categories={['SIN_SONIDO', 'DIAMANTE', 'NO_SE_YO']}
         title={'Some title for this'}
         footer={<div>footer div</div>}
         image={postDiamante}
