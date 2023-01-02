@@ -24,6 +24,25 @@ import { css } from '@emotion/react'
 import banner from 'src/assets/banner-la-clipassa.png'
 
 const useStyles = createStyles((theme) => ({
+  // banner: {
+  //   minHeight: '35px',
+  //   backgroundImage: `url(${banner})`,
+  //   backgroundSize: 'cover',
+  //   backgroundRepeat: 'no-repeat',
+  //   backgroundPosition: 'center',
+  //   [theme.fn.smallerThan('xs')]: {
+  //     // display: 'block',
+  //     // minWidth: '1730px',
+  //     // minHeight: '95px',
+  //     // width: 'auto',
+  //     // height: 'auto',
+  //     // overflow: 'hidden',
+  //     // verticalAlign: 'middle',
+  //     // scale: '2.8',
+  //     // paddingTop: '40px',
+  //   },
+  // },
+
   header: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     borderBottom: `1px solid ${theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]}`,
@@ -43,13 +62,9 @@ const useStyles = createStyles((theme) => ({
     },
 
     [theme.fn.smallerThan('xs')]: {
-      display: 'none',
-    },
-  },
-
-  burger: {
-    [theme.fn.largerThan('xs')]: {
-      display: 'none',
+      '.display-name': {
+        display: 'none',
+      },
     },
   },
 
@@ -105,7 +120,7 @@ export default function Header({ tabs }: HeaderProps) {
 
   return (
     <>
-      <Image alt="" src={banner} />
+      <Image alt="" src={banner} className={classes.banner} />
       <Box
         pb={120}
         css={css`
@@ -123,7 +138,6 @@ export default function Header({ tabs }: HeaderProps) {
           >
             <IconHeart size={28} color="red" fill="red" />
 
-            <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
             <Menu
               width={260}
               position="bottom-end"
@@ -140,7 +154,7 @@ export default function Header({ tabs }: HeaderProps) {
                   <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
                     <Group spacing={7}>
                       <Avatar src={avatarUrl} alt={username} radius="xl" size={25} />
-                      <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
+                      <Text className="display-name" weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
                         {username}
                       </Text>
                       <IconChevronDown size={12} stroke={1.5} />

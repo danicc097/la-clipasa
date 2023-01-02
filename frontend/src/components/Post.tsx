@@ -11,6 +11,10 @@ const useStyles = createStyles((theme) => ({
     boxShadow: `inset 2px 2px 15px ${theme.colorScheme === 'dark' ? '#524f541d' : '#9993a436'},
     0 2px 10px ${theme.colorScheme === 'dark' ? '#3f3c4025' : '#d5d0df1c'}`,
     // boxShadow: `0 15px 10px -10px ${theme.colorScheme === 'dark' ? '#7d6e9335' : '#22212460'}`,
+
+    [theme.fn.smallerThan('sm')]: {
+      minWidth: '90vw',
+    },
   },
 
   title: {
