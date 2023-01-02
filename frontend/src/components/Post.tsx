@@ -16,7 +16,10 @@ import emojiRana from 'src/assets/emoji-rana.png'
 import emojiOro from 'src/assets/emoji-oro.png'
 import emojiDiamante from 'src/assets/emoji-diamante.png'
 import { css } from '@emotion/react'
-import { ArrayElement, PostCategories, RequiredKeys } from 'shared-types'
+import { ArrayElement, PostCategories, RequiredKeys, Union } from 'shared-types'
+import postDiamante from 'src/assets/post-diamante.png'
+import postOro from 'src/assets/post-oro.png'
+import postRana from 'src/assets/post-rana.png'
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -51,7 +54,10 @@ const useStyles = createStyles((theme) => ({
 }))
 
 interface ArticleCardFooterProps {
-  image: string
+  /**
+   * Overrides a default image for a category
+   */
+  image?: string
   categories: Array<keyof typeof PostCategories>
   title: string
   footer: JSX.Element
@@ -83,14 +89,19 @@ const categoryColorGradient: Record<PostCategories, MantineGradient> = {
 /**
  * Restricted to 1 per post.
  */
-const uniqueCategories: Array<Partial<keyof typeof PostCategories>> = ['DIAMANTE', 'ORO', 'RANA']
+const uniqueCategories = {
+  DIAMANTE: true,
+  ORO: true,
+  RANA: true,
+}
 
-// TODO backgrounds restricted to uniqueCategories
-// const uniqueCategoryBackground: Record<ArrayElement<typeof uniqueCategories>, string> = {
-//   DIAMANTE: emojiDiamante,
-//   RANA: emojiRana,
-//   ORO: emojiOro,
-// }
+type UniqueCategoriesKeys<T extends object> = Extract<keyof T, keyof typeof uniqueCategories>
+
+const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategories>, string> = {
+  DIAMANTE: postDiamante,
+  RANA: postRana,
+  ORO: postOro,
+}
 
 /**
  * Interesting possiblities:
@@ -99,6 +110,9 @@ const uniqueCategories: Array<Partial<keyof typeof PostCategories>> = ['DIAMANTE
  */
 export default function Post({ image, categories, title, footer, author }: ArticleCardFooterProps) {
   const { classes, theme } = useStyles()
+
+  const cardBackground = image ? image : uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
+  console.log(cardBackground)
 
   return (
     <Card
@@ -109,10 +123,9 @@ export default function Post({ image, categories, title, footer, author }: Artic
         background-repeat: no-repeat;
         background-size: 300px; // must adapt to height, or ensure all posts have the same height
         background-position: right;
-        -webkit-background-clip: padding-box; /* for Safari */
-        background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
-
-        background-image: url(${image});
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        background-image: url(${cardBackground});
       `}
     >
       {categories.length > 0 && (

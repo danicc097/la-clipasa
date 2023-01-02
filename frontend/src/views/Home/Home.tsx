@@ -11,7 +11,6 @@ import { Helmet } from 'react-helmet'
 import { useUISlice } from 'src/slices/ui'
 import { useTwitchUser, useTwitchUserFollower, useTwitchUserSubscriber } from 'src/queries/twitch'
 import homeBackground from 'src/assets/background-la-clipassa.jpg'
-import postDiamante from 'src/assets/post-diamante.png'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 
 export default function Home() {
@@ -94,7 +93,6 @@ export default function Home() {
         categories={['SIN_SONIDO', 'DIAMANTE', 'NO_SE_YO']}
         title={'Some title for this'}
         footer={<div>footer div</div>}
-        image={postDiamante}
       />
     </>
   )
