@@ -19,10 +19,11 @@ import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown } from '
 import LoginTwitchButton from './LoginTwitchButton'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import { useTwitchUser } from 'src/queries/twitch'
-import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
+import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
 import banner from 'src/assets/banner-la-clipassa.png'
 import subscriberIcon from 'src/assets/subscriber-icon.png'
+import { useQueryClient } from '@tanstack/react-query'
 
 const useStyles = createStyles((theme) => ({
   banner: {
@@ -104,11 +105,11 @@ interface HeaderProps {
 }
 
 export default function Header({ tabs }: HeaderProps) {
+  const queryClient = useQueryClient()
   const { classes, theme, cx } = useStyles()
   const [opened, { toggle }] = useDisclosure(false)
   const [userMenuOpened, setUserMenuOpened] = useState(false)
   const { data: twitchUser, isLoading, error } = useTwitchUser()
-  const { logout } = useAuthenticatedUser()
   const { isFollower, isSubscriber } = useAuthenticatedUser()
 
   const username = twitchUser?.data[0].display_name
@@ -186,7 +187,7 @@ export default function Header({ tabs }: HeaderProps) {
                 <Menu.Label>Settings</Menu.Label>
                 <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>Account settings</Menu.Item>
                 <Menu.Divider />
-                <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} onClick={logout}>
+                <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} onClick={() => logout(queryClient)}>
                   Logout
                 </Menu.Item>
               </Menu.Dropdown>

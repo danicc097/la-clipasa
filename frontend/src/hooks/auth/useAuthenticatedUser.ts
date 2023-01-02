@@ -25,21 +25,22 @@ export default function useAuthenticatedUser() {
     twitchValidateTokenRefetch()
   }, [twitchUser])
 
-  function logout() {
-    Cookies.remove(TWITCH_ACCESS_TOKEN_COOKIE, {
-      expires: 365,
-      sameSite: 'none',
-      secure: true,
-    })
-    localStorage.removeItem(UI_SLICE_PERSIST_KEY)
-    persister.removeClient()
-    queryClient.invalidateQueries()
-    window.location.reload()
-  }
-
   return {
     logout,
     isSubscriber,
     isFollower,
   }
+}
+
+export function logout(queryClient: QueryClient) {
+  queryClient.cancelQueries()
+  queryClient.invalidateQueries()
+  Cookies.remove(TWITCH_ACCESS_TOKEN_COOKIE, {
+    expires: 365,
+    sameSite: 'none',
+    secure: true,
+  })
+  localStorage.removeItem(UI_SLICE_PERSIST_KEY)
+  persister.removeClient()
+  window.location.reload()
 }

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query'
-import { useUISlice } from 'src/slices/ui'
+import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY, useUISlice } from 'src/slices/ui'
 import { useEffect } from 'react'
 import type {
   TwitchUserFollowResponse,
@@ -9,6 +9,8 @@ import type {
   TwitchTokenValidateResponse,
 } from 'shared-types'
 import { formatURLWithQueryParams } from 'src/utils/url'
+import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUser'
+import Cookies from 'js-cookie'
 
 const broadcasterId = 52341091 // alternatively check every time we log in. can GET more than user with &login=<loginname>
 
@@ -101,6 +103,7 @@ export function useTwitchUserFollower() {
 
 export function useTwitchValidateToken() {
   const { twitchToken } = useUISlice()
+  const queryClient = useQueryClient()
   const { data: twitchUser } = useTwitchUser()
   const userId = twitchUser?.data[0].id
 
@@ -121,8 +124,12 @@ export function useTwitchValidateToken() {
         signal,
         method: 'POST',
       })
-      console.log(data)
       return data
+    },
+    onError(err) {
+      if (err.response.status === 401) {
+        logout(queryClient) // invalid token, clear everything
+      }
     },
   })
 }
