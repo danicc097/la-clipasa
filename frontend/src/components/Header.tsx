@@ -22,6 +22,7 @@ import { useTwitchUser } from 'src/queries/twitch'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
 import banner from 'src/assets/banner-la-clipassa.png'
+import subscriberIcon from 'src/assets/subscriber-icon.png'
 
 const useStyles = createStyles((theme) => ({
   banner: {
@@ -108,6 +109,7 @@ export default function Header({ tabs }: HeaderProps) {
   const [userMenuOpened, setUserMenuOpened] = useState(false)
   const { data: twitchUser, isLoading, error } = useTwitchUser()
   const { logout } = useAuthenticatedUser()
+  const { isFollower, isSubscriber } = useAuthenticatedUser()
 
   const username = twitchUser?.data[0].display_name
   const avatarUrl = twitchUser?.data[0].profile_image_url
@@ -138,7 +140,7 @@ export default function Header({ tabs }: HeaderProps) {
             <IconHeart size={28} color="red" fill="red" />
 
             <Menu
-              width={260}
+              width={220}
               position="bottom-end"
               transition="pop-top-right"
               onClose={() => setUserMenuOpened(false)}
@@ -165,13 +167,19 @@ export default function Header({ tabs }: HeaderProps) {
               </Menu.Target>
 
               <Menu.Dropdown>
+                <Menu.Item disabled>
+                  <Group position="center">
+                    <Avatar src={subscriberIcon} alt={username} variant="outline" size={15} />
+                    Subscribed!
+                  </Group>
+                </Menu.Item>
+                <Menu.Divider />
                 <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
                   Liked posts
                 </Menu.Item>
                 <Menu.Item icon={<IconStar size={14} color={theme.colors.yellow[6]} stroke={1.5} />}>
                   Saved posts
                 </Menu.Item>
-
                 <Menu.Divider />
                 <ThemeSwitcher />
                 <Menu.Divider />

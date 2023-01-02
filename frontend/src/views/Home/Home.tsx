@@ -17,7 +17,6 @@ import { css } from '@emotion/react'
 export default function Home() {
   const { hash } = useLocation()
   const { twitchToken, setTwitchToken } = useUISlice()
-  const { isFollower, isSubscriber } = useAuthenticatedUser()
   const { data: twitchUser, error: twitchUserError, refetch: twitchUserRefetch } = useTwitchUser()
   const {
     data: twitchUserSubscriber,
@@ -81,10 +80,7 @@ export default function Home() {
           zIndex: -1,
         }}
       /> */}
-      <p>Is subscriber: {JSON.stringify(isSubscriber)}</p>
-      <p>Is follower: {JSON.stringify(isFollower)}</p>
       {/* <Posts /> */}
-      <Space />
 
       <Container
         css={css`
@@ -93,6 +89,7 @@ export default function Home() {
           }
         `}
       >
+        <Space />
         <Post
           author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
           categories={['SIN_SONIDO', 'DIAMANTE', 'NO_SE_YO']}
