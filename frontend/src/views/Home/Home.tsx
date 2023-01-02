@@ -12,6 +12,7 @@ import { useUISlice } from 'src/slices/ui'
 import { useTwitchUser, useTwitchUserFollower, useTwitchUserSubscriber } from 'src/queries/twitch'
 import homeBackground from 'src/assets/background-la-clipassa.jpg'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
+import { css } from '@emotion/react'
 
 export default function Home() {
   const { hash } = useLocation()
@@ -84,12 +85,36 @@ export default function Home() {
       <p>Is follower: {JSON.stringify(isFollower)}</p>
       {/* <Posts /> */}
       <Space />
-      <Post
-        author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
-        categories={['SIN_SONIDO', 'DIAMANTE', 'NO_SE_YO']}
-        title={'Some title for this'}
-        footer={<div>footer div</div>}
-      />
+
+      <Container
+        css={css`
+          .post:not(:first-child) {
+            margin-top: 1rem;
+          }
+        `}
+      >
+        <Post
+          author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
+          categories={['SIN_SONIDO', 'DIAMANTE', 'NO_SE_YO']}
+          title={'Some title for this'}
+          className="post"
+          footer={<div>footer div</div>}
+        />
+        <Post
+          author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
+          categories={['SIN_SONIDO', 'RANA']}
+          title={'Some title for this'}
+          className="post"
+          footer={<div>footer div</div>}
+        />
+        <Post
+          author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
+          categories={['ORO']}
+          title={'Some title for this'}
+          className="post"
+          footer={<div>footer div</div>}
+        />
+      </Container>
     </Container>
   )
 }

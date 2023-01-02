@@ -28,7 +28,6 @@ export default function Layout({ children }: LayoutProps) {
           flex-direction: column;
           justify-content: space-between;
           align-items: center;
-          padding: 1rem;
           min-height: 100vh;
         `}
       >

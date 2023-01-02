@@ -72,6 +72,7 @@ interface ArticleCardFooterProps {
    * Overrides a default image for a category
    */
   image?: string
+  className?: string
   categories: Array<keyof typeof PostCategories>
   title: string
   footer: JSX.Element
@@ -122,7 +123,7 @@ const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategorie
  *  - broadcast polls for each post (just for broadcaster, id = broadcasterId)
  *
  */
-export default function Post({ image, categories, title, footer, author }: ArticleCardFooterProps) {
+export default function Post({ image, categories, title, footer, author, className }: ArticleCardFooterProps) {
   const { classes, theme } = useStyles()
 
   const cardBackground = image ? image : uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
@@ -132,7 +133,7 @@ export default function Post({ image, categories, title, footer, author }: Artic
     <Card
       p="lg"
       radius={12}
-      className={classes.card}
+      className={`${classes.card} ${className ?? ''}`}
       /* move to classes */
       css={css`
         background-repeat: no-repeat;
