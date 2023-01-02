@@ -8,17 +8,16 @@ interface UIState {
   twitchToken: string
   setTwitchToken: (token: string) => void
 }
+export const TWITCH_ACCESS_TOKEN_COOKIE = 'twitchAccessToken'
 
 export const UI_SLICE_PERSIST_KEY = 'ui-slice'
-// TODO https://tanstack.com/query/v4/docs/react/guides/ssr
-// probably wont need anything else
 
 const useUISlice = create<UIState>()(
   devtools(
     persist(
       (set) => {
         return {
-          twitchToken: Cookies.get('twitchAccessToken'),
+          twitchToken: Cookies.get(TWITCH_ACCESS_TOKEN_COOKIE),
           setTwitchToken: (token: string) => set(setTwitchToken(token), false, `setTwitchToken`),
         }
       },
@@ -34,7 +33,7 @@ type UIAction = (...args: any[]) => Partial<UIState>
 
 function setTwitchToken(token: string): UIAction {
   return (state: UIState) => {
-    Cookies.set('twitchAccessToken', token, {
+    Cookies.set(TWITCH_ACCESS_TOKEN_COOKIE, token, {
       expires: 365,
       sameSite: 'none',
       secure: true,

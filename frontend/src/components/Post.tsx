@@ -59,6 +59,11 @@ const categoryColor: Record<Categories, DefaultMantineColor> = {
   Oro: 'yellow',
 }
 
+/**
+ * Interesting possiblities:
+ *  - broadcast polls for each post (just for broadcaster, id = broadcasterId)
+ *
+ */
 export default function Post({ image, categories, title, footer, author }: ArticleCardFooterProps) {
   const { classes, theme } = useStyles()
 

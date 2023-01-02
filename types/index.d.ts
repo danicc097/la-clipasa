@@ -1,8 +1,32 @@
+export type TwitchUserFollowResponse = {
+  data: TwitchUserFollow[]
+}
+export type TwitchUserSubscriptionResponse = {
+  data: TwitchUserSubscription[]
+}
 
 export type TwitchUserResponse = {
   data: TwitchUser[]
 }
 
+export type TwitchUserFollow = {
+  from_id: string
+  from_login: string
+  from_name: string
+  to_id: string
+  to_login: string
+  to_name: string
+  followed_at: string
+}
+
+export type TwitchUserSubscription = {
+  broadcaster_id: string
+broadcaster_name: string
+broadcaster_login: string
+is_gift: boolean
+// e.g. "1000"
+tier: string
+}
 export type TwitchUser = {
   /**
    * User’s broadcaster type: "partner", "affiliate", or "".
