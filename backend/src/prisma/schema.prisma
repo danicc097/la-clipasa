@@ -41,6 +41,12 @@ model Post {
   author     User           @relation(fields: [authorId], references: [id])
   authorId   Int
   title      String
+  // message embed content to show in modal when post is clicked as is,
+  // coming from generated discord message embed (if the POST message response does not include the
+  // final embed, then as soon as message is posted launch a lambda that waits for a bit (maybe use supabase's)
+  // and update the post with the generated embed)
+  // much easier alternative: store discord message id here and fetch content individually (i.e. every time a post is clicked,
+  // since content is NOT showed on the home page). this won't be too hard on the discord api.
   content    String
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
