@@ -3,7 +3,7 @@ import { formatURLWithQueryParams } from '../../../../src/utils/url'
 
 // can't use shared import
 export const config = {
-  runtime: 'edge',
+  runtime: 'experimental-edge',
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 

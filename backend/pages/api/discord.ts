@@ -3,7 +3,7 @@ import { DiscordPostUpload, TwitchUser } from 'shared-types'
 
 // can't use shared import
 export const config = {
-  runtime: 'edge',
+  runtime: 'experimental-edge',
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 
