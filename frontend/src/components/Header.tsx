@@ -129,7 +129,9 @@ export default function Header({ tabs }: HeaderProps) {
 
   return (
     <>
-      <Image alt="" src={banner} className={classes.banner} />
+      <a href="/">
+        <Image alt="" src={banner} className={classes.banner} />
+      </a>
       <Box
         css={css`
           position: sticky;
@@ -149,15 +151,20 @@ export default function Header({ tabs }: HeaderProps) {
                 <Group position="center">
                   <Tooltip label={twitchBroadcasterLive?.data?.data?.[0]?.title}>
                     <a href={`https://www.twitch.tv/${broadcaster.name}`} target="_blank" rel="noopener noreferrer">
-                      <Avatar
-                        radius="xl"
+                      <img
                         src={broadcasterIcon}
-                        css={css`
-                          color: #eb0400;
-                          border: 0.15rem solid;
-                        `}
                         alt={`${broadcaster.name}`}
-                        size={32}
+                        height={40}
+                        width={40}
+                        css={css`
+                          max-width: 100%;
+                          vertical-align: top;
+                          color: #c11a17;
+                          border: 0.15rem solid;
+                          display: block;
+                          border-radius: 9000px;
+                          width: 100%;
+                        `}
                       />
                     </a>
                   </Tooltip>
