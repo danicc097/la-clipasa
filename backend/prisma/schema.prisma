@@ -43,9 +43,9 @@ model Category {
 }
 
 model PostCategory {
-  post       Post     @relation(fields: [postId], references: [id])
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId     Int
-  category   Category @relation(fields: [categoryId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId Int
 
   @@id([postId, categoryId])
@@ -53,7 +53,7 @@ model PostCategory {
 
 model Post {
   id         Int            @id @default(autoincrement())
-  author     User           @relation(fields: [authorId], references: [id])
+  author     User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId   Int
   title      String
   // message embed content to show in modal when post is clicked as is,
@@ -75,8 +75,8 @@ model Post {
 model LikedPost {
   postId Int
   userId Int
-  User   User @relation(fields: [userId], references: [id])
-  Post   Post @relation(fields: [postId], references: [id])
+  User   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
   @@index([postId]) // post likes count
@@ -86,8 +86,8 @@ model LikedPost {
 model SavedPost {
   postId Int
   userId Int
-  User   User @relation(fields: [userId], references: [id])
-  Post   Post @relation(fields: [postId], references: [id])
+  User   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
   @@index([postId]) // post likes count

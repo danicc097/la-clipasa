@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useUISlice } from 'src/slices/ui'
 import {
+  useTwitchBroadcasterLive,
   useTwitchUser,
   useTwitchUserFollower,
   useTwitchUserSubscriber,
@@ -25,6 +26,7 @@ export default function Home() {
   const twitchUser = useTwitchUser()
   const twitchUserFollower = useTwitchUserFollower()
   const twitchUserSubscriber = useTwitchUserSubscriber()
+  const twitchBroadcasterLive = useTwitchBroadcasterLive()
 
   useEffect(() => {
     // the URL hash is processed by the browser only. not available in edge function/backend
@@ -43,6 +45,7 @@ export default function Home() {
       twitchUser.refetch({ throwOnError: true }).then(() => {
         twitchUserSubscriber.refetch()
         twitchUserFollower.refetch()
+        twitchBroadcasterLive.refetch()
       })
     }
   }, [twitchToken])

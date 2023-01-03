@@ -10,7 +10,8 @@
     "dev": "turbo run dev --parallel",
     "start": "turbo run start",
     "lint": "turbo run lint",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "psql": "docker exec -it postgres_db_discord_twitch_app psql"
   },
   "devDependencies": {
     "eslint": "^8.28.0",

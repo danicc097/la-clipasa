@@ -13,18 +13,20 @@ import {
   Header as MantineHeader,
   Box,
   Image,
+  Tooltip,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown, IconBookmark } from '@tabler/icons'
 import LoginTwitchButton from './LoginTwitchButton'
 import { ThemeSwitcher } from './ThemeSwitcher'
-import { useTwitchUser } from 'src/queries/twitch'
+import { useTwitchBroadcasterLive, useTwitchUser } from 'src/queries/twitch'
 import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
 import banner from 'src/assets/banner-la-clipassa.png'
 import broadcasterIcon from 'src/assets/caliebre-logo.png'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import { broadcaster } from 'src/services/twitch'
 
 const useStyles = createStyles((theme) => ({
   banner: {
@@ -122,8 +124,8 @@ export default function Header({ tabs }: HeaderProps) {
       {tab}
     </Tabs.Tab>
   ))
-
-  const broadcasterLive = false
+  const twitchBroadcasterLive = useTwitchBroadcasterLive()
+  const broadcasterLive = twitchBroadcasterLive.data?.data?.length > 0
 
   return (
     <>
@@ -143,21 +145,24 @@ export default function Header({ tabs }: HeaderProps) {
             `}
           >
             {broadcasterLive ? (
-              <a href="https://www.twitch.tv/caliebre" target="_blank" rel="noopener noreferrer">
+              <>
                 <Group position="center">
-                  <Avatar
-                    radius="xl"
-                    src={broadcasterIcon}
-                    css={css`
-                      color: #eb0400;
-                      border: 0.15rem solid;
-                    `}
-                    alt="caliebre"
-                    size={32}
-                  ></Avatar>
-                  <Beacon></Beacon>
+                  <Tooltip label={twitchBroadcasterLive?.data?.data?.[0]?.title}>
+                    <a href={`https://www.twitch.tv/${broadcaster.name}`} target="_blank" rel="noopener noreferrer">
+                      <Avatar
+                        radius="xl"
+                        src={broadcasterIcon}
+                        css={css`
+                          color: #eb0400;
+                          border: 0.15rem solid;
+                        `}
+                        alt={`${broadcaster.name}`}
+                        size={32}
+                      ></Avatar>{' '}
+                    </a>
+                  </Tooltip>
                 </Group>
-              </a>
+              </>
             ) : (
               <div></div>
             )}
@@ -202,12 +207,12 @@ export default function Header({ tabs }: HeaderProps) {
                     Object.assign(document.createElement('a'), {
                       target: '_blank',
                       rel: 'noopener noreferrer',
-                      href: 'https://www.twitch.tv/caliebre',
+                      href: `https://www.twitch.tv/${broadcaster.name}`,
                     }).click()
                   }
                   icon={<IconHeart size={20} />}
                 >
-                  <Text fz="s">{isFollower ? 'Already following!' : 'Follow caliebre'}</Text>
+                  <Text fz="s">{isFollower ? 'Already following!' : `Follow ${broadcaster.name}`}</Text>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item
@@ -217,7 +222,7 @@ export default function Header({ tabs }: HeaderProps) {
                     Object.assign(document.createElement('a'), {
                       target: '_blank',
                       rel: 'noopener noreferrer',
-                      href: 'https://www.twitch.tv/subs/caliebre',
+                      href: `https://www.twitch.tv/subs/${broadcaster.name}`,
                     }).click()
                   }
                   icon={<Avatar radius="xl" src={broadcasterIcon} alt={username} size={20} />}
@@ -226,7 +231,7 @@ export default function Header({ tabs }: HeaderProps) {
                     {isSubscriber ? (
                       'Already subscribed!'
                     ) : (
-                      <strong style={{ color: '#b17cba' }}>Subscribe to caliebre</strong>
+                      <strong style={{ color: '#b17cba' }}>Subscribe to {broadcaster.name}</strong>
                     )}
                   </Text>
                 </Menu.Item>

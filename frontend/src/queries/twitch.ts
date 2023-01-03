@@ -7,12 +7,12 @@ import type {
   TwitchUserResponse,
   TwitchUserSubscriptionResponse,
   TwitchTokenValidateResponse,
+  TwitchStreamResponse,
 } from 'shared-types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUser'
 import Cookies from 'js-cookie'
-
-const broadcasterId = 52341091 // alternatively check every time we log in. can GET more than user with &login=<loginname>
+import { broadcaster } from 'src/services/twitch'
 
 export function useTwitchUser() {
   const { twitchToken } = useUISlice()
@@ -53,7 +53,7 @@ export function useTwitchUserSubscriber() {
 
       const { data } = await axios.get(
         formatURLWithQueryParams('https://api.twitch.tv/helix/subscriptions/user', {
-          broadcaster_id: broadcasterId,
+          broadcaster_id: broadcaster.id,
           user_id: userId,
         }),
         {
@@ -86,7 +86,7 @@ export function useTwitchUserFollower() {
       const { data } = await axios.get(
         formatURLWithQueryParams('https://api.twitch.tv/helix/users/follows', {
           from_id: userId,
-          to_id: broadcasterId,
+          to_id: broadcaster.id,
         }),
         {
           headers: {
@@ -122,7 +122,6 @@ export function useTwitchValidateToken() {
           Authorization: `OAuth ${twitchToken}`,
         },
         signal,
-        method: 'POST',
       })
       return data
     },
@@ -130,6 +129,36 @@ export function useTwitchValidateToken() {
       if (err.response.status === 401) {
         logout(queryClient) // invalid token, clear everything
       }
+    },
+  })
+}
+
+export function useTwitchBroadcasterLive() {
+  const { twitchToken } = useUISlice()
+  const { data: twitchUser } = useTwitchUser()
+  const userId = twitchUser?.data[0].id
+
+  return useQuery<TwitchStreamResponse, AxiosError>({
+    queryKey: [`twitchBroadcasterLive-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
+    retry: (failureCount, error) => {
+      if (error.response.status !== 401 && failureCount < 3) return true
+    },
+    staleTime: 1000 * 3600, // 1h recommended
+    retryDelay: 1000,
+    queryFn: async ({ signal }): Promise<TwitchStreamResponse> => {
+      if (!userId) return null
+
+      const { data } = await axios.get(
+        formatURLWithQueryParams('https://api.twitch.tv/helix/streams', { user_id: broadcaster.id }),
+        {
+          headers: {
+            Authorization: `Bearer ${twitchToken}`,
+            'Client-Id': import.meta.env.VITE_TWITCH_CLIENT_ID ?? '',
+          },
+          signal,
+        },
+      )
+      return data
     },
   })
 }
@@ -150,13 +179,12 @@ export function useTwitchValidateToken() {
 //     queryFn: async ({ signal }): Promise<any> => {
 //       if (!userId) return null
 
-//       const { data } = await axios.get(`https://api.twitch.tv/kraken/users/${userId}/follows/channels/caliebre`, {
+//       const { data } = await axios.put(`https://api.twitch.tv/kraken/users/${userId}/follows/channels/${broadcaster.name}`, {
 //         headers: {
 //           Authorization: `Bearer ${twitchToken}`,
 //           'Client-Id': import.meta.env.VITE_TWITCH_CLIENT_ID ?? '',
 //         },
 //         signal,
-//         method: 'PUT',
 //       })
 //       return data
 //     },

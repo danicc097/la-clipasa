@@ -30,3 +30,4 @@ networks:
 
 volumes:
   discord_twitch_app_pg_data:
+    name: discord_twitch_app_pg_data
