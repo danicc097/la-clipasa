@@ -158,7 +158,7 @@ export default function Header({ tabs }: HeaderProps) {
                         `}
                         alt={`${broadcaster.name}`}
                         size={32}
-                      ></Avatar>{' '}
+                      />
                     </a>
                   </Tooltip>
                 </Group>

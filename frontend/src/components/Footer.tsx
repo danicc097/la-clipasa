@@ -1,6 +1,7 @@
 import { css } from '@emotion/react'
-import { createStyles, Container, Group, ActionIcon, Image, Text } from '@mantine/core'
+import { createStyles, Container, Group, ActionIcon, Image, Text, Tooltip } from '@mantine/core'
 import { IconBrandTwitter, IconBrandYoutube, IconBrandInstagram, IconBrandTwitch } from '@tabler/icons'
+import { broadcaster } from 'src/services/twitch'
 
 const useStyles = createStyles((theme) => ({
   footer: {
@@ -48,18 +49,34 @@ export default function Footer() {
         </Text>
 
         <Group spacing={0} className={classes.links} position="right" noWrap>
-          <ActionIcon size="lg">
-            <IconBrandTwitter size={18} stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size="lg">
-            <IconBrandYoutube size={18} stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size="lg">
-            <IconBrandInstagram size={18} stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size="lg">
-            <IconBrandTwitch size={18} stroke={1.5} />
-          </ActionIcon>
+          <Tooltip label={`Follow caliebre on Twitter`}>
+            <ActionIcon size="lg">
+              <a href="https://www.twitter.com/caliebre" target="_blank" rel="noopener noreferrer">
+                <IconBrandTwitter size={18} stroke={1.5} color="#2d8bb3" />
+              </a>
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label={`Follow caliebre on YouTube`}>
+            <ActionIcon size="lg">
+              <a href="https://youtube.com/caliebre" target="_blank" rel="noopener noreferrer">
+                <IconBrandYoutube size={18} stroke={1.5} color="#d63808" />
+              </a>
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label={`Follow caliebre on Instagram`}>
+            <ActionIcon size="lg">
+              <a href="http://www.instagram.com/caliebre" target="_blank" rel="noopener noreferrer">
+                <IconBrandInstagram size={18} stroke={1.5} color="#e15d16" />
+              </a>
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label={`Follow caliebre on Twitch`}>
+            <ActionIcon size="lg">
+              <a href="https://www.twitch.tv/caliebre" target="_blank" rel="noopener noreferrer">
+                <IconBrandTwitch size={18} stroke={1.5} color="#a970ff" />
+              </a>
+            </ActionIcon>
+          </Tooltip>
         </Group>
       </Container>
     </div>
