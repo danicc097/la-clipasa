@@ -20,8 +20,10 @@ model User {
   displayName  String
   login        String
   twitchId     String
-  isSubscriber Boolean
-  isFollower   Boolean
+  isSubscriber Boolean // will always get from client calls upon rendering so it's always in sync
+  isFollower   Boolean // will always get from client calls upon rendering so it's always in sync
+  // Current twitchUser will always be compared to /follows and /subscriptions/user responses when these refetched
+  // so when someone starts following an update is triggered on the next rerender.
   role         Role
   createdAt    DateTime    @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime    @updatedAt @db.Timestamptz(3)

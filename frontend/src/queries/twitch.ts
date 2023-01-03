@@ -133,3 +133,32 @@ export function useTwitchValidateToken() {
     },
   })
 }
+
+// endpoint deprecated
+// export function useTwitchFollow() {
+//   const { twitchToken } = useUISlice()
+//   const { data: twitchUser } = useTwitchUser()
+//   const userId = twitchUser?.data[0].id
+
+//   return useQuery<any, AxiosError>({
+//     enabled: false,
+//     queryKey: [`twitchFollow-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
+//     retry: (failureCount, error) => {
+//       if (error.response.status !== 401 && failureCount < 3) return true
+//     },
+//     retryDelay: 1000,
+//     queryFn: async ({ signal }): Promise<any> => {
+//       if (!userId) return null
+
+//       const { data } = await axios.get(`https://api.twitch.tv/kraken/users/${userId}/follows/channels/caliebre`, {
+//         headers: {
+//           Authorization: `Bearer ${twitchToken}`,
+//           'Client-Id': import.meta.env.VITE_TWITCH_CLIENT_ID ?? '',
+//         },
+//         signal,
+//         method: 'PUT',
+//       })
+//       return data
+//     },
+//   })
+// }

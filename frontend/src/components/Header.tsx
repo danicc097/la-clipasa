@@ -22,7 +22,7 @@ import { useTwitchUser } from 'src/queries/twitch'
 import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
 import banner from 'src/assets/banner-la-clipassa.png'
-import subscriberIcon from 'src/assets/caliebre-logo.png'
+import broadcasterIcon from 'src/assets/caliebre-logo.png'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 
@@ -140,7 +140,9 @@ export default function Header({ tabs }: HeaderProps) {
               align-self: center;
             `}
           >
-            <IconHeart size={28} color="red" fill="red" />
+            <a href="https://www.twitch.tv/caliebre" target="_blank" rel="noopener noreferrer">
+              <Avatar radius="xl" src={broadcasterIcon} alt="caliebre" size={32} />
+            </a>
 
             <Menu
               width={220}
@@ -168,24 +170,47 @@ export default function Header({ tabs }: HeaderProps) {
                   <LoginTwitchButton />
                 )}
               </Menu.Target>
-              <Menu.Dropdown>
+              <Menu.Dropdown
+                css={css`
+                  p {
+                    margin: 0px;
+                  }
+                `}
+              >
+                <Menu.Item
+                  disabled={isFollower}
+                  onClick={() =>
+                    !isFollower &&
+                    Object.assign(document.createElement('a'), {
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                      href: 'https://www.twitch.tv/caliebre',
+                    }).click()
+                  }
+                  icon={<IconHeart size={20} />}
+                >
+                  {isFollower ? <p>Already following!</p> : <p>Follow caliebre</p>}
+                </Menu.Item>
+                <Menu.Divider />
                 <Menu.Item
                   disabled={isSubscriber}
-                  onClick={() => !isSubscriber && window.location.replace('https://www.twitch.tv/subs/caliebre')}
+                  onClick={() =>
+                    !isSubscriber &&
+                    Object.assign(document.createElement('a'), {
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                      href: 'https://www.twitch.tv/subs/caliebre',
+                    }).click()
+                  }
+                  icon={<Avatar radius="xl" src={broadcasterIcon} alt={username} size={20} />}
                 >
-                  <Group position="center">
-                    {isSubscriber ? (
-                      <>
-                        <Avatar radius="xl" src={subscriberIcon} alt={username} size={20} />
-                        Subscribed!
-                      </>
-                    ) : (
-                      <>
-                        <Avatar radius="xl" src={subscriberIcon} alt={username} size={20} />
-                        <strong style={{ color: '#b17cba' }}>Subscribe to caliebre</strong>
-                      </>
-                    )}
-                  </Group>
+                  {isSubscriber ? (
+                    <p>Already subscribed!</p>
+                  ) : (
+                    <p style={{ color: '#b17cba' }}>
+                      <strong>Subscribe to caliebre</strong>
+                    </p>
+                  )}
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
