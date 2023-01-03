@@ -111,11 +111,11 @@ export default function Header({ tabs }: HeaderProps) {
   const { classes, theme, cx } = useStyles()
   const [opened, { toggle }] = useDisclosure(false)
   const [userMenuOpened, setUserMenuOpened] = useState(false)
-  const { data: twitchUser, isLoading, error } = useTwitchUser()
+  const twitchUser = useTwitchUser()
   const { isFollower, isSubscriber } = useAuthenticatedUser()
 
-  const username = twitchUser?.data[0].display_name
-  const avatarUrl = twitchUser?.data[0].profile_image_url
+  const username = twitchUser.data?.data[0].display_name
+  const avatarUrl = twitchUser.data?.data[0].profile_image_url
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab} key={tab}>
@@ -148,11 +148,11 @@ export default function Header({ tabs }: HeaderProps) {
               transition="pop-top-right"
               onClose={() => setUserMenuOpened(false)}
               onOpen={() => {
-                if (twitchUser) setUserMenuOpened(true)
+                if (twitchUser.data) setUserMenuOpened(true)
               }}
             >
               <Menu.Target>
-                {isLoading ? (
+                {twitchUser.isLoading ? (
                   <Loader size={'sm'} />
                 ) : avatarUrl ? (
                   <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
@@ -169,23 +169,24 @@ export default function Header({ tabs }: HeaderProps) {
                 )}
               </Menu.Target>
               <Menu.Dropdown>
-                <div onClick={() => !isSubscriber && window.location.replace('https://www.twitch.tv/subs/caliebre')}>
-                  <Menu.Item disabled={isSubscriber}>
-                    <Group position="center">
-                      {isSubscriber ? (
-                        <>
-                          <Avatar radius="xl" src={subscriberIcon} alt={username} size={20} />
-                          Subscribed!
-                        </>
-                      ) : (
-                        <>
-                          <Avatar radius="xl" src={subscriberIcon} alt={username} size={20} />
-                          <strong style={{ color: '#b17cba' }}>Subscribe to caliebre</strong>
-                        </>
-                      )}
-                    </Group>
-                  </Menu.Item>
-                </div>
+                <Menu.Item
+                  disabled={isSubscriber}
+                  onClick={() => !isSubscriber && window.location.replace('https://www.twitch.tv/subs/caliebre')}
+                >
+                  <Group position="center">
+                    {isSubscriber ? (
+                      <>
+                        <Avatar radius="xl" src={subscriberIcon} alt={username} size={20} />
+                        Subscribed!
+                      </>
+                    ) : (
+                      <>
+                        <Avatar radius="xl" src={subscriberIcon} alt={username} size={20} />
+                        <strong style={{ color: '#b17cba' }}>Subscribe to caliebre</strong>
+                      </>
+                    )}
+                  </Group>
+                </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
                   Liked posts

@@ -22,17 +22,9 @@ import { css } from '@emotion/react'
 export default function Home() {
   const { hash } = useLocation()
   const { twitchToken, setTwitchToken } = useUISlice()
-  const { data: twitchUser, error: twitchUserError, refetch: twitchUserRefetch } = useTwitchUser()
-  const {
-    data: twitchUserSubscriber,
-    error: twitchUserSubscriberError,
-    refetch: twitchUserSubscriberRefetch,
-  } = useTwitchUserSubscriber()
-  const {
-    data: twitchUserFollower,
-    error: twitchUserFollowerError,
-    refetch: twitchUserFollowerRefetch,
-  } = useTwitchUserFollower()
+  const twitchUser = useTwitchUser()
+  const twitchUserFollower = useTwitchUserFollower()
+  const twitchUserSubscriber = useTwitchUserSubscriber()
 
   useEffect(() => {
     // the URL hash is processed by the browser only. not available in edge function/backend
@@ -48,18 +40,18 @@ export default function Home() {
 
   useEffect(() => {
     if (twitchToken !== '') {
-      twitchUserRefetch({ throwOnError: true }).then(() => {
-        twitchUserSubscriberRefetch()
-        twitchUserFollowerRefetch()
+      twitchUser.refetch({ throwOnError: true }).then(() => {
+        twitchUserSubscriber.refetch()
+        twitchUserFollower.refetch()
       })
     }
-  }, [twitchUserRefetch, twitchToken, twitchUserSubscriberRefetch, twitchUserFollowerRefetch])
+  }, [twitchToken])
 
   useEffect(() => {
-    if (twitchUserError?.response?.status === 401) {
-      console.log('unauthenticated: ', twitchUserError.response.data)
+    if (twitchUser.error?.response?.status === 401) {
+      console.log('unauthenticated: ', twitchUser.error.response.data)
     }
-  }, [twitchUserError])
+  }, [twitchUser.error])
 
   useEffect(() => {
     document.body.style.background = `url(${homeBackground}) no-repeat center/cover`

@@ -12,18 +12,17 @@ import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY } from 'src/slices/ui'
 
 export default function useAuthenticatedUser() {
   const queryClient = useQueryClient()
-  const { data: twitchUser } = useTwitchUser()
-  const { data: twitchUserFollower } = useTwitchUserFollower()
-  const { data: twitchUserSubscriber } = useTwitchUserSubscriber()
+  const twitchUser = useTwitchUser()
+  const twitchUserFollower = useTwitchUserFollower()
+  const twitchUserSubscriber = useTwitchUserSubscriber()
+  const twitchValidateToken = useTwitchValidateToken()
 
-  const isSubscriber = !!twitchUserSubscriber?.data[0].broadcaster_id
-  const isFollower = !!twitchUserFollower?.data[0].to_id
-
-  const { data: twitchValidateToken, refetch: twitchValidateTokenRefetch } = useTwitchValidateToken()
+  const isSubscriber = !!twitchUserSubscriber.data?.data[0].broadcaster_id
+  const isFollower = !!twitchUserFollower.data?.data[0].to_id
 
   useEffect(() => {
-    twitchValidateTokenRefetch()
-  }, [twitchUser])
+    if (!twitchValidateToken.isLoading) twitchValidateToken.refetch()
+  }, [twitchUser.data])
 
   return {
     logout,
