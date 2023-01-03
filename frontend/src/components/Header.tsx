@@ -15,7 +15,7 @@ import {
   Image,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown } from '@tabler/icons'
+import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown, IconBookmark } from '@tabler/icons'
 import LoginTwitchButton from './LoginTwitchButton'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import { useTwitchUser } from 'src/queries/twitch'
@@ -216,7 +216,7 @@ export default function Header({ tabs }: HeaderProps) {
                 <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
                   Liked posts
                 </Menu.Item>
-                <Menu.Item icon={<IconStar size={14} color={theme.colors.yellow[6]} stroke={1.5} />}>
+                <Menu.Item icon={<IconBookmark size={14} color={theme.colors.yellow[6]} stroke={1.5} />}>
                   Saved posts
                 </Menu.Item>
                 <Menu.Divider />

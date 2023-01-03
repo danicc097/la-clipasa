@@ -106,6 +106,13 @@ export default function Home() {
           className="post"
           footer={<div>footer div</div>}
         />
+        <Post
+          author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
+          categories={[]}
+          title={'Some title for this'}
+          className="post"
+          footer={<div>footer div</div>}
+        />
       </Container>
     </Container>
   )

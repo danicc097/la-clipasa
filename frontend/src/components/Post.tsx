@@ -10,6 +10,8 @@ import {
   DefaultMantineColor,
   MantineGradient,
   Space,
+  MantineTheme,
+  ColorScheme,
 } from '@mantine/core'
 import { IconHeart, IconBookmark, IconShare } from '@tabler/icons'
 import emojiRana from 'src/assets/emoji-rana.png'
@@ -112,21 +114,36 @@ const uniqueCategories = {
 
 type UniqueCategoriesKeys<T extends object> = Extract<keyof T, keyof typeof uniqueCategories>
 
-const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategories>, string> = {
-  DIAMANTE: postDiamante,
-  RANA: postRana,
-  ORO: postOro,
+type CardBackground = {
+  image: string
+  color: (theme: ColorScheme) => string
+}
+
+const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategories>, CardBackground> = {
+  DIAMANTE: {
+    image: postDiamante,
+    color: (theme: ColorScheme) => (theme === 'light' ? '#d1ebf4' : '#141f25'),
+  },
+  RANA: {
+    image: postRana,
+    color: (theme: ColorScheme) => (theme === 'light' ? '#d6f3dd' : '#1f2b1f'),
+  },
+  ORO: {
+    image: postOro,
+    color: (theme: ColorScheme) => (theme === 'light' ? '#f9f5cf' : '#212013'),
+  },
 }
 
 /**
  * Interesting possiblities:
- *  - broadcast polls for each post (just for broadcaster, id = broadcasterId)
+ *  - broadcast polls for each post (just for admin or moderator)
  *
  */
 export default function Post({ image, categories, title, footer, author, className }: ArticleCardFooterProps) {
   const { classes, theme } = useStyles()
-
-  const cardBackground = image ? image : uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
+  const cardBackground: CardBackground = uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
+  const cardBackgroundImage = image ? image : cardBackground ? cardBackground.image : 'auto'
+  const cardBackgroundColor = image ? 'auto' : cardBackground ? cardBackground.color(theme.colorScheme) : 'auto'
 
   return (
     <Card
@@ -140,9 +157,9 @@ export default function Post({ image, categories, title, footer, author, classNa
         background-position: right;
         -webkit-background-clip: padding-box;
         background-clip: padding-box;
-        background-image: url(${cardBackground});
+        background-image: url(${cardBackgroundImage});
         animation: 0.4s ease-out 0s 1 animateIn;
-
+        background-color: ${cardBackgroundColor};
         @keyframes animateIn {
           0% {
             transform: translate3d(0px, 15px, 0) scale(0.8);
@@ -177,6 +194,7 @@ export default function Post({ image, categories, title, footer, author, classNa
               <div
                 css={css`
                   display: flex;
+                  align-items: center;
                   justify-content: center;
                   *:not(:first-child) {
                     margin-left: 3px;
