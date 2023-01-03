@@ -14,6 +14,7 @@ import {
   Box,
   Image,
   Tooltip,
+  Badge,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown, IconBookmark } from '@tabler/icons'
@@ -146,33 +147,7 @@ export default function Header({ tabs }: HeaderProps) {
               align-self: center;
             `}
           >
-            {broadcasterLive ? (
-              <>
-                <Group position="center">
-                  <Tooltip label={twitchBroadcasterLive?.data?.data?.[0]?.title}>
-                    <a href={`https://www.twitch.tv/${broadcaster.name}`} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={broadcasterIcon}
-                        alt={`${broadcaster.name}`}
-                        height={40}
-                        width={40}
-                        css={css`
-                          max-width: 100%;
-                          vertical-align: top;
-                          color: #c11a17;
-                          border: 0.15rem solid;
-                          display: block;
-                          border-radius: 9000px;
-                          width: 100%;
-                        `}
-                      />
-                    </a>
-                  </Tooltip>
-                </Group>
-              </>
-            ) : (
-              <div></div>
-            )}
+            {broadcasterLive ? renderLiveAvatar(twitchBroadcasterLive?.data?.data?.[0]?.title) : <div></div>}
 
             <Menu
               width={220}
@@ -277,5 +252,52 @@ export default function Header({ tabs }: HeaderProps) {
         </MantineHeader>
       </Box>
     </>
+  )
+}
+
+function renderLiveAvatar(streamTitle: string) {
+  return (
+    <Group position="center">
+      <Tooltip label={streamTitle}>
+        <a href={`https://www.twitch.tv/${broadcaster.name}`} target="_blank" rel="noopener noreferrer">
+          <div
+            css={css`
+              position: relative;
+            `}
+          >
+            <img
+              src={broadcasterIcon}
+              alt={`${broadcaster.name}`}
+              height={40}
+              width={40}
+              css={css`
+                max-width: 100%;
+                vertical-align: top;
+                color: #c11a17;
+                border: 0.15rem solid;
+                display: block;
+                border-radius: 9000px;
+                width: 100%;
+              `}
+            />
+            <Badge
+              css={css`
+                position: absolute;
+                bottom: -0.4rem;
+                left: 50%;
+                transform: translateX(-50%) scale(0.8);
+                padding: 0.2rem 0.4rem;
+                background-color: #c11a17;
+              `}
+              variant="filled"
+              radius={4}
+              size="xs"
+            >
+              LIVE
+            </Badge>
+          </div>
+        </a>
+      </Tooltip>
+    </Group>
   )
 }
