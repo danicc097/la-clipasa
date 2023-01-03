@@ -123,6 +123,8 @@ export default function Header({ tabs }: HeaderProps) {
     </Tabs.Tab>
   ))
 
+  const broadcasterLive = false
+
   return (
     <>
       <Image alt="" src={banner} className={classes.banner} />
@@ -140,15 +142,25 @@ export default function Header({ tabs }: HeaderProps) {
               align-self: center;
             `}
           >
-            <a href="https://www.twitch.tv/caliebre" target="_blank" rel="noopener noreferrer">
-              <Avatar
-                radius="xl"
-                src={broadcasterIcon}
-                style={{ ...(theme.colorScheme === 'light' && { border: '0.2rem solid' }) }}
-                alt="caliebre"
-                size={32}
-              />
-            </a>
+            {broadcasterLive ? (
+              <a href="https://www.twitch.tv/caliebre" target="_blank" rel="noopener noreferrer">
+                <Group position="center">
+                  <Avatar
+                    radius="xl"
+                    src={broadcasterIcon}
+                    css={css`
+                      color: #eb0400;
+                      border: 0.15rem solid;
+                    `}
+                    alt="caliebre"
+                    size={32}
+                  ></Avatar>
+                  <Beacon></Beacon>
+                </Group>
+              </a>
+            ) : (
+              <div></div>
+            )}
 
             <Menu
               width={220}
