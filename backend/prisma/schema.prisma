@@ -1,3 +1,6 @@
+// prisma data proxy shouldn't be needed with supabase pgbouncer
+// if for some obscure reason it doesn't work right disable pgbouncer and setup data proxy
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -70,20 +73,23 @@ model Post {
 }
 
 model LikedPost {
-  postId   Int
-  authorId Int
-  User     User @relation(fields: [authorId], references: [id])
-  Post     Post @relation(fields: [postId], references: [id])
+  postId Int
+  userId Int
+  User   User @relation(fields: [userId], references: [id])
+  Post   Post @relation(fields: [postId], references: [id])
 
-  @@id([authorId, postId])
-  @@index([postId])
+  @@id([userId, postId])
+  @@index([postId]) // post likes count
+  @@index([userId]) // filter "My posts"
 }
 
 model SavedPost {
-  postId   Int
-  authorId Int
-  User     User @relation(fields: [authorId], references: [id])
-  Post     Post @relation(fields: [postId], references: [id])
+  postId Int
+  userId Int
+  User   User @relation(fields: [userId], references: [id])
+  Post   Post @relation(fields: [postId], references: [id])
 
-  @@id([authorId, postId])
+  @@id([userId, postId])
+  @@index([postId]) // post likes count
+  @@index([userId]) // filter "Saved posts"
 }
