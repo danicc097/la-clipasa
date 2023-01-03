@@ -141,7 +141,7 @@ export default function Header({ tabs }: HeaderProps) {
             `}
           >
             <a href="https://www.twitch.tv/caliebre" target="_blank" rel="noopener noreferrer">
-              <Avatar radius="xl" src={broadcasterIcon} alt="caliebre" size={32} />
+              <Avatar radius="xl" src={broadcasterIcon} style={{ border: '0.12rem solid' }} alt="caliebre" size={32} />
             </a>
 
             <Menu
@@ -189,7 +189,7 @@ export default function Header({ tabs }: HeaderProps) {
                   }
                   icon={<IconHeart size={20} />}
                 >
-                  {isFollower ? <p>Already following!</p> : <p>Follow caliebre</p>}
+                  <Text fz="s">{isFollower ? 'Already following!' : 'Follow caliebre'}</Text>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item
@@ -204,13 +204,13 @@ export default function Header({ tabs }: HeaderProps) {
                   }
                   icon={<Avatar radius="xl" src={broadcasterIcon} alt={username} size={20} />}
                 >
-                  {isSubscriber ? (
-                    <p>Already subscribed!</p>
-                  ) : (
-                    <p style={{ color: '#b17cba' }}>
-                      <strong>Subscribe to caliebre</strong>
-                    </p>
-                  )}
+                  <Text fz="s">
+                    {isSubscriber ? (
+                      'Already subscribed!'
+                    ) : (
+                      <strong style={{ color: '#b17cba' }}>Subscribe to caliebre</strong>
+                    )}
+                  </Text>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>

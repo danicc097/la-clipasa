@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Code } from '@mantine/core'
+import { Code, Image } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
@@ -8,6 +8,7 @@ import Header from 'src/components/Header'
 import { css } from '@emotion/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUISlice } from 'src/slices/ui'
+import Footer from 'src/components/Footer'
 
 type LayoutProps = {
   children: React.ReactElement
@@ -45,6 +46,7 @@ export default function Layout({ children }: LayoutProps) {
       >
         {children}
       </main>
+      <Footer></Footer>
     </>
   )
 }
