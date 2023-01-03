@@ -54,7 +54,9 @@ export default async (req: NextRequest) => {
         try {
           payload = await req.json()
           console.log(payload)
-        } catch (error) {}
+        } catch (error) {
+          return new Response('missing payload', { status: 400 })
+        }
         /*
           NOTE: Bot needs embed permission on channel.
                 Embeds are always generated a few seconds after it is posted as long as no other embed is sent.

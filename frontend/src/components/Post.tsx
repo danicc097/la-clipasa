@@ -29,7 +29,9 @@ const useStyles = createStyles((theme) => {
   return {
     card: {
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-      minWidth: '50vw',
+      minWidth: '100%',
+      float: 'left',
+      overflow: 'hidden',
       // should rework it with gradient shadow instead of border
       // border: `6px solid ${theme.colorScheme === 'dark' ? '#212327' : '#ddd8e4'}`,
       boxShadow: `inset 2px 2px 15px ${theme.colorScheme === 'dark' ? '#524f541d' : '#9993a436'},
@@ -41,12 +43,15 @@ const useStyles = createStyles((theme) => {
       },
 
       ':hover': {
-        '-webkit-transition': 'all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)',
+        WebkitTransition: 'all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)',
         transition: 'all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)',
         transform: 'translate3d(0px, -2px, 0)',
         cursor: 'pointer',
-        boxShadow: `1px 2px 2px hsl(${shadowColor} / 0.333), 2px 4px 4px hsl(${shadowColor} / 0.333),
-        1px 3px 3px hsl(${shadowColor} / 0.333)`,
+        boxShadow: `
+          1px 2px 2px hsl(${shadowColor} / 0.333),
+          2px 4px 4px hsl(${shadowColor} / 0.333),
+          1px 3px 3px hsl(${shadowColor} / 0.333)
+        `,
       },
     },
 

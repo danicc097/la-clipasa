@@ -62,7 +62,7 @@ export default function Home() {
   }, [])
 
   return (
-    <Container style={{ padding: 0 }}>
+    <Container style={{ padding: 0, margin: '2rem' }}>
       {/* <div
         style={{
           position: 'absolute',
@@ -82,6 +82,8 @@ export default function Home() {
           .post:not(:first-child) {
             margin-top: 1rem;
           }
+
+          min-width: 100%;
         `}
       >
         <Space />

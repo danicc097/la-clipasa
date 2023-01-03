@@ -141,7 +141,13 @@ export default function Header({ tabs }: HeaderProps) {
             `}
           >
             <a href="https://www.twitch.tv/caliebre" target="_blank" rel="noopener noreferrer">
-              <Avatar radius="xl" src={broadcasterIcon} style={{ border: '0.12rem solid' }} alt="caliebre" size={32} />
+              <Avatar
+                radius="xl"
+                src={broadcasterIcon}
+                style={{ ...(theme.colorScheme === 'light' && { border: '0.2rem solid' }) }}
+                alt="caliebre"
+                size={32}
+              />
             </a>
 
             <Menu
