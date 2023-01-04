@@ -17,8 +17,7 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^4.8.0",
-    "database": "workspace:*"
+    "@prisma/client": "^4.8.0"
   },
   "devDependencies": {
     "@types/node": "18.11.18",

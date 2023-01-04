@@ -126,12 +126,10 @@ importers:
     specifiers:
       '@prisma/client': ^4.8.0
       '@types/node': 18.11.18
-      database: workspace:*
       prisma: ^4.8.0
       ts-node: ^10.9.1
     dependencies:
       '@prisma/client': 4.8.0_prisma@4.8.0
-      database: 'link:'
     devDependencies:
       '@types/node': 18.11.18
       prisma: 4.8.0

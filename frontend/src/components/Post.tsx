@@ -13,7 +13,7 @@ import {
   MantineTheme,
   ColorScheme,
 } from '@mantine/core'
-import { IconHeart, IconBookmark, IconShare } from '@tabler/icons'
+import { IconHeart, IconBookmark, IconShare, IconVolumeOff, IconAlertTriangle, IconAlertOctagon } from '@tabler/icons'
 import emojiRana from 'src/assets/emoji-rana.png'
 import emojiOro from 'src/assets/emoji-oro.png'
 import emojiDiamante from 'src/assets/emoji-diamante.png'
@@ -74,13 +74,15 @@ const useStyles = createStyles((theme) => {
   }
 })
 
+type PostCategory = keyof typeof PostCategories
+
 interface ArticleCardFooterProps {
   /**
    * Overrides a default image for a category
    */
   image?: string
   className?: string
-  categories: Array<keyof typeof PostCategories>
+  categories: Array<PostCategory>
   title: string
   footer: JSX.Element
   author: {
@@ -90,22 +92,31 @@ interface ArticleCardFooterProps {
   }
 }
 
-const categoryEmojis: Record<PostCategories, string> = {
-  'MEME ARTESANAL': emojiRana,
+const categoryEmojis: Partial<Record<PostCategory, string>> = {
+  MEME_ARTESANAL: emojiRana,
   DIAMANTE: emojiDiamante,
   RANA: emojiRana,
   ORO: emojiOro,
-  'SIN SONIDO': emojiRana,
-  'NO SÉ YO': emojiRana,
+  // SIN_SONIDO: emojiRana,
+  // NO_SE_YO: emojiRana,
 }
 
-const categoryColorGradient: Record<PostCategories, MantineGradient> = {
-  'MEME ARTESANAL': { from: 'teal', to: 'lime' },
+const EMOJI_SIZE = 16
+
+const categoryPreEmojis: Partial<Record<PostCategory, JSX.Element>> = {}
+
+const categoryPostEmojis: Partial<Record<PostCategory, JSX.Element>> = {
+  SIN_SONIDO: <IconVolumeOff size={EMOJI_SIZE} />,
+  NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
+}
+
+const categoryColorGradient: Record<PostCategory, MantineGradient> = {
+  MEME_ARTESANAL: { from: 'teal', to: 'lime' },
   DIAMANTE: { from: '#1c95b1', to: '#16758b' },
   RANA: { from: 'teal', to: 'lime' },
   ORO: { from: 'yellow', to: 'yellow' },
-  'SIN SONIDO': { from: 'gray', to: 'gray' },
-  'NO SÉ YO': { from: 'red', to: 'red' },
+  SIN_SONIDO: { from: 'gray', to: 'gray' },
+  NO_SE_YO: { from: 'red', to: 'red' },
 }
 
 /**
@@ -201,14 +212,20 @@ export default function Post({ image, categories, title, footer, author, classNa
                   display: flex;
                   align-items: center;
                   justify-content: center;
+
                   *:not(:first-child) {
                     margin-left: 3px;
                   }
                 `}
               >
-                {categoryEmojis[category] && <img src={categoryEmojis[category]} height={16} width={16} />}
+                {categoryEmojis[category] && (
+                  <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
+                )}
                 <div>{PostCategories[category] ?? category}</div>
-                {categoryEmojis[category] && <img src={categoryEmojis[category]} height={16} width={16} />}
+                {categoryPostEmojis[category]}
+                {categoryEmojis[category] && (
+                  <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
+                )}
               </div>
             </Badge>
           ))}
