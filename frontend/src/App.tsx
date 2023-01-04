@@ -12,6 +12,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryCache } from '@tanstack/react-query'
 import { useUISlice } from 'src/slices/ui'
 import { useTwitchUser } from 'src/queries/twitch'
+import { NotificationsProvider } from '@mantine/notifications'
 
 // const queryCache = new QueryCache({
 //   onError: (error) => {
@@ -72,64 +73,66 @@ export default function App() {
             fontFamily: 'Catamaran, Arial, sans-serif',
           }}
         >
-          <BrowserRouter basename="">
-            <React.Suspense
-              fallback={<div style={{ backgroundColor: 'rgb(20, 21, 25)', height: '100vh', width: '100vw' }} />}
-            >
-              <Layout>
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <React.Suspense fallback={<div />}>
-                        <ProtectedRoute>
-                          <Home />
-                        </ProtectedRoute>
-                      </React.Suspense>
-                    }
-                  />
-                  <Route
-                    path="/upload"
-                    element={
-                      <React.Suspense fallback={<div />}>
-                        <ProtectedRoute>
-                          <div>Upload to discord page</div>
-                        </ProtectedRoute>
-                      </React.Suspense>
-                    }
-                  />
-                  <Route
-                    path="/analytics"
-                    element={
-                      <React.Suspense fallback={<div />}>
-                        <ProtectedRoute>
-                          <div>Analytics page</div>
-                        </ProtectedRoute>
-                      </React.Suspense>
-                    }
-                  />
-                  <Route
-                    path="/analytics"
-                    element={
-                      <React.Suspense fallback={<div />}>
-                        <ProtectedRoute>
-                          <div>Analytics page</div>
-                        </ProtectedRoute>
-                      </React.Suspense>
-                    }
-                  />
-                  <Route
-                    path="*"
-                    element={
-                      <React.Suspense fallback={<div />}>
-                        <ErrorPage status={404} />
-                      </React.Suspense>
-                    }
-                  />
-                </Routes>
-              </Layout>
-            </React.Suspense>
-          </BrowserRouter>
+          <NotificationsProvider>
+            <BrowserRouter basename="">
+              <React.Suspense
+                fallback={<div style={{ backgroundColor: 'rgb(20, 21, 25)', height: '100vh', width: '100vw' }} />}
+              >
+                <Layout>
+                  <Routes>
+                    <Route
+                      path="/"
+                      element={
+                        <React.Suspense fallback={<div />}>
+                          <ProtectedRoute>
+                            <Home />
+                          </ProtectedRoute>
+                        </React.Suspense>
+                      }
+                    />
+                    <Route
+                      path="/upload"
+                      element={
+                        <React.Suspense fallback={<div />}>
+                          <ProtectedRoute>
+                            <div>Upload to discord page</div>
+                          </ProtectedRoute>
+                        </React.Suspense>
+                      }
+                    />
+                    <Route
+                      path="/analytics"
+                      element={
+                        <React.Suspense fallback={<div />}>
+                          <ProtectedRoute>
+                            <div>Analytics page</div>
+                          </ProtectedRoute>
+                        </React.Suspense>
+                      }
+                    />
+                    <Route
+                      path="/analytics"
+                      element={
+                        <React.Suspense fallback={<div />}>
+                          <ProtectedRoute>
+                            <div>Analytics page</div>
+                          </ProtectedRoute>
+                        </React.Suspense>
+                      }
+                    />
+                    <Route
+                      path="*"
+                      element={
+                        <React.Suspense fallback={<div />}>
+                          <ErrorPage status={404} />
+                        </React.Suspense>
+                      }
+                    />
+                  </Routes>
+                </Layout>
+              </React.Suspense>
+            </BrowserRouter>
+          </NotificationsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
       {!import.meta.env.PROD && <ReactQueryDevtools initialIsOpen />}

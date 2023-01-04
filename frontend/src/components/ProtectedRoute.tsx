@@ -3,6 +3,7 @@ import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { useEffect, useState } from 'react'
 import { Notification } from '@mantine/core'
 import { IconX } from '@tabler/icons'
+import { showNotification } from '@mantine/notifications'
 
 type ProtectedRouteProps = {
   children: JSX.Element
@@ -15,10 +16,16 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   // const { user } = useAuthenticatedUser()
   const [user, setuser] = useState({})
 
-  const [notificationVisible, setNotificationVisible] = useState(false)
   useEffect(() => {
     if (!user) {
-      setNotificationVisible(true)
+      showNotification({
+        id: 'login-required',
+        title: 'Login required',
+        message: 'You need to log in to access this page',
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 5000,
+      })
     }
   }, [user])
 
@@ -32,14 +39,5 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     window.location.replace(`${import.meta.env.VITE_AUTH_SERVER}/login`)
   }
 
-  return (
-    <>
-      {children}
-      {notificationVisible ? (
-        <Notification icon={<IconX size={18} />} color="red">
-          You need to log in to access this page
-        </Notification>
-      ) : null}
-    </>
-  )
+  return <>{children}</>
 }
