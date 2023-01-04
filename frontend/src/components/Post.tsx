@@ -25,6 +25,7 @@ import postOro from 'src/assets/post-oro.png'
 import postRana from 'src/assets/post-rana.png'
 import { truncateIntegerToString } from 'src/utils/string'
 import { useState } from 'react'
+import { truncate } from 'lodash-es'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -310,7 +311,7 @@ export default function Post({ image, categories, title, footer, author, classNa
           padding-right: 3rem; // leave space for bg decorations
         `}
       >
-        {title}
+        {truncate(title, { length: 100 })}
       </Text>
     )
   }
@@ -324,8 +325,8 @@ export default function Post({ image, categories, title, footer, author, classNa
       /* move to classes */
       css={css`
         background-repeat: no-repeat;
-        background-size: 300px; // must adapt to height, or ensure all posts have the same height
-        background-position: right;
+        background-size: 300px;
+        background-position: right top;
         background-clip: padding-box;
         background-image: url(${cardBackgroundImage});
         background-color: ${cardBackgroundColor};
