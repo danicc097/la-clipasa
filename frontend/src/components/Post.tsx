@@ -56,13 +56,13 @@ const useStyles = createStyles((theme) => {
     },
 
     title: {
-      fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+      fontSize: '1.5rem',
     },
 
     footer: {
       padding: `${theme.spacing.xs}px ${theme.spacing.lg}px`,
       marginTop: theme.spacing.md,
-      borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
+      background: `${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
     },
 
     action: {
@@ -138,15 +138,15 @@ type CardBackground = {
 const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategories>, CardBackground> = {
   DIAMANTE: {
     image: postDiamante,
-    color: (theme: ColorScheme) => (theme === 'light' ? '#d1ebf4' : '#141f25'),
+    color: (theme: ColorScheme) => (theme === 'light' ? '#b5d6e2' : '#36525a'),
   },
   RANA: {
     image: postRana,
-    color: (theme: ColorScheme) => (theme === 'light' ? '#d6f3dd' : '#1f2b1f'),
+    color: (theme: ColorScheme) => (theme === 'light' ? '#b4dbbd' : '#334838'),
   },
   ORO: {
     image: postOro,
-    color: (theme: ColorScheme) => (theme === 'light' ? '#f9f5cf' : '#212013'),
+    color: (theme: ColorScheme) => (theme === 'light' ? '#d9d3a1' : '#2f2b22'),
   },
 }
 
@@ -237,6 +237,7 @@ export default function Post({ image, categories, title, footer, author, classNa
       </Text>
 
       <Group mt="lg">
+        {/* TODO twitch GET /users?<...> and replace with profile image */}
         <Avatar src={author.image} radius="sm" />
         <div>
           <Text weight={500}>{author.name}</Text>
