@@ -93,7 +93,7 @@ export default function Home() {
         <Post
           author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
           categories={['SIN_SONIDO', 'DIAMANTE', 'NO_SE_YO']}
-          title={'Some title for this'}
+          title={'A very very  very very very very very very very very very very very very very very long post'}
           className="post"
           footer={<div>footer div</div>}
         />

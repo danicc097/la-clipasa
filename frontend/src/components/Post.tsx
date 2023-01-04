@@ -232,7 +232,14 @@ export default function Post({ image, categories, title, footer, author, classNa
         </Group>
       )}
 
-      <Text weight={700} className={classes.title} mt="xs">
+      <Text
+        weight={700}
+        className={classes.title}
+        mt="xs"
+        css={css`
+          padding-right: 3rem; // leave space for bg decorations
+        `}
+      >
         {title}
       </Text>
 
