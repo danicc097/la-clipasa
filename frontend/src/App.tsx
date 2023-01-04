@@ -40,6 +40,7 @@ export const persister = createSyncStoragePersister({
 })
 
 const Home = React.lazy(() => import('./views/Home/Home'))
+const Login = React.lazy(() => import('./views/Login/Login'))
 
 export default function App() {
   const [colorScheme, setColorScheme] = useState<ColorScheme>(
@@ -84,28 +85,24 @@ export default function App() {
                       path="/"
                       element={
                         <React.Suspense fallback={<div />}>
-                          <ProtectedRoute>
-                            <Home />
-                          </ProtectedRoute>
+                          <Home />
                         </React.Suspense>
                       }
                     />
                     <Route
-                      path="/upload"
+                      path="/login"
                       element={
                         <React.Suspense fallback={<div />}>
-                          <ProtectedRoute>
-                            <div>Upload to discord page</div>
-                          </ProtectedRoute>
+                          <Login />
                         </React.Suspense>
                       }
                     />
                     <Route
-                      path="/analytics"
+                      path="/posts/upload"
                       element={
                         <React.Suspense fallback={<div />}>
                           <ProtectedRoute>
-                            <div>Analytics page</div>
+                            <div>Upload to post page</div>
                           </ProtectedRoute>
                         </React.Suspense>
                       }

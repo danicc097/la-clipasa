@@ -17,6 +17,7 @@ export default function useAuthenticatedUser() {
   const twitchUserSubscriber = useTwitchUserSubscriber()
   const twitchValidateToken = useTwitchValidateToken()
 
+  const isAuthenticated = !!twitchUser.data?.data?.[0]?.id
   const isSubscriber = !!twitchUserSubscriber.data?.data[0].broadcaster_id
   const isFollower = !!twitchUserFollower.data?.data[0].to_id
 
@@ -28,6 +29,7 @@ export default function useAuthenticatedUser() {
     logout,
     isSubscriber,
     isFollower,
+    isAuthenticated,
   }
 }
 

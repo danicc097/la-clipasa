@@ -15,6 +15,7 @@ import {
   Image,
   Tooltip,
   Badge,
+  Skeleton,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown, IconBookmark } from '@tabler/icons'
@@ -160,7 +161,11 @@ export default function Header({ tabs }: HeaderProps) {
             >
               <Menu.Target>
                 {twitchUser.isLoading ? (
-                  <Loader size={'sm'} />
+                  <Group spacing={7} align="center">
+                    <Loader size={'sm'} variant="dots"></Loader>
+                    {/* <Skeleton height={36} circle /> */}
+                    Login in...
+                  </Group>
                 ) : avatarUrl ? (
                   <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
                     <Group spacing={7}>

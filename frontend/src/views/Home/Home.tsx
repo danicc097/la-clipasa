@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import LoginTwitchButton from '../../components/LoginTwitchButton'
 import Posts from '../../components/Posts'
 import Post from '../../components/Post'
 import Cookies from 'js-cookie'

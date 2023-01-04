@@ -1,9 +1,11 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { useEffect, useState } from 'react'
 import { Notification } from '@mantine/core'
 import { IconX } from '@tabler/icons'
 import { showNotification } from '@mantine/notifications'
+import { useTwitchUser } from 'src/queries/twitch'
+import { ErrorPage } from 'src/components/ErrorPage/ErrorPage'
 
 type ProtectedRouteProps = {
   children: JSX.Element
@@ -13,30 +15,23 @@ type ProtectedRouteProps = {
  *  Requires an authenticated user.
  */
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  // const { user } = useAuthenticatedUser()
-  const [user, setuser] = useState({})
+  const { isAuthenticated } = useAuthenticatedUser()
+  const twitchUser = useTwitchUser()
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    if (!user) {
-      showNotification({
-        id: 'login-required',
-        title: 'Login required',
-        message: 'You need to log in to access this page',
-        color: 'red',
-        icon: <IconX size={18} />,
-        autoClose: 5000,
-      })
-    }
-  }, [user])
-
-  const isAuthenticated = true
-
-  if (!user) {
-    return <Navigate to="/login" />
+  if (!isAuthenticated && !twitchUser.isLoading && !twitchUser.isRefetching) {
+    showNotification({
+      id: 'login-required',
+      title: 'Login required',
+      message: 'You need to log in to access this page',
+      color: 'red',
+      icon: <IconX size={18} />,
+      autoClose: 5000,
+    })
   }
 
-  if (!isAuthenticated && user) {
-    window.location.replace(`${import.meta.env.VITE_AUTH_SERVER}/login`)
+  if (!isAuthenticated) {
+    return <ErrorPage status={401} />
   }
 
   return <>{children}</>

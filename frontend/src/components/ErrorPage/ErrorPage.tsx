@@ -70,11 +70,20 @@ export function ErrorPage({ status }: ErrorPageProps) {
       <Group position="center">
         <Button
           size="md"
+          color="teal"
           onClick={() => {
             navigate('/')
           }}
         >
           Take me back to the home page
+        </Button>
+        <Button
+          size="md"
+          onClick={() => {
+            navigate(-1)
+          }}
+        >
+          Take me back to the previous page
         </Button>
       </Group>
     </Container>
