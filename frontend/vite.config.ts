@@ -15,13 +15,13 @@ export default ({ mode }) => {
   return defineConfig({
     base: '/',
     plugins: [
-      // react({
-      //   jsxImportSource: '@emotion/react',
-      //   jsxRuntime: 'automatic',
-      //   babel: {
-      //     plugins: ['@emotion/babel-plugin'],
-      //   },
-      // }),
+      react({
+        jsxImportSource: '@emotion/react',
+        jsxRuntime: 'automatic',
+        babel: {
+          plugins: ['@emotion/babel-plugin'],
+        },
+      }),
       tsconfigPaths({ root: '.' }),
       dynamicImport({}),
     ],
@@ -44,7 +44,7 @@ export default ({ mode }) => {
           drop_debugger: true,
         },
       },
-      outDir: './build',
+      outDir: './dist',
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),

@@ -12,6 +12,8 @@
     "start": "turbo run start",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
+    "db:dev": "turbo db:push db:generate",
+    "kill": "fuser -k 5143/tcp 3000/tcp",
     "psql": "docker exec -it postgres_db_discord_twitch_app psql"
   },
   "devDependencies": {

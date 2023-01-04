@@ -1,9 +1,16 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
+    "db:generate": {
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
     "build": {
       "dependsOn": [
-        "^build"
+        "^build",
+        "^db:generate"
       ],
       "outputs": [
         "backend/.next/**",
@@ -20,6 +27,9 @@
       "outputs": []
     },
     "dev": {
+      "dependsOn": [
+        "^db:generate"
+      ],
       "cache": false
     },
     "start": {

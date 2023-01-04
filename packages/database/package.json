@@ -5,6 +5,8 @@
   "types": "./index.ts",
   "private": true,
   "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --skip-generate",
     "prisma-dev": "dotenv -e .env.development -- prisma",
     "prisma-dev:reset": "dotenv -e .env.development -- prisma migrate reset",
     "prisma-dev:deploy": "dotenv -e .env.development -- prisma migrate deploy",
