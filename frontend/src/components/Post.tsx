@@ -83,9 +83,9 @@ const useStyles = createStyles((theme) => {
 
     likedAction: {
       ...actionStyle,
-      color: theme.colors.red[6],
+      color: theme.colors.red[6] + ' !important',
       '*': {
-        color: theme.colors.red[6],
+        color: theme.colors.red[6] + ' !important',
       },
     },
   }
@@ -180,102 +180,11 @@ export default function Post({ image, categories, title, footer, author, classNa
   const cardBackgroundColor = image ? 'auto' : cardBackground ? cardBackground.color(theme.colorScheme) : 'auto'
   const [saveBeacon, setSaveBeacon] = useState(false)
   const [likeBeacon, setLikeBeacon] = useState(false)
-  const [hasLiked, setHasLiked] = useState(false)
+  const [hasLiked, setHasLiked] = useState(true)
   const [hasSaved, setHasSaved] = useState(false)
 
-  return (
-    <Card
-      p="lg"
-      radius={12}
-      className={`${classes.card} ${className ?? ''}`}
-      /* move to classes */
-      css={css`
-        background-repeat: no-repeat;
-        background-size: 300px; // must adapt to height, or ensure all posts have the same height
-        background-position: right;
-        -webkit-background-clip: padding-box;
-        background-clip: padding-box;
-        background-image: url(${cardBackgroundImage});
-        animation: 0.4s ease-out 0s 1 animateIn;
-        background-color: ${cardBackgroundColor};
-        @keyframes animateIn {
-          0% {
-            transform: translate3d(0px, 15px, 0) scale(0.8);
-            filter: blur(3px);
-            opacity: var(0.7);
-            transition: opacity 0.3s;
-          }
-        }
-      `}
-    >
-      {categories.length > 0 && (
-        <Group position="left">
-          {categories.map((category, i) => (
-            <Badge
-              onClick={() => {
-                null
-              }}
-              key={i}
-              variant="gradient"
-              gradient={categoryColorGradient[category] ?? null}
-              css={css`
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                cursor: pointer;
-
-                :hover {
-                  filter: brightness(1.2);
-                }
-              `}
-            >
-              <div
-                css={css`
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-
-                  *:not(:first-child) {
-                    margin-left: 3px;
-                  }
-                `}
-              >
-                {categoryEmojis[category] && (
-                  <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
-                )}
-                <div>{PostCategories[category] ?? category}</div>
-                {categoryPostEmojis[category]}
-                {categoryEmojis[category] && (
-                  <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
-                )}
-              </div>
-            </Badge>
-          ))}
-        </Group>
-      )}
-
-      <Text
-        weight={700}
-        className={classes.title}
-        mt="xs"
-        css={css`
-          padding-right: 3rem; // leave space for bg decorations
-        `}
-      >
-        {title}
-      </Text>
-
-      <Group mt="lg">
-        {/* TODO twitch GET /users?<...> and replace with profile image */}
-        <Avatar src={author.image} radius="sm" />
-        <div>
-          <Text weight={500}>{author.name}</Text>
-          <Text size="xs" color="dimmed">
-            {author.description}
-          </Text>
-        </div>
-      </Group>
-
+  function renderFooter() {
+    return (
       <Card.Section className={classes.footer}>
         <Group position="apart">
           <Text size="xs" color="dimmed">
@@ -325,6 +234,118 @@ export default function Post({ image, categories, title, footer, author, classNa
           </Group>
         </Group>
       </Card.Section>
+    )
+  }
+
+  function renderCategories() {
+    return (
+      <Group position="left">
+        {categories.map((category, i) => (
+          <Badge
+            onClick={() => {
+              null
+            }}
+            key={i}
+            variant="gradient"
+            gradient={categoryColorGradient[category] ?? null}
+            css={css`
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              cursor: pointer;
+
+              :hover {
+                filter: brightness(1.2);
+              }
+            `}
+          >
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                *:not(:first-child) {
+                  margin-left: 3px;
+                }
+              `}
+            >
+              {categoryEmojis[category] && (
+                <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
+              )}
+              <div>{PostCategories[category] ?? category}</div>
+              {categoryPostEmojis[category]}
+              {categoryEmojis[category] && (
+                <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
+              )}
+            </div>
+          </Badge>
+        ))}
+      </Group>
+    )
+  }
+
+  function renderMetadata() {
+    return (
+      <Group mt="lg">
+        {/* TODO twitch GET /users?<...> and replace with profile image */}
+        <Avatar src={author.image} radius="sm" />
+        <div>
+          <Text weight={500}>{author.name}</Text>
+          <Text size="xs" color="dimmed">
+            {author.description}
+          </Text>
+        </div>
+      </Group>
+    )
+  }
+
+  function renderTitle() {
+    return (
+      <Text
+        weight={700}
+        className={classes.title}
+        mt="xs"
+        css={css`
+          padding-right: 3rem; // leave space for bg decorations
+        `}
+      >
+        {title}
+      </Text>
+    )
+  }
+
+  return (
+    <Card
+      p="lg"
+      radius={12}
+      className={`${classes.card} ${className ?? ''}`}
+      /* move to classes */
+      css={css`
+        background-repeat: no-repeat;
+        background-size: 300px; // must adapt to height, or ensure all posts have the same height
+        background-position: right;
+        background-clip: padding-box;
+        background-image: url(${cardBackgroundImage});
+        background-color: ${cardBackgroundColor};
+        background-clip: padding-box;
+
+        animation: 0.4s ease-out 0s 1 animateIn;
+
+        @keyframes animateIn {
+          0% {
+            transform: translate3d(0px, 15px, 0) scale(0.8);
+            filter: blur(3px);
+            opacity: var(0.7);
+            transition: opacity 0.3s;
+          }
+        }
+      `}
+    >
+      {categories.length > 0 && renderCategories()}
+      {renderTitle()}
+      {renderMetadata()}
+      {renderFooter()}
     </Card>
   )
 }
