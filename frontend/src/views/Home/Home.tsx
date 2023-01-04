@@ -96,6 +96,7 @@ export default function Home() {
           title={'A very very  very very very very very very very very very very very very very very long post'}
           className="post"
           footer={<div>footer div</div>}
+          likes={100}
         />
         <Post
           author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
@@ -103,6 +104,7 @@ export default function Home() {
           title={'Some title for this'}
           className="post"
           footer={<div>footer div</div>}
+          likes={4324}
         />
         <Post
           author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
@@ -110,6 +112,7 @@ export default function Home() {
           title={'Some title for this'}
           className="post"
           footer={<div>footer div</div>}
+          likes={14324}
         />
         <Post
           author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
@@ -117,6 +120,7 @@ export default function Home() {
           title={'Some title for this'}
           className="post"
           footer={<div>footer div</div>}
+          likes={2}
         />
       </Container>
     </Container>

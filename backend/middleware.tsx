@@ -6,8 +6,9 @@ import { validateTwitchToken } from './src/services/authentication'
 
 export default async function middleware(request: NextRequest, event: NextFetchEvent) {
   const getPost = request.nextUrl.pathname.match(/\/api\/posts*/) && request.method === 'GET'
+  const twitchAuth = request.nextUrl.pathname.match(/\/api\/auth*/)
 
-  if (!getPost) {
+  if (!getPost && !twitchAuth) {
     if (!(await validateTwitchToken(request.headers.get('Authorization')))) {
       return new Response('unauthenticated', { status: 401 })
     }

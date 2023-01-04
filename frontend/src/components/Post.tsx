@@ -12,6 +12,7 @@ import {
   Space,
   MantineTheme,
   ColorScheme,
+  Button,
 } from '@mantine/core'
 import { IconHeart, IconBookmark, IconShare, IconVolumeOff, IconAlertTriangle, IconAlertOctagon } from '@tabler/icons'
 import emojiRana from 'src/assets/emoji-rana.png'
@@ -22,6 +23,8 @@ import { ArrayElement, PostCategories, RequiredKeys, Union } from 'types'
 import postDiamante from 'src/assets/post-diamante.png'
 import postOro from 'src/assets/post-oro.png'
 import postRana from 'src/assets/post-rana.png'
+import { truncateIntegerToString } from 'src/utils/string'
+import { useState } from 'react'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -67,6 +70,12 @@ const useStyles = createStyles((theme) => {
 
     action: {
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+      color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
+      //   button: {
+      //   backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+      //   color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
+      // },
+
       ...theme.fn.hover({
         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
       }),
@@ -85,6 +94,7 @@ interface ArticleCardFooterProps {
   categories: Array<PostCategory>
   title: string
   footer: JSX.Element
+  likes: number
   author: {
     name: string
     description: string
@@ -155,11 +165,13 @@ const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategorie
  *  - broadcast polls for each post (just for admin or moderator)
  *
  */
-export default function Post({ image, categories, title, footer, author, className }: ArticleCardFooterProps) {
+export default function Post({ image, categories, title, footer, author, className, likes }: ArticleCardFooterProps) {
   const { classes, theme } = useStyles()
   const cardBackground: CardBackground = uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = image ? image : cardBackground ? cardBackground.image : 'auto'
   const cardBackgroundColor = image ? 'auto' : cardBackground ? cardBackground.color(theme.colorScheme) : 'auto'
+  const [hasLiked, setHasLiked] = useState(false)
+  const [hasSaved, setHasSaved] = useState(false)
 
   return (
     <Card
@@ -259,12 +271,29 @@ export default function Post({ image, categories, title, footer, author, classNa
           <Text size="xs" color="dimmed">
             {footer}
           </Text>
-          <Group spacing={5}>
-            <ActionIcon className={classes.action}>
-              <IconHeart size={18} color={theme.colors.red[6]} stroke={1.5} />
-            </ActionIcon>
-            <ActionIcon className={classes.action}>
-              <IconBookmark size={18} color={theme.colors.yellow[6]} stroke={1.5} />
+          <Group spacing={8}>
+            <Button
+              className={classes.action}
+              onClick={() => setHasLiked(!hasLiked)}
+              size="xs"
+              leftIcon={
+                <IconHeart
+                  size={18}
+                  color={theme.colors.red[6]}
+                  stroke={1.5}
+                  {...(hasLiked && { fill: theme.colors.red[6] })}
+                />
+              }
+            >
+              <ActionIcon>{truncateIntegerToString(likes)}</ActionIcon>
+            </Button>
+            <ActionIcon className={classes.action} onClick={() => setHasSaved(!hasSaved)}>
+              <IconBookmark
+                size={18}
+                color={theme.colors.yellow[6]}
+                stroke={1.5}
+                {...(hasSaved && { fill: theme.colors.yellow[6] })}
+              />
             </ActionIcon>
             <ActionIcon className={classes.action}>
               <IconShare size={16} color={theme.colors.blue[6]} stroke={1.5} />
