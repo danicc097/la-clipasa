@@ -8,14 +8,10 @@ export const config = {
 }
 
 export default async (req: NextRequest) => {
-  // calls to discord will be made from GET|POST /api/posts directly (which require authenticated user (MUST call twitch every hour or so
-  // and especially before someone POST's /api/posts - see https://dev.twitch.tv/docs/authentication/validate-tokens)
   try {
     switch (req.method) {
       case 'GET': {
-        break
-      }
-      case 'POST': {
+        // all posts with infinite scroll (https://react-query-v3.tanstack.com/guides/infinite-queries)
         break
       }
     }
