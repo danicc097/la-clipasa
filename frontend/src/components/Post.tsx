@@ -29,6 +29,17 @@ import { useState } from 'react'
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
 
+  const actionStyle = {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
+    //   button: {
+    //   backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    //   color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
+    // },
+    ...theme.fn.hover({
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
+    }),
+  }
   return {
     card: {
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
@@ -68,17 +79,14 @@ const useStyles = createStyles((theme) => {
       background: `${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
     },
 
-    action: {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-      color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
-      //   button: {
-      //   backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-      //   color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
-      // },
+    action: actionStyle,
 
-      ...theme.fn.hover({
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-      }),
+    likedAction: {
+      ...actionStyle,
+      color: theme.colors.red[6],
+      '*': {
+        color: theme.colors.red[6],
+      },
     },
   }
 })
@@ -273,8 +281,13 @@ export default function Post({ image, categories, title, footer, author, classNa
           </Text>
           <Group spacing={8}>
             <Button
-              className={classes.action}
-              onClick={() => setHasLiked(!hasLiked)}
+              classNames={{
+                root: hasLiked ? classes.likedAction : classes.action,
+              }}
+              onClick={(e) => {
+                applyBeaconAnimation(e.currentTarget)
+                setHasLiked(!hasLiked)
+              }}
               size="xs"
               leftIcon={
                 <IconHeart
@@ -287,7 +300,13 @@ export default function Post({ image, categories, title, footer, author, classNa
             >
               <ActionIcon>{truncateIntegerToString(likes)}</ActionIcon>
             </Button>
-            <ActionIcon className={classes.action} onClick={() => setHasSaved(!hasSaved)}>
+            <ActionIcon
+              className={classes.action}
+              onClick={(e) => {
+                applyBeaconAnimation(e.currentTarget)
+                setHasSaved(!hasSaved)
+              }}
+            >
               <IconBookmark
                 size={18}
                 color={theme.colors.yellow[6]}
@@ -303,4 +322,10 @@ export default function Post({ image, categories, title, footer, author, classNa
       </Card.Section>
     </Card>
   )
+}
+
+function applyBeaconAnimation(element: HTMLElement) {
+  console.log('applying beacon to ', element)
+  element.classList.remove('beacon')
+  element.classList.add('beacon')
 }
