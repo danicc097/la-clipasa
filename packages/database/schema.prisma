@@ -21,8 +21,8 @@ enum Role {
 model User {
   id           Int         @id @default(autoincrement())
   displayName  String
-  login        String
-  twitchId     String
+  login        String      @unique
+  twitchId     String      @unique
   isSubscriber Boolean?    @default(false) // will always get from client calls upon rendering so it's always in sync
   isFollower   Boolean?    @default(false) // will always get from client calls upon rendering so it's always in sync
   // Current twitchUser will always be compared to /follows and /subscriptions/user responses when these refetched

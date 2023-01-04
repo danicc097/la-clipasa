@@ -64,6 +64,12 @@ CREATE TABLE "SavedPost" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_login_key" ON "User"("login");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_twitchId_key" ON "User"("twitchId");
+
+-- CreateIndex
 CREATE INDEX "LikedPost_postId_idx" ON "LikedPost"("postId");
 
 -- CreateIndex
