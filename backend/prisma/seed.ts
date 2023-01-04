@@ -1,20 +1,18 @@
-import { PrismaClient } from '@prisma/client'
-import { User } from 'shared-types'
-// import quotes from './data.json'
-const prisma = new PrismaClient()
+export {}
+// import { User, PrismaClient, Prisma } from 'shared-types'
+// // import quotes from './data.json'
+// const prisma = new PrismaClient()
 
-export async function main() {
-  for (let i = 0; i < 2000; i++) {
-    const user: User =
-  }
-  for (const quote of quotes) {
-    await prisma.quote.create({
-      data: {
-        author: quote.author,
-        content: quote.content,
-      },
-    })
-  }
-}
+// export async function main() {
+//   const user: Prisma.UserCreateInput = {
+//     login: 'aaaaaaaaa',
+//     displayName: 'aaaaaaaaa',
+//     role: 'USER',
+//     twitchId: '52342f2423fr4f2',
+//   }
+//   for (let i = 0; i < 2000; i++) {
+//     await prisma.user.create({ data: user })
+//   }
+// }
 
-main()
+// main()

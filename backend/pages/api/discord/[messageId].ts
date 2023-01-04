@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
+import { PrismaClient } from 'shared-types'
 
 // can't use shared import
 export const config = {
