@@ -315,6 +315,7 @@ export default function Post({ image, categories, title, footer, author, classNa
     )
   }
 
+  // TODO skeleton https://mantine.dev/core/skeleton/
   return (
     <Card
       p="lg"

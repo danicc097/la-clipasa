@@ -163,7 +163,6 @@ export default function Header({ tabs }: HeaderProps) {
                 {twitchUser.isLoading ? (
                   <Group spacing={7} align="center">
                     <Loader size={'sm'} variant="dots"></Loader>
-                    {/* <Skeleton height={36} circle /> */}
                     Login in...
                   </Group>
                 ) : avatarUrl ? (

@@ -1,5 +1,5 @@
 // import 'regenerator-runtime/runtime'
-import { MantineProvider, ColorSchemeProvider, ColorScheme, Image } from '@mantine/core'
+import { MantineProvider, ColorSchemeProvider, ColorScheme, Image, Skeleton, Loader } from '@mantine/core'
 import ProtectedRoute from 'src/components/ProtectedRoute'
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
@@ -13,6 +13,8 @@ import { QueryCache } from '@tanstack/react-query'
 import { useUISlice } from 'src/slices/ui'
 import { useTwitchUser } from 'src/queries/twitch'
 import { NotificationsProvider } from '@mantine/notifications'
+import { css } from '@emotion/react'
+import FallbackLoader from 'src/components/FallbackLoader'
 
 // const queryCache = new QueryCache({
 //   onError: (error) => {
@@ -84,7 +86,7 @@ export default function App() {
                     <Route
                       path="/"
                       element={
-                        <React.Suspense fallback={<div />}>
+                        <React.Suspense fallback={<FallbackLoader />}>
                           <Home />
                         </React.Suspense>
                       }
@@ -92,7 +94,7 @@ export default function App() {
                     <Route
                       path="/login"
                       element={
-                        <React.Suspense fallback={<div />}>
+                        <React.Suspense fallback={<FallbackLoader />}>
                           <Login />
                         </React.Suspense>
                       }
@@ -100,7 +102,7 @@ export default function App() {
                     <Route
                       path="/posts/upload"
                       element={
-                        <React.Suspense fallback={<div />}>
+                        <React.Suspense fallback={<FallbackLoader />}>
                           <ProtectedRoute>
                             <div>Upload to post page</div>
                           </ProtectedRoute>
@@ -110,7 +112,7 @@ export default function App() {
                     <Route
                       path="/analytics"
                       element={
-                        <React.Suspense fallback={<div />}>
+                        <React.Suspense fallback={<FallbackLoader />}>
                           <ProtectedRoute>
                             <div>Analytics page</div>
                           </ProtectedRoute>
@@ -120,7 +122,7 @@ export default function App() {
                     <Route
                       path="*"
                       element={
-                        <React.Suspense fallback={<div />}>
+                        <React.Suspense fallback={<FallbackLoader />}>
                           <ErrorPage status={404} />
                         </React.Suspense>
                       }
