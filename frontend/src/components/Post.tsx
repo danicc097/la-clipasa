@@ -178,6 +178,8 @@ export default function Post({ image, categories, title, footer, author, classNa
   const cardBackground: CardBackground = uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = image ? image : cardBackground ? cardBackground.image : 'auto'
   const cardBackgroundColor = image ? 'auto' : cardBackground ? cardBackground.color(theme.colorScheme) : 'auto'
+  const [saveBeacon, setSaveBeacon] = useState(false)
+  const [likeBeacon, setLikeBeacon] = useState(false)
   const [hasLiked, setHasLiked] = useState(false)
   const [hasSaved, setHasSaved] = useState(false)
 
@@ -284,10 +286,12 @@ export default function Post({ image, categories, title, footer, author, classNa
               classNames={{
                 root: hasLiked ? classes.likedAction : classes.action,
               }}
+              className={hasLiked && likeBeacon ? 'beacon' : ''}
               onClick={(e) => {
-                applyBeaconAnimation(e.currentTarget)
                 setHasLiked(!hasLiked)
+                setLikeBeacon(true)
               }}
+              onAnimationEnd={() => setLikeBeacon(false)}
               size="xs"
               leftIcon={
                 <IconHeart
@@ -301,11 +305,12 @@ export default function Post({ image, categories, title, footer, author, classNa
               <ActionIcon>{truncateIntegerToString(likes)}</ActionIcon>
             </Button>
             <ActionIcon
-              className={classes.action}
+              className={`${classes.action} ${hasSaved && saveBeacon ? 'beacon' : ''}`}
               onClick={(e) => {
-                applyBeaconAnimation(e.currentTarget)
                 setHasSaved(!hasSaved)
+                setSaveBeacon(true)
               }}
+              onAnimationEnd={() => setSaveBeacon(false)}
             >
               <IconBookmark
                 size={18}
@@ -322,10 +327,4 @@ export default function Post({ image, categories, title, footer, author, classNa
       </Card.Section>
     </Card>
   )
-}
-
-function applyBeaconAnimation(element: HTMLElement) {
-  console.log('applying beacon to ', element)
-  element.classList.remove('beacon')
-  element.classList.add('beacon')
 }
