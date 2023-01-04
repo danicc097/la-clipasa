@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { DiscordPostUpload, TwitchUser } from 'shared-types'
+import { DiscordPostUpload, TwitchUser } from 'types'
 
 // can't use shared import
 export const config = {

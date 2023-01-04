@@ -14,9 +14,9 @@ importers:
 
   backend:
     specifiers:
-      '@prisma/client': ^4.8.0
       '@types/node': 18.11.18
       '@typescript-eslint/eslint-plugin': ^5.47.1
+      database: workspace:*
       eslint: 8.30.0
       eslint-config-next: 13.1.1
       eslint-config-prettier: ^8.3.0
@@ -24,14 +24,12 @@ importers:
       eslint-plugin-prettier: ^4.2.1
       next: 13.1.1
       prettier: ^2.7.1
-      prisma: ^4.8.0
-      shared-types: file:../types
-      ts-node: ^10.9.1
+      types: workspace:*
       typescript: 4.9.4
     dependencies:
-      '@prisma/client': 4.8.0_prisma@4.8.0
+      database: link:../packages/database
       next: 13.1.1
-      shared-types: file:types
+      types: link:../packages/types
       typescript: 4.9.4
     devDependencies:
       '@types/node': 18.11.18
@@ -42,8 +40,6 @@ importers:
       eslint-plugin-import: 2.26.0_eslint@8.30.0
       eslint-plugin-prettier: 4.2.1_kl4pe43v5b43npmso5hoplpbyi
       prettier: 2.8.1
-      prisma: 4.8.0
-      ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq
 
   frontend:
     specifiers:
@@ -68,6 +64,7 @@ importers:
       '@types/react-helmet': ^6.1.6
       '@vitejs/plugin-react': ^3.0.0
       axios: ^1.2.2
+      database: workspace:*
       dotenv: ^16.0.3
       js-cookie: ^3.0.1
       lodash: ^4.17.21
@@ -75,8 +72,8 @@ importers:
       react-dom: ^18.2.0
       react-helmet: ^6.1.0
       react-router-dom: ^6.6.1
-      shared-types: file:../types
       terser: ^5.16.1
+      types: workspace:*
       typescript: ^4.9.3
       vite: ^4.0.0
       vite-plugin-dynamic-import: ^1.2.1
@@ -103,6 +100,7 @@ importers:
       '@types/js-cookie': 3.0.2
       '@types/react-helmet': 6.1.6
       axios: 1.2.2
+      database: link:../packages/database
       dotenv: 16.0.3
       js-cookie: 3.0.1
       lodash: 4.17.21
@@ -110,8 +108,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       react-helmet: 6.1.0_react@18.2.0
       react-router-dom: 6.6.1_biqbaboplfbrettd7655fr4n2y
-      shared-types: file:types
       terser: 5.16.1
+      types: link:../packages/types
       zustand: 4.2.0_react@18.2.0
     devDependencies:
       '@types/react': 18.0.26
@@ -124,7 +122,22 @@ importers:
       vite-tsconfig-paths: 3.6.0_vite@4.0.3
       vitest: 0.26.3_terser@5.16.1
 
-  types:
+  packages/database:
+    specifiers:
+      '@prisma/client': ^4.8.0
+      '@types/node': 18.11.18
+      database: workspace:*
+      prisma: ^4.8.0
+      ts-node: ^10.9.1
+    dependencies:
+      '@prisma/client': 4.8.0_prisma@4.8.0
+      database: 'link:'
+    devDependencies:
+      '@types/node': 18.11.18
+      prisma: 4.8.0
+      ts-node: 10.9.1_@types+node@18.11.18
+
+  packages/types:
     specifiers: {}
 
 packages:
@@ -3914,7 +3927,7 @@ packages:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
 
-  /ts-node/10.9.1_awa2wsr5thmg3i7jqycphctjfq:
+  /ts-node/10.9.1_@types+node@18.11.18:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -3940,7 +3953,6 @@ packages:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.9.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
@@ -4362,10 +4374,4 @@ packages:
     dependencies:
       react: 18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
-    dev: false
-
-  file:types:
-    resolution: {directory: types, type: directory}
-    name: types
-    version: 1.1.0
     dev: false

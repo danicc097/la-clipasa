@@ -8,7 +8,7 @@ import type {
   TwitchUserSubscriptionResponse,
   TwitchTokenValidateResponse,
   TwitchStreamResponse,
-} from 'shared-types'
+} from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUser'
 import Cookies from 'js-cookie'

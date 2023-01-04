@@ -6,24 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "vercel-build": "pnpm run prisma:migrate && next build",
-    "prisma-dev": "dotenv -e .env.development -- prisma",
-    "prisma-dev:reset": "dotenv -e .env.development -- prisma migrate reset",
-    "prisma-dev:deploy": "dotenv -e .env.development -- prisma migrate deploy",
-    "prisma-dev:migrate": "dotenv -e .env.development -- prisma migrate dev",
-    "prisma-dev:generate": "dotenv -e .env.development -- prisma generate",
-    "prisma-dev:create-migration": "dotenv -e .env.development -- prisma migrate dev --create-only",
-    "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "eslint --config ./.eslintrc.json --ext .js,.jsx,.ts,.tsx --fix ."
   },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.cjs"
-  },
   "dependencies": {
-    "@prisma/client": "^4.8.0",
     "next": "13.1.1",
-    "shared-types": "file:../types",
+    "database": "workspace:*",
+    "types": "workspace:*",
     "typescript": "4.9.4"
   },
   "devDependencies": {
@@ -34,9 +24,6 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.7.1",
-    "ts-node": "^10.9.1",
-    "prisma": "^4.8.0",
-    "shared-types": "file:../types"
+    "prettier": "^2.7.1"
   }
 }

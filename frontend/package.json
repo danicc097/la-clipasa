@@ -10,6 +10,8 @@
     "lint": "eslint --config ./.eslintrc.json --ext .js,.jsx,.ts,.tsx --fix ./src"
   },
   "dependencies": {
+    "database": "workspace:*",
+    "types": "workspace:*",
     "@babel/core": "^7.20.7",
     "@emotion/react": "^11.10.4",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
@@ -35,7 +37,6 @@
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^6.6.1",
-    "shared-types": "file:../types",
     "terser": "^5.16.1",
     "zustand": "^4.1.4"
   },
