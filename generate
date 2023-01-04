@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd backend || exit
+pnpm run prisma-dev:generate
+cd - || exit
+find types/prisma-client/* -not -regex 'types/prisma-client/index\.d\.ts' -delete

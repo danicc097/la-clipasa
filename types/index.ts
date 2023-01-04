@@ -1,4 +1,5 @@
 export * from './utils'
+export * from './prisma-client/index'
 
 
 export enum PostCategories {

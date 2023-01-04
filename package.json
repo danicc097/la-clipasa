@@ -6,6 +6,7 @@
     "frontend"
   ],
   "scripts": {
+    "generate": "./generate",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "start": "turbo run start",
