@@ -1,6 +1,29 @@
 export * from './utils'
+import type { PostCategory as DatabasePostCategory } from 'database'
+import type { Role as DatabaseRole } from 'database'
 
-export type TwitchTokenValidateResponse= {
+// due to some obscure typescript shenanigans I don't really care about
+// we can't use the const enum exported directly from prisma or reexported from the types package
+// in the frontend package
+// In any case, we need a frontend user-friendly mapping regardless
+// https://stackoverflow.com/questions/56854964/why-is-const-enum-allowed-with-isolatedmodules
+// https://github.com/prisma/prisma/issues/14692
+export const PostCategoryNames: Record<DatabasePostCategory, string> = {
+  RANA: 'RANA',
+  SIN_SONIDO: 'SIN SONIDO',
+  MEME_ARTESANAL: 'MEME ARTESANAL',
+  NO_SE_YO: 'NO SÉ YO',
+  ORO: 'ORO',
+  DIAMANTE: 'DIAMANTE',
+}
+
+export const RoleNames: Record<DatabaseRole, string> = {
+  ADMIN: 'admin',
+  MODERATOR: 'moderator',
+  USER: 'user',
+}
+
+export type TwitchTokenValidateResponse = {
   client_id: string
   login: string
   scopes: string[]
@@ -54,11 +77,11 @@ export type TwitchUserFollow = {
 
 export type TwitchUserSubscription = {
   broadcaster_id: string
-broadcaster_name: string
-broadcaster_login: string
-is_gift: boolean
-// e.g. "1000"
-tier: string
+  broadcaster_name: string
+  broadcaster_login: string
+  is_gift: boolean
+  // e.g. "1000"
+  tier: string
 }
 export type TwitchUser = {
   /**
@@ -103,10 +126,9 @@ export type TwitchUser = {
   view_count: number
 }
 
-
 export type DiscordPostUpload = {
-  twitchUserId: TwitchUser["id"]
-  twitchUserName: TwitchUser["display_name"]
+  twitchUserId: TwitchUser['id']
+  twitchUserName: TwitchUser['display_name']
   title: string
   initialCategories: string[]
   description: string

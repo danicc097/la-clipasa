@@ -19,14 +19,15 @@ import emojiRana from 'src/assets/emoji-rana.png'
 import emojiOro from 'src/assets/emoji-oro.png'
 import emojiDiamante from 'src/assets/emoji-diamante.png'
 import { css } from '@emotion/react'
-import { ArrayElement, RequiredKeys, Union } from 'types'
+import { ArrayElement, PostCategoryNames, RequiredKeys, Union } from 'types'
 import postDiamante from 'src/assets/post-diamante.png'
 import postOro from 'src/assets/post-oro.png'
 import postRana from 'src/assets/post-rana.png'
 import { truncateIntegerToString } from 'src/utils/string'
 import { useState } from 'react'
 import { truncate } from 'lodash-es'
-import { Postca } from 'database'
+import { Prisma } from 'database' // cant use PostCategory exported const
+
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
 
@@ -92,7 +93,7 @@ const useStyles = createStyles((theme) => {
   }
 })
 
-type PostCategory = keyof typeof PostCategories
+type PostCategoryKey = keyof typeof PostCategoryNames
 
 interface PostProps {
   /**
@@ -100,7 +101,7 @@ interface PostProps {
    */
   image?: string
   className?: string
-  categories: Array<PostCategory>
+  categories: Array<PostCategoryKey>
   title: string
   footer: JSX.Element
   likes: number
@@ -111,7 +112,7 @@ interface PostProps {
   }
 }
 
-const categoryEmojis: Partial<Record<PostCategory, string>> = {
+const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
   MEME_ARTESANAL: emojiRana,
   DIAMANTE: emojiDiamante,
   RANA: emojiRana,
@@ -120,14 +121,14 @@ const categoryEmojis: Partial<Record<PostCategory, string>> = {
 
 const EMOJI_SIZE = 16
 
-const categoryPreEmojis: Partial<Record<PostCategory, JSX.Element>> = {}
+const categoryPreEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {}
 
-const categoryPostEmojis: Partial<Record<PostCategory, JSX.Element>> = {
+const categoryPostEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {
   SIN_SONIDO: <IconVolumeOff size={EMOJI_SIZE} />,
   NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
 }
 
-const categoryColorGradient: Record<PostCategory, MantineGradient> = {
+const categoryColorGradient: Record<PostCategoryKey, MantineGradient> = {
   MEME_ARTESANAL: { from: 'teal', to: 'lime' },
   DIAMANTE: { from: '#1c95b1', to: '#16758b' },
   RANA: { from: 'teal', to: 'lime' },
@@ -152,7 +153,7 @@ type CardBackground = {
   color: (theme: ColorScheme) => string
 }
 
-const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategories>, CardBackground> = {
+const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategoryNames>, CardBackground> = {
   DIAMANTE: {
     image: postDiamante,
     color: (theme: ColorScheme) => (theme === 'light' ? '#b5d6e2' : '#36525a'),
@@ -273,7 +274,7 @@ export default function Post(props: PostProps) {
               {categoryEmojis[category] && (
                 <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
               )}
-              <div>{PostCategories[category] ?? category}</div>
+              <div>{PostCategoryNames[category] ?? category}</div>
               {categoryPostEmojis[category]}
               {categoryEmojis[category] && (
                 <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />

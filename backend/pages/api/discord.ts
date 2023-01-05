@@ -1,3 +1,4 @@
+import { PostCategory } from 'database'
 import { NextRequest, NextResponse } from 'next/server'
 import { DiscordPostUpload, TwitchUser } from 'types'
 

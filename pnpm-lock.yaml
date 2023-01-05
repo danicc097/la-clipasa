@@ -148,7 +148,6 @@ importers:
       lodash: ^4.17.21
       prisma: ^4.8.0
       ts-node: ^10.9.1
-      types: workspace:*
     dependencies:
       '@prisma/client': 4.8.0_prisma@4.8.0
     devDependencies:
@@ -159,13 +158,17 @@ importers:
       lodash: 4.17.21
       prisma: 4.8.0
       ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq
-      types: link:../types
 
   packages/eslint-config-custom:
     specifiers: {}
 
   packages/types:
-    specifiers: {}
+    specifiers:
+      database: workspace:*
+      eslint-config-custom: workspace:*
+    devDependencies:
+      database: link:../database
+      eslint-config-custom: link:../eslint-config-custom
 
 packages:
 

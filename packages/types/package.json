@@ -5,6 +5,10 @@
   "main": "index.ts",
   "scripts": {},
   "keywords": [],
+  "devDependencies": {
+    "database": "workspace:*",
+    "eslint-config-custom": "workspace:*"
+  },
   "author": "",
   "license": "MIT"
 }

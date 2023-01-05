@@ -44,12 +44,6 @@ model User {
   savedPosts   SavedPost[]
 }
 
-model Category {
-  id    Int            @id @default(autoincrement())
-  name  String
-  posts PostCategory[]
-}
-
 model Post {
   id          Int            @id @default(autoincrement())
   pinned      Boolean        @default(false)
@@ -71,6 +65,8 @@ model Post {
   LikedPost   LikedPost[]
   SavedPost   SavedPost[]
   User        User           @relation(fields: [userId], references: [id])
+
+  @@index([categories], type: Gin) // filter "My posts"
 }
 
 model LikedPost {

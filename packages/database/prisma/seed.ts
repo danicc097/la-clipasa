@@ -1,6 +1,6 @@
 import { User, PrismaClient, Prisma, Post, PostCategory } from '@prisma/client'
 import { faker } from '@faker-js/faker'
-import _ from 'lodash'
+import _, { uniq } from 'lodash'
 
 const prisma = new PrismaClient()
 
@@ -21,11 +21,16 @@ export async function main() {
   for (let i = 0; i < 30; i++) {
     const post: Prisma.PostCreateArgs = {
       data: {
+        deletedAt: Math.random() < 0.8 ? null : new Date(),
         userId: (_.sample(users) as User).id,
         title: faker.lorem.sentence(),
         content: faker.internet.url(),
         link: faker.internet.url(),
-        categories: [_.sample(Object.values(PostCategory)) as PostCategory],
+        categories: _.uniq(
+          Array(_.random(0, 5))
+            .fill(null)
+            .map((e) => _.sample(Object.values(PostCategory)) as PostCategory),
+        ),
       },
     }
     const createdPost = await prisma.post.create(post)
