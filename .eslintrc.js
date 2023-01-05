@@ -4,7 +4,7 @@ module.exports = {
   extends: ["custom"],
   settings: {
     next: {
-      rootDir: ["backend", "frontend", "packages/database"],
+      rootDir: ["backend", "frontend", "packages/*/"],
     },
   },
 };
