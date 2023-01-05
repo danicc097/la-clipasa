@@ -19,14 +19,14 @@ import emojiRana from 'src/assets/emoji-rana.png'
 import emojiOro from 'src/assets/emoji-oro.png'
 import emojiDiamante from 'src/assets/emoji-diamante.png'
 import { css } from '@emotion/react'
-import { ArrayElement, PostCategories, RequiredKeys, Union } from 'types'
+import { ArrayElement, RequiredKeys, Union } from 'types'
 import postDiamante from 'src/assets/post-diamante.png'
 import postOro from 'src/assets/post-oro.png'
 import postRana from 'src/assets/post-rana.png'
 import { truncateIntegerToString } from 'src/utils/string'
 import { useState } from 'react'
 import { truncate } from 'lodash-es'
-
+import { Postca } from 'database'
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
 

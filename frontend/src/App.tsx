@@ -99,7 +99,11 @@ export default function App() {
                       element={
                         <React.Suspense fallback={<FallbackLoader />}>
                           <ProtectedRoute>
-                            <div>Upload to post page</div>
+                            {/* TODO
+                            - reject url is not isURL
+                            - show free services to upload if its not a link
+                            */}
+                            <div>Upload post</div>
                           </ProtectedRoute>
                         </React.Suspense>
                       }

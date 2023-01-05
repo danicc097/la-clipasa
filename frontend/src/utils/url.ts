@@ -18,3 +18,13 @@ export const formatURLWithQueryParams = (base: string, params: Params) => {
 
   return `${base}?${query}`
 }
+
+export function isURL(str: string) {
+  let url
+  try {
+    url = new URL(str)
+  } catch (error) {
+    return false
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:'
+}

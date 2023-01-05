@@ -41,7 +41,7 @@ export default function Home() {
 
   useEffect(() => {
     if (twitchToken !== '') {
-      twitchUser.refetch({ throwOnError: true }).then(() => {
+      twitchUser.refetch().then(() => {
         twitchUserSubscriber.refetch()
         twitchUserFollower.refetch()
         twitchBroadcasterLive.refetch()
@@ -49,27 +49,7 @@ export default function Home() {
     }
   }, [twitchToken])
 
-  useEffect(() => {
-    if (twitchUser.error?.response?.status === 401) {
-      console.log('unauthenticated: ', twitchUser.error.response.data)
-    }
-  }, [twitchUser.error])
-
-  useEffect(() => {
-    // TODO fixed image size and infinite scroll.
-    // Object.assign(document.body.style, {
-    //   background: `url(${homeBackground}) no-repeat center/cover`,
-    //   // minHeight: '100%',
-    //   // overflow: 'hidden',
-    //   // position: 'relative',
-    //   // msFlex: 'none',
-    //   // flex: 'none',
-    //   // minHeight: '100vh',
-    //   width: '100vw',
-    //   backgroundPosition: '50% 50%',
-    //   // backgroundSize: '1920px 1200px',
-    // })
-  }, [])
+  // TODO padding before footer including image (right now empty background)
 
   return (
     <>

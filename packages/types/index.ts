@@ -1,15 +1,5 @@
 export * from './utils'
 
-
-export enum PostCategories {
-  RANA = "RANA",
-  SIN_SONIDO = "SIN SONIDO",
-  MEME_ARTESANAL = "MEME ARTESANAL",
-  NO_SE_YO = "NO SÉ YO",
-  ORO = "ORO",
-  DIAMANTE = "DIAMANTE",
-}
-
 export type TwitchTokenValidateResponse= {
   client_id: string
   login: string

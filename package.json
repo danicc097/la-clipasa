@@ -13,14 +13,25 @@
     "lint": "turbo run lint",
     "clean": "turbo run clean",
     "db:dev": "turbo db:push db:generate",
+    "db:seed": "turbo db:seed",
     "kill": "fuser -k 5143/tcp 3000/tcp",
     "psql": "docker exec -it postgres_db_discord_twitch_app psql"
   },
   "devDependencies": {
     "eslint": "^8.28.0",
     "eslint-config-custom": "workspace:*",
+    "turbo": "latest",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "eslint-config-next": "13.1.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-turbo": "latest",
+    "eslint-plugin-turbo": "latest",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "7.28.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.7.1",
-    "turbo": "latest"
+    "typescript": "4.9.4"
   },
   "packageManager": "pnpm@7.15.0"
 }

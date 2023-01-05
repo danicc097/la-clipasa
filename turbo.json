@@ -37,6 +37,9 @@
         "frontend/dist/**"
       ]
     },
+    "db:seed": {
+      "cache": false
+    },
     "test": {
       "dependsOn": [
         "^build"

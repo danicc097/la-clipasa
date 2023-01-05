@@ -10,6 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PostCategory {
+  RANA
+  SIN_SONIDO
+  MEME_ARTESANAL
+  NO_SE_YO
+  ORO
+  DIAMANTE
+}
+
 enum Role {
   USER
   ADMIN
@@ -26,9 +35,9 @@ model User {
   isFollower   Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync
   // Current twitchUser will always be compared to /follows and /subscriptions/user responses when these refetched
   // so when someone starts following an update is triggered on the next rerender.
-  role         Role
+  role         Role        @default(USER)
   createdAt    DateTime    @default(now()) @db.Timestamptz(3)
-  updatedAt    DateTime    @updatedAt @db.Timestamptz(3)
+  updatedAt    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
   deletedAt    DateTime?   @db.Timestamptz(3)
   posts        Post[]
   likedPosts   LikedPost[]
@@ -41,19 +50,10 @@ model Category {
   posts PostCategory[]
 }
 
-model PostCategory {
-  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId     Int
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId Int
-
-  @@id([postId, categoryId])
-}
-
 model Post {
   id          Int            @id @default(autoincrement())
-  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId    Int
+  pinned      Boolean        @default(false)
+  userId      Int
   title       String
   // message embed content to show in modal when post is clicked as is,
   // coming from generated discord message embed (if the POST message response does not include the
@@ -65,11 +65,12 @@ model Post {
   link        String // store link in case discord is gone. We only care about this in the end
   isModerated Boolean        @default(false)
   createdAt   DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime       @updatedAt @db.Timestamptz(3)
+  updatedAt   DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
   deletedAt   DateTime?      @db.Timestamptz(3)
   categories  PostCategory[]
   LikedPost   LikedPost[]
   SavedPost   SavedPost[]
+  User        User           @relation(fields: [userId], references: [id])
 }
 
 model LikedPost {
