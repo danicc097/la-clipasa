@@ -34,6 +34,7 @@ export default function Layout({ children }: LayoutProps) {
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <Header tabs={[]}></Header>
+      {/* TODO when header becomes sticky, main should have a padding top of height=header height*/}
       <main
         css={css`
           display: flex;

@@ -94,7 +94,7 @@ const useStyles = createStyles((theme) => {
 
 type PostCategory = keyof typeof PostCategories
 
-interface ArticleCardFooterProps {
+interface PostProps {
   /**
    * Overrides a default image for a category
    */
@@ -116,8 +116,6 @@ const categoryEmojis: Partial<Record<PostCategory, string>> = {
   DIAMANTE: emojiDiamante,
   RANA: emojiRana,
   ORO: emojiOro,
-  // SIN_SONIDO: emojiRana,
-  // NO_SE_YO: emojiRana,
 }
 
 const EMOJI_SIZE = 16
@@ -174,11 +172,12 @@ const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategorie
  *  - broadcast polls for each post (just for admin or moderator)
  *
  */
-export default function Post({ image, categories, title, footer, author, className, likes }: ArticleCardFooterProps) {
+export default function Post(props: PostProps) {
   const { classes, theme } = useStyles()
-  const cardBackground: CardBackground = uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
-  const cardBackgroundImage = image ? image : cardBackground ? cardBackground.image : 'auto'
-  const cardBackgroundColor = image ? 'auto' : cardBackground ? cardBackground.color(theme.colorScheme) : 'auto'
+  const cardBackground: CardBackground =
+    uniqueCategoryBackground[props.categories.find((c) => uniqueCategoryBackground[c])]
+  const cardBackgroundImage = props.image ? props.image : cardBackground ? cardBackground.image : 'auto'
+  const cardBackgroundColor = props.image ? 'auto' : cardBackground ? cardBackground.color(theme.colorScheme) : 'auto'
   const [saveBeacon, setSaveBeacon] = useState(false)
   const [likeBeacon, setLikeBeacon] = useState(false)
   const [hasLiked, setHasLiked] = useState(true)
@@ -189,7 +188,7 @@ export default function Post({ image, categories, title, footer, author, classNa
       <Card.Section className={classes.footer}>
         <Group position="apart">
           <Text size="xs" color="dimmed">
-            {footer}
+            {props.footer}
           </Text>
           <Group spacing={8}>
             <Button
@@ -212,7 +211,7 @@ export default function Post({ image, categories, title, footer, author, classNa
                 />
               }
             >
-              <ActionIcon>{truncateIntegerToString(likes)}</ActionIcon>
+              <ActionIcon>{truncateIntegerToString(props.likes)}</ActionIcon>
             </Button>
             <ActionIcon
               className={`${classes.action} ${hasSaved && saveBeacon ? 'beacon' : ''}`}
@@ -241,7 +240,7 @@ export default function Post({ image, categories, title, footer, author, classNa
   function renderCategories() {
     return (
       <Group position="left">
-        {categories.map((category, i) => (
+        {props.categories.map((category, i) => (
           <Badge
             onClick={() => {
               null
@@ -290,11 +289,11 @@ export default function Post({ image, categories, title, footer, author, classNa
     return (
       <Group mt="lg">
         {/* TODO twitch GET /users?<...> and replace with profile image */}
-        <Avatar src={author.image} radius="sm" />
+        <Avatar src={props.author.image} radius="sm" />
         <div>
-          <Text weight={500}>{author.name}</Text>
+          <Text weight={500}>{props.author.name}</Text>
           <Text size="xs" color="dimmed">
-            {author.description}
+            {props.author.description}
           </Text>
         </div>
       </Group>
@@ -311,7 +310,7 @@ export default function Post({ image, categories, title, footer, author, classNa
           padding-right: 3rem; // leave space for bg decorations
         `}
       >
-        {truncate(title, { length: 100 })}
+        {truncate(props.title, { length: 100 })}
       </Text>
     )
   }
@@ -321,7 +320,7 @@ export default function Post({ image, categories, title, footer, author, classNa
     <Card
       p="lg"
       radius={12}
-      className={`${classes.card} ${className ?? ''}`}
+      className={`${classes.card} ${props.className ?? ''}`}
       /* move to classes */
       css={css`
         background-repeat: no-repeat;
@@ -344,7 +343,7 @@ export default function Post({ image, categories, title, footer, author, classNa
         }
       `}
     >
-      {categories.length > 0 && renderCategories()}
+      {props.categories.length > 0 && renderCategories()}
       {renderTitle()}
       {renderMetadata()}
       {renderFooter()}

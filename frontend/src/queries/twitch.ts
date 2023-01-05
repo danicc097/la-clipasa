@@ -49,7 +49,7 @@ export function useTwitchUserSubscriber() {
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchUserSubscriptionResponse> => {
-      if (!userId || twitchToken === "") return null
+      if (!userId || twitchToken === '') return null
 
       const { data } = await axios.get(
         formatURLWithQueryParams('https://api.twitch.tv/helix/subscriptions/user', {

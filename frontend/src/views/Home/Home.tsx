@@ -126,8 +126,9 @@ export default function Home() {
             />
             {Array(7)
               .fill(null)
-              .map((e) => (
+              .map((e, idx) => (
                 <Post
+                  key={idx}
                   author={{ name: 'some_user', description: 'posted X minutes ago', image: '' }}
                   categories={[]}
                   title={'Some title for this'}

@@ -18,7 +18,8 @@
   },
   "devDependencies": {
     "eslint": "^8.28.0",
-    "eslint-config-turbo": "latest",
+    "eslint-config-custom": "workspace:*",
+    "prettier": "^2.7.1",
     "turbo": "latest"
   },
   "packageManager": "pnpm@7.15.0"
