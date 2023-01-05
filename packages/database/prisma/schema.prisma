@@ -2,12 +2,16 @@
 // if for some obscure reason it doesn't work right disable pgbouncer and setup data proxy
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "fullTextSearch", "multiSchema"]
 }
 
 datasource db {
-  provider = "postgres"
-  url      = env("DATABASE_URL")
+  provider   = "postgres"
+  url        = env("DATABASE_URL")
+  // see supabase to replicate the schema they're stored in
+  extensions = [uuidOSSP(schema: "extensions", map: "uuid-ossp"), pg_trgm(schema: "extensions")]
+  schemas    = ["public", "extensions"]
 }
 
 enum PostCategory {
@@ -17,18 +21,22 @@ enum PostCategory {
   NO_SE_YO
   ORO
   DIAMANTE
+
+  @@schema("public")
 }
 
 enum Role {
   USER
   ADMIN
   MODERATOR
+
+  @@schema("public")
 }
 
 // users display, login and id will be constantly updated since twitch's /validate endpoint
 // must be called on startup and every hour. update only if diff to save up db and edge fn queries
 model User {
-  id           Int         @id @default(autoincrement())
+  id           String      @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
   displayName  String
   twitchId     String      @unique
   isSubscriber Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync
@@ -42,12 +50,14 @@ model User {
   posts        Post[]
   likedPosts   LikedPost[]
   savedPosts   SavedPost[]
+
+  @@schema("public")
 }
 
 model Post {
   id          Int            @id @default(autoincrement())
   pinned      Boolean        @default(false)
-  userId      Int
+  userId      String         @db.Uuid
   title       String
   // message embed content to show in modal when post is clicked as is,
   // coming from generated discord message embed (if the POST message response does not include the
@@ -66,27 +76,30 @@ model Post {
   SavedPost   SavedPost[]
   User        User           @relation(fields: [userId], references: [id])
 
-  @@index([categories], type: Gin) // filter "My posts"
+  @@index([userId, categories, createdAt], type: BTree) // filter "My posts"
+  @@schema("public")
 }
 
 model LikedPost {
   postId Int
-  userId Int
-  User   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
+  // composite pk index is enough for the first column (userId) // @@index([userId]) // filter "My posts"
   @@index([postId]) // post likes count
-  @@index([userId]) // filter "My posts"
+  @@schema("public")
 }
 
 model SavedPost {
   postId Int
-  userId Int
-  User   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
+  // composite pk index is enough for the first column (userId) // @@index([userId]) // filter "Saved posts"
   @@index([postId]) // post likes count
-  @@index([userId]) // filter "Saved posts"
+  @@schema("public")
 }

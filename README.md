@@ -11,6 +11,8 @@ See:
 
 ## TODO
 
+- prisma turbo: https://github.com/vercel/turbo/tree/main/examples/with-prisma
+
 - Edge function 5mb limit. Discord upload max 8MiB.
 
 
