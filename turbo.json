@@ -28,10 +28,11 @@
     },
     "build": {
       "dependsOn": [
-        "^build",
-        "^db:generate"
+        "^db:generate",
+        "^build"
       ],
       "outputs": [
+        "dist/**",
         "backend/.next/**",
         "frontend/dist/**"
       ]
