@@ -54,7 +54,7 @@ const useStyles = createStyles((theme) => {
       transition: 'all .3s ease-in-out',
 
       [theme.fn.smallerThan('sm')]: {
-        minWidth: '90vw',
+        width: '90vw',
       },
 
       ':hover': {

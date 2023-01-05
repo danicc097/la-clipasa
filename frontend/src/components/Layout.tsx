@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Code, Image } from '@mantine/core'
+import { Code, Image, ScrollArea } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
@@ -20,7 +20,6 @@ export default function Layout({ children }: LayoutProps) {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    // TODO if not user / not isAuthneticated -> fetch twitch user using ui slice twitchToken (only on startup)
     queryClient.invalidateQueries({
       predicate: (query) => (query.queryKey[0] as string).startsWith('twitch'),
     })
@@ -41,7 +40,7 @@ export default function Layout({ children }: LayoutProps) {
           flex-direction: column;
           justify-content: space-between;
           align-items: center;
-          min-height: 100vh;
+          min-height: 100%;
         `}
       >
         {children}

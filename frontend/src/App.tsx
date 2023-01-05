@@ -45,15 +45,12 @@ const Home = React.lazy(() => import('./views/Home/Home'))
 const Login = React.lazy(() => import('./views/Login/Login'))
 
 export default function App() {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('light')
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(
+    localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
+  )
   const toggleColorScheme = (value?: ColorScheme) => {
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
   }
-
-  useEffect(() => {
-    const newTheme = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light'
-    toggleColorScheme(newTheme)
-  }, [])
 
   useEffect(() => {
     localStorage.setItem('theme', colorScheme)
