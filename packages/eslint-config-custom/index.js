@@ -1,4 +1,18 @@
 module.exports = {
+  overrides: [
+    {
+      files: ['backend/**/*.{js,ts,jsx,tsx}'],
+      rules: {
+        'next/core-web-vitals': 'warn',
+      },
+    },
+    {
+      files: ['frontend/**/*.{js,ts,jsx,tsx}'],
+      rules: {
+        'plugin:react/recommended': 'warn',
+      },
+    },
+  ],
   rules: {
     'react/no-unknown-property': [
       'error',
@@ -29,8 +43,7 @@ module.exports = {
   },
   ignorePatterns: ['build/**/*', 'dist/**/*', '.next/**/*', 'node_modules/**/*'],
   extends: [
-    // "plugin:react/recommended",
-    'next/core-web-vitals',
+    'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
     'plugin:react-hooks/recommended',
