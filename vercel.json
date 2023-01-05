@@ -3,5 +3,8 @@
     "deploymentEnabled": {
       "dev": false
     }
+  },
+  "github": {
+    "silent": true
   }
 }

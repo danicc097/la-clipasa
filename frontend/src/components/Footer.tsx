@@ -8,11 +8,10 @@ const useStyles = createStyles((theme) => ({
     borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
 
-    // should fix
-    [theme.fn.smallerThan('md')]: {
-      position: 'absolute',
-      bottom: 0,
-    },
+    // [theme.fn.smallerThan('md')]: {
+    //   position: 'absolute',
+    //   bottom: 0,
+    // },
   },
 
   inner: {
