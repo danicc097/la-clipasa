@@ -5,8 +5,8 @@
   "types": "./index.ts",
   "private": true,
   "scripts": {
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate --accept-data-loss --force-reset",
+    "db:generate": "dotenv -e .env.development -- prisma generate",
+    "db:push": "dotenv -e .env.development -- prisma db push --skip-generate --accept-data-loss --force-reset",
     "db:migrate-dev": "dotenv -e .env.development -- prisma migrate dev",
     "db:seed": "dotenv -e .env.development -- prisma db seed",
     "prisma-dev": "dotenv -e .env.development -- prisma",

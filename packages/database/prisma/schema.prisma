@@ -72,8 +72,8 @@ model Post {
   updatedAt   DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
   deletedAt   DateTime?      @db.Timestamptz(3)
   categories  PostCategory[]
-  LikedPost   LikedPost[]
-  SavedPost   SavedPost[]
+  likedPost   LikedPost[]
+  savedPost   SavedPost[]
   User        User           @relation(fields: [userId], references: [id])
 
   @@index([userId, categories, createdAt], type: BTree) // filter "My posts"

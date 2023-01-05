@@ -1,6 +1,6 @@
-import { PostCategory } from 'database'
+import { PostCategory, Prisma } from 'database'
 import { NextRequest, NextResponse } from 'next/server'
-import { DiscordPostUpload, TwitchUser } from 'types'
+import { TwitchUser } from 'types'
 
 // can't use shared import
 export const config = {
@@ -50,8 +50,9 @@ export default async (req: NextRequest) => {
         return new Response(JSON.stringify({ messages }))
       }
       case 'POST': {
+        // move to api/posts and POST to discord after successful db create
         // need twitch current "display_name", title, twitch id and a single url or nothing if its a file upload
-        let payload: DiscordPostUpload
+        let payload: Prisma.PostUncheckedCreateInput
         try {
           payload = await req.json()
           console.log(payload)
@@ -68,26 +69,16 @@ export default async (req: NextRequest) => {
             "type": "rich"
           }'
           */
-        const res = await fetch(`https://discord.com/api/channels/${process.env.DISCORD_CHANNEL_ID}/messages`, {
-          headers: {
-            Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-          method: 'POST',
-        })
-        const body = await res.json()
-        console.log(res.status)
-        console.log(body)
 
         /**
+        UPDATE: not worth it, will call discord only when showing directly in modal
         To save up edge function calls:
         wait a few seconds and fetch discord message, which will contain a generated embed
         (we have 30s worth of edge function).
         Retry discord call until GET /messages/{id} returns a non-empty embed field
         */
 
-        return new Response(JSON.stringify(body))
+        return new Response(JSON.stringify('body'))
       }
       default:
         break

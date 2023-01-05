@@ -10,7 +10,8 @@ export default async function middleware(request: NextRequest, event: NextFetchE
   const twitchAuth = request.nextUrl.pathname.match(/\/api\/auth*/)
 
   if (!(getPost || twitchAuth || discord)) {
-    if (!(await validateTwitchToken(request.headers.get('Authorization')))) {
+    const token = request.headers.get('Authorization')?.split('Bearer ')[1]
+    if (!token || !(await validateTwitchToken(token))) {
       return new Response('unauthenticated', { status: 401 })
     }
   }

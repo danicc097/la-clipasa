@@ -125,11 +125,3 @@ export type TwitchUser = {
    */
   view_count: number
 }
-
-export type DiscordPostUpload = {
-  twitchUserId: TwitchUser['id']
-  twitchUserName: TwitchUser['display_name']
-  title: string
-  initialCategories: string[]
-  description: string
-}
