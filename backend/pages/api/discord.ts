@@ -1,4 +1,4 @@
-import { PostCategory, Prisma } from 'database'
+import { Prisma } from 'database'
 import { NextRequest, NextResponse } from 'next/server'
 import { TwitchUser } from 'types'
 
