@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd packages/database || exit
-pnpm run db:generate
+pnpm run db:migrate-dev
 cd - || exit

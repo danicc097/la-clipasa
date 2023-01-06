@@ -11,7 +11,10 @@ See:
 
 ## TODO
 
-- prisma turbo: https://github.com/vercel/turbo/tree/main/examples/with-prisma
+
+
+- [prisma data proxy cannot be used in local development ](https://github.com/prisma/prisma/issues/14398)
+Checkout [supabase js client for edge](https://github.com/supabase/supabase/discussions/6321)
 
 - Edge function 5mb limit. Discord upload max 8MiB.
 

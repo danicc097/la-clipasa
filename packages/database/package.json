@@ -5,15 +5,15 @@
   "types": "./index.ts",
   "private": true,
   "scripts": {
-    "db:generate": "dotenv -e .env.development -- prisma generate --data-proxy",
-    "db:push": "dotenv -e .env.development -- prisma db push --skip-generate --accept-data-loss --force-reset",
-    "db:migrate-dev": "dotenv -e .env.development -- prisma migrate dev",
-    "db:seed": "dotenv -e .env.development -- prisma db seed",
-    "prisma-dev": "dotenv -e .env.development -- prisma",
-    "prisma-dev:reset": "dotenv -e .env.development -- prisma migrate reset",
-    "prisma-dev:deploy": "dotenv -e .env.development -- prisma migrate deploy",
-    "prisma-dev:create-migration": "dotenv -e .env.development -- prisma migrate dev --create-only",
-    "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
+    "db:generate": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy",
+    "db:push": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma db push --skip-generate --accept-data-loss --force-reset",
+    "db:migrate-dev": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "prisma-dev": "prisma",
+    "prisma-dev:reset": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate reset",
+    "prisma-dev:deploy": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
+    "prisma-dev:create-migration": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev --create-only",
+    "prisma:migrate": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
   },
   "prisma": {
@@ -23,12 +23,12 @@
     "@prisma/client": "^4.8.0"
   },
   "devDependencies": {
-    "eslint-config-custom": "workspace:*",
     "@faker-js/faker": "^7.6.0",
     "@types/lodash": "^4.14.191",
     "@types/node": "18.11.18",
+    "eslint-config-custom": "workspace:*",
     "lodash": "^4.17.21",
-    "prisma": "^4.8.0",
+    "prisma": "^4.8.1",
     "ts-node": "^10.9.1"
   }
 }
