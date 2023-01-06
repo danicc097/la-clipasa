@@ -23,6 +23,18 @@ export const RoleNames: Record<DatabaseRole, string> = {
   USER: 'user',
 }
 
+export type UserUpdateOrCreate = {
+  displayName: string
+}
+
+/**
+ *
+ *
+ *  TWITCH
+ *
+ *
+ */
+
 export type TwitchTokenValidateResponse = {
   client_id: string
   login: string

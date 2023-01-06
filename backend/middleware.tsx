@@ -1,6 +1,7 @@
 import { NextFetchEvent, NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { validateTwitchToken } from './src/services/authentication'
+import cors from './lib/cors'
 
 // Up to 1,000,000 middleware invocations
 
@@ -24,10 +25,13 @@ export default async function middleware(request: NextRequest, event: NextFetchE
     requestHeaders.set('x-twitch-id', twitchId)
   }
 
-  return NextResponse.next({
-    request: {
-      // New request headers
-      headers: requestHeaders,
-    },
-  })
+  return cors(
+    request,
+    NextResponse.next({
+      request: {
+        // New request headers
+        headers: requestHeaders,
+      },
+    }),
+  )
 }

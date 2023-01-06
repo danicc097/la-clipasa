@@ -40,21 +40,21 @@ export function useTwitchUser() {
 export function useTwitchUserSubscriber() {
   const { twitchToken } = useUISlice()
   const { data: twitchUser } = useTwitchUser()
-  const userId = twitchUser?.data[0].id
+  const twitchId = twitchUser?.data[0].id
 
   return useQuery<TwitchUserSubscriptionResponse, AxiosError>({
-    queryKey: [`twitchUserSubscriber-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [`twitchUserSubscriber-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response.status) && failureCount < 3) return true
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchUserSubscriptionResponse> => {
-      if (!userId || twitchToken === '') return null
+      if (!twitchId || twitchToken === '') return null
 
       const { data } = await axios.get(
         formatURLWithQueryParams('https://api.twitch.tv/helix/subscriptions/user', {
           broadcaster_id: broadcaster.id,
-          user_id: userId,
+          user_id: twitchId,
         }),
         {
           headers: {
@@ -72,20 +72,20 @@ export function useTwitchUserSubscriber() {
 export function useTwitchUserFollower() {
   const { twitchToken } = useUISlice()
   const { data: twitchUser } = useTwitchUser()
-  const userId = twitchUser?.data[0].id
+  const twitchId = twitchUser?.data[0].id
 
   return useQuery<TwitchUserFollowResponse, AxiosError>({
-    queryKey: [`twitchUserFollower-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [`twitchUserFollower-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response.status) && failureCount < 3) return true
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchUserFollowResponse> => {
-      if (!userId) return null
+      if (!twitchId) return null
 
       const { data } = await axios.get(
         formatURLWithQueryParams('https://api.twitch.tv/helix/users/follows', {
-          from_id: userId,
+          from_id: twitchId,
           to_id: broadcaster.id,
         }),
         {
@@ -105,17 +105,17 @@ export function useTwitchValidateToken() {
   const { twitchToken } = useUISlice()
   const queryClient = useQueryClient()
   const { data: twitchUser } = useTwitchUser()
-  const userId = twitchUser?.data[0].id
+  const twitchId = twitchUser?.data[0].id
 
   return useQuery<TwitchTokenValidateResponse, AxiosError>({
-    queryKey: [`twitchValidateToken-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [`twitchValidateToken-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response.status) && failureCount < 3) return true
     },
     staleTime: 1000 * 3600, // 1h recommended
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchTokenValidateResponse> => {
-      if (!userId) return null
+      if (!twitchId) return null
 
       const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', {
         headers: {
@@ -136,17 +136,17 @@ export function useTwitchValidateToken() {
 export function useTwitchBroadcasterLive() {
   const { twitchToken } = useUISlice()
   const { data: twitchUser } = useTwitchUser()
-  const userId = twitchUser?.data[0].id
+  const twitchId = twitchUser?.data[0].id
 
   return useQuery<TwitchStreamResponse, AxiosError>({
-    queryKey: [`twitchBroadcasterLive-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [`twitchBroadcasterLive-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response.status) && failureCount < 3) return true
     },
     staleTime: 1000 * 3600, // 1h recommended
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchStreamResponse> => {
-      if (!userId) return null
+      if (!twitchId) return null
 
       const { data } = await axios.get(
         formatURLWithQueryParams('https://api.twitch.tv/helix/streams', { user_id: broadcaster.id }),
@@ -167,19 +167,19 @@ export function useTwitchBroadcasterLive() {
 // export function useTwitchFollow() {
 //   const { twitchToken } = useUISlice()
 //   const { data: twitchUser } = useTwitchUser()
-//   const userId = twitchUser?.data[0].id
+//   const twitchId = twitchUser?.data[0].id
 
 //   return useQuery<any, AxiosError>({
 //     enabled: false,
-//     queryKey: [`twitchFollow-${twitchToken}-${userId}`], // any state used inside the queryFn must be part of the queryKey
+//     queryKey: [`twitchFollow-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
 //     retry: (failureCount, error) => {
 //       if ([401,404].includes(error.response.status)  && failureCount < 3) return true
 //     },
 //     retryDelay: 1000,
 //     queryFn: async ({ signal }): Promise<any> => {
-//       if (!userId) return null
+//       if (!twitchId) return null
 
-//       const { data } = await axios.put(`https://api.twitch.tv/kraken/users/${userId}/follows/channels/${broadcaster.name}`, {
+//       const { data } = await axios.put(`https://api.twitch.tv/kraken/users/${twitchId}/follows/channels/${broadcaster.name}`, {
 //         headers: {
 //           Authorization: `Bearer ${twitchToken}`,
 //           'Client-Id': import.meta.env.VITE_TWITCH_CLIENT_ID ?? '',

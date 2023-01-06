@@ -15,6 +15,8 @@ import {
   useTwitchUserFollower,
   useTwitchUserSubscriber,
 } from 'src/queries/twitch'
+import { useUserPostMutation } from 'src/queries/api'
+import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 
 type LayoutProps = {
   children: React.ReactElement
@@ -24,12 +26,15 @@ export default function Layout({ children }: LayoutProps) {
   // doing query cache invalidation, etc. here since client is not yet initialized
   // in App and layout is used once. Maybe there's better options
   const queryClient = useQueryClient()
+  const { isAuthenticated } = useAuthenticatedUser()
   const { hash } = useLocation()
   const { twitchToken, setTwitchToken } = useUISlice()
   const twitchUser = useTwitchUser()
   const twitchUserFollower = useTwitchUserFollower()
   const twitchUserSubscriber = useTwitchUserSubscriber()
   const twitchBroadcasterLive = useTwitchBroadcasterLive()
+  const userPostMutation = useUserPostMutation()
+  const [updateUserAfterLogin, setUpdateUserAfterLogin] = useState(false)
 
   useEffect(() => {
     // the URL hash is processed by the browser only. not available in edge function/backend
@@ -37,6 +42,7 @@ export default function Layout({ children }: LayoutProps) {
     const parsedHash = new URLSearchParams(hash.split('#')[1])
     const token = parsedHash.get('access_token')
     if (token !== '' && token) {
+      setUpdateUserAfterLogin(true)
       setTwitchToken(token)
       // remove hash
       history.pushState('', document.title, window.location.pathname + window.location.search)
@@ -46,13 +52,21 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     if (twitchToken !== '') {
-      twitchUser.refetch().then(() => {
+      twitchUser.refetch().then((res) => {
         twitchUserSubscriber.refetch()
         twitchUserFollower.refetch()
         twitchBroadcasterLive.refetch()
       })
     }
-  }, [twitchToken])
+  }, [twitchToken, updateUserAfterLogin])
+
+  useEffect(() => {
+    if (updateUserAfterLogin && isAuthenticated) {
+      console.log('UPDATING USER AFTER OAUTH2 LOGIN')
+      userPostMutation.mutate({ displayName: twitchUser?.data?.data?.[0]?.display_name })
+      setUpdateUserAfterLogin(false)
+    }
+  }, [updateUserAfterLogin, isAuthenticated, twitchUser])
 
   useEffect(() => {
     queryClient.invalidateQueries({
