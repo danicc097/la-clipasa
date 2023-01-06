@@ -79,6 +79,21 @@ function getAllowedHeaders(req: Request, allowed?: string | string[]) {
   return headers
 }
 
+/**
+ * Usage:
+```
+export default async function handler(req: NextRequest) {
+// `cors` also takes care of handling OPTIONS requests
+return cors(
+  req,
+  new Response(JSON.stringify({ message: 'Hello World!' }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  })
+)
+}
+```
+ */
 export default async function cors(req: Request, res: Response, options?: CorsOptions) {
   const opts = { ...defaultOptions, ...options }
   const { headers } = res
