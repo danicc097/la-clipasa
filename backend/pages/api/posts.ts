@@ -44,6 +44,8 @@ export default async (req: NextRequest) => {
       }
     }
   } catch (error) {
+    if (!error) return new Response('internal server error', { status: 500 })
+
     if (error instanceof Prisma.PrismaClientValidationError) {
       console.log('error.message')
       console.log(error.message.match(/Argument .*/g))
