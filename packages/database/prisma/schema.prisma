@@ -83,7 +83,7 @@ model Post {
   savedPost   SavedPost[]
   User        User           @relation(fields: [userId], references: [id])
 
-  @@index([userId, categories, createdAt], type: BTree) // filter "My posts"
+  @@index([userId, categories, createdAt(sort: Desc)], type: BTree) // filter "My posts"
   @@schema("public")
 }
 
