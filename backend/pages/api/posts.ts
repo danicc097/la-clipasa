@@ -54,16 +54,16 @@ export default async (req: NextRequest) => {
         return new Response(JSON.stringify(post), { status: 201 })
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     if (!error) return new Response('internal server error', { status: 500 })
 
     try {
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      if (error?.message) {
         console.log('error.message')
         console.log(error.message.match(/Argument .*/g))
       }
     } catch (error) {}
-    // console.log(error)
+    console.log(error)
     return new Response(JSON.stringify(error), { status: 500 })
   }
 }

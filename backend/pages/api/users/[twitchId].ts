@@ -24,7 +24,7 @@ export const config = {
 export default async (req: NextRequest) => {
   const { searchParams } = new URL(req.url)
   const twitchId = searchParams.get('twitchId') ?? undefined
-
+  console.log('twithc id is, ', twitchId)
   try {
     switch (req.method) {
       case 'POST': {
@@ -41,7 +41,7 @@ export default async (req: NextRequest) => {
         const headerTwitchId = req.headers.get('x-twitch-id') as string
 
         const user = await prisma.user.upsert({
-          where: { twitchId: headerTwitchId },
+          where: { twitchId: twitchId },
           update: {
             displayName: payload.displayName,
           },
@@ -59,16 +59,16 @@ export default async (req: NextRequest) => {
         return new Response(JSON.stringify(user), { status: 201 })
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     if (!error) return new Response('internal server error', { status: 500 })
 
     try {
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      if (error?.message) {
         console.log('error.message')
         console.log(error.message.match(/Argument .*/g))
       }
     } catch (error) {}
-    // console.log(error)
+    console.log(error)
     return new Response(JSON.stringify(error), { status: 500 })
   }
 }
