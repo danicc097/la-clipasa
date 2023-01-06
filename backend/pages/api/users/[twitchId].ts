@@ -32,9 +32,9 @@ export default async (req: NextRequest) => {
         try {
           payload = await req.json()
           console.log(payload)
-          if (!payload.displayName) return cors(req, new Response('displayName is required', { status: 422 }))
+          if (!payload.displayName) return new Response('displayName is required', { status: 422 })
         } catch (error) {
-          return cors(req, new Response('missing payload', { status: 400 }))
+          return new Response('missing payload', { status: 400 })
         }
         // curl -X POST "https://edge-functions-backend.vercel.app/api/posts"  -H 'Authorization: Bearer 1btt566hxkovfzn4qwt2a6h8sdotnk' -H 'Client-Id: r2r4w2bedvlt0qmfexgpnzqvv1ymfq' -d '{"title":"title", "link":"link", "content":"content", "userId": "a32065f5-fc9e-4dfd-b292-4709d211a86c"}'
 
@@ -51,22 +51,22 @@ export default async (req: NextRequest) => {
           },
         })
 
-        return cors(req, new Response(JSON.stringify(user), { status: 201 }))
+        return new Response(JSON.stringify(user), { status: 201 })
       }
       case 'GET': {
         const user = await prisma.user.findFirst({ where: { twitchId: twitchId } })
 
-        return cors(req, new Response(JSON.stringify(user), { status: 201 }))
+        return new Response(JSON.stringify(user), { status: 201 })
       }
     }
   } catch (error) {
-    if (!error) return cors(req, new Response('internal server error', { status: 500 }))
+    if (!error) return new Response('internal server error', { status: 500 })
 
     if (error instanceof Prisma.PrismaClientValidationError) {
       console.log('error.message')
       console.log(error.message.match(/Argument .*/g))
     }
     // console.log(error)
-    return cors(req, new Response(JSON.stringify(error), { status: 500 }))
+    return new Response(JSON.stringify(error), { status: 500 })
   }
 }

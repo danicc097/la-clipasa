@@ -18,6 +18,10 @@ const nextConfig = {
   //     },
   //   ]
   // },
+
+  // experimental: {
+  //   urlImports: ['https://example.com/assets/', 'https://cdn.skypack.dev'],
+  // },
   reactStrictMode: true,
   images: {
     remotePatterns: [
