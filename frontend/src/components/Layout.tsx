@@ -34,6 +34,7 @@ export default function Layout({ children }: LayoutProps) {
   const twitchUserSubscriber = useTwitchUserSubscriber()
   const twitchBroadcasterLive = useTwitchBroadcasterLive()
   const userPostMutation = useUserPostMutation()
+
   const [updateUserAfterLogin, setUpdateUserAfterLogin] = useState(false)
 
   useEffect(() => {

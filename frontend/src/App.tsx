@@ -33,6 +33,9 @@ const queryClient = new QueryClient({
       staleTime: 300000,
       keepPreviousData: true,
     },
+    mutations: {
+      cacheTime: 1000 * 60 * 5, // 5 minutes
+    },
   },
   // queryCache,
 })

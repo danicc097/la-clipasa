@@ -28,6 +28,9 @@ export function useUser() {
   })
 }
 
+// will only be called on token renewal.
+// if user needs to refresh data instantly (new sub or follow to be able to post, etc.)
+// then logs out and back in
 export function useUserPostMutation() {
   const { twitchToken } = useUISlice()
   const { data: twitchUser } = useTwitchUser()
@@ -39,7 +42,7 @@ export function useUserPostMutation() {
       if (![401, 404].includes(error?.response?.status) && failureCount < 2) return true
     },
     retryDelay: 1000,
-    mutationFn: async (body: UserUpdateOrCreate): Promise<User | AxiosError> => {
+    mutationFn: async (body: UserUpdateOrCreate): Promise<User> => {
       const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/users/${twitchId}`, body, {
         // proxy: import.meta.env.VITE_URL, // https://github.com/axios/axios/issues/1358#issuecomment-624709818
         headers: {

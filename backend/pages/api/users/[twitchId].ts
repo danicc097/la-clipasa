@@ -24,7 +24,7 @@ export const config = {
 export default async (req: NextRequest) => {
   const { searchParams } = new URL(req.url)
   const twitchId = searchParams.get('twitchId') ?? undefined
-  console.log('twithc id is, ', twitchId)
+
   try {
     switch (req.method) {
       // will add moderators and admin by hand in db.
@@ -34,7 +34,9 @@ export default async (req: NextRequest) => {
         try {
           payload = await req.json()
           console.log(payload)
-          if (!payload.displayName) return new Response('displayName is required', { status: 422 })
+          if (payload.displayName === null) return new Response('displayName is required', { status: 422 })
+          if (payload.isFollower === null) return new Response('isFollower is required', { status: 422 })
+          if (payload.isSubscriber === null) return new Response('isSubscriber is required', { status: 422 })
         } catch (error) {
           return new Response('missing payload', { status: 400 })
         }
