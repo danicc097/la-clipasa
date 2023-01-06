@@ -36,20 +36,21 @@ enum Role {
 // users display, login and id will be constantly updated since twitch's /validate endpoint
 // must be called on startup and every hour. update only if diff to save up db and edge fn queries
 model User {
-  id           String      @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
-  displayName  String
-  twitchId     String      @unique
-  isSubscriber Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync
-  isFollower   Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync
+  id                 String      @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  displayName        String
+  dummyField         String      @unique
+  twitchId           String      @unique
+  renameIsSubscriber Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync
+  isFollower         Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync
   // Current twitchUser will always be compared to /follows and /subscriptions/user responses when these refetched
   // so when someone starts following an update is triggered on the next rerender.
-  role         Role        @default(USER)
-  createdAt    DateTime    @default(now()) @db.Timestamptz(3)
-  updatedAt    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
-  deletedAt    DateTime?   @db.Timestamptz(3)
-  posts        Post[]
-  likedPosts   LikedPost[]
-  savedPosts   SavedPost[]
+  role               Role        @default(USER)
+  createdAt          DateTime    @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
+  deletedAt          DateTime?   @db.Timestamptz(3)
+  posts              Post[]
+  likedPosts         LikedPost[]
+  savedPosts         SavedPost[]
 
   @@schema("public")
 }
