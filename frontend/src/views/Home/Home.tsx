@@ -20,35 +20,6 @@ import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
 
 export default function Home() {
-  const { hash } = useLocation()
-  const { twitchToken, setTwitchToken } = useUISlice()
-  const twitchUser = useTwitchUser()
-  const twitchUserFollower = useTwitchUserFollower()
-  const twitchUserSubscriber = useTwitchUserSubscriber()
-  const twitchBroadcasterLive = useTwitchBroadcasterLive()
-
-  useEffect(() => {
-    // the URL hash is processed by the browser only. not available in edge function/backend
-    // so must parse in useEffect
-    const parsedHash = new URLSearchParams(hash.split('#')[1])
-    const token = parsedHash.get('access_token')
-    if (token !== '' && token) {
-      setTwitchToken(token)
-      // remove hash
-      history.pushState('', document.title, window.location.pathname + window.location.search)
-    }
-  }, [hash, setTwitchToken])
-
-  useEffect(() => {
-    if (twitchToken !== '') {
-      twitchUser.refetch().then(() => {
-        twitchUserSubscriber.refetch()
-        twitchUserFollower.refetch()
-        twitchBroadcasterLive.refetch()
-      })
-    }
-  }, [twitchToken])
-
   // TODO padding before footer including image (right now empty background)
 
   return (

@@ -9,6 +9,12 @@ import { css } from '@emotion/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUISlice } from 'src/slices/ui'
 import Footer from 'src/components/Footer'
+import {
+  useTwitchBroadcasterLive,
+  useTwitchUser,
+  useTwitchUserFollower,
+  useTwitchUserSubscriber,
+} from 'src/queries/twitch'
 
 type LayoutProps = {
   children: React.ReactElement
@@ -18,6 +24,35 @@ export default function Layout({ children }: LayoutProps) {
   // doing query cache invalidation, etc. here since client is not yet initialized
   // in App and layout is used once. Maybe there's better options
   const queryClient = useQueryClient()
+  const { hash } = useLocation()
+  const { twitchToken, setTwitchToken } = useUISlice()
+  const twitchUser = useTwitchUser()
+  const twitchUserFollower = useTwitchUserFollower()
+  const twitchUserSubscriber = useTwitchUserSubscriber()
+  const twitchBroadcasterLive = useTwitchBroadcasterLive()
+
+  useEffect(() => {
+    // the URL hash is processed by the browser only. not available in edge function/backend
+    // so must parse in useEffect
+    const parsedHash = new URLSearchParams(hash.split('#')[1])
+    const token = parsedHash.get('access_token')
+    if (token !== '' && token) {
+      setTwitchToken(token)
+      // remove hash
+      history.pushState('', document.title, window.location.pathname + window.location.search)
+      // TODO call api POST /user and upsert (only will be done when login in, i.e. here)
+    }
+  }, [hash, setTwitchToken])
+
+  useEffect(() => {
+    if (twitchToken !== '') {
+      twitchUser.refetch().then(() => {
+        twitchUserSubscriber.refetch()
+        twitchUserFollower.refetch()
+        twitchBroadcasterLive.refetch()
+      })
+    }
+  }, [twitchToken])
 
   useEffect(() => {
     queryClient.invalidateQueries({
