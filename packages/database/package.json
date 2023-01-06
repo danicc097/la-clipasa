@@ -13,14 +13,15 @@
     "prisma-dev": "prisma",
     "prisma-dev:reset": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate reset",
     "prisma-dev:create-migration": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev --create-only",
-    "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
+    "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" npx prisma migrate deploy",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^4.8.1"
+    "@prisma/client": "^4.8.1",
+    "prisma": "^4.8.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
@@ -28,7 +29,6 @@
     "@types/node": "18.11.18",
     "eslint-config-custom": "workspace:*",
     "lodash": "^4.17.21",
-    "prisma": "^4.8.1",
     "ts-node": "^10.9.1"
   }
 }

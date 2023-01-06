@@ -150,13 +150,13 @@ importers:
       ts-node: ^10.9.1
     dependencies:
       '@prisma/client': 4.8.1_prisma@4.8.1
+      prisma: 4.8.1
     devDependencies:
       '@faker-js/faker': 7.6.0
       '@types/lodash': 4.14.191
       '@types/node': 18.11.18
       eslint-config-custom: link:../eslint-config-custom
       lodash: 4.17.21
-      prisma: 4.8.1
       ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq
 
   packages/eslint-config-custom:
@@ -1183,6 +1183,7 @@ packages:
   /@prisma/engines/4.8.1:
     resolution: {integrity: sha512-93tctjNXcIS+i/e552IO6tqw17sX8liivv8WX9lDMCpEEe3ci+nT9F+1oHtAafqruXLepKF80i/D20Mm+ESlOw==}
     requiresBuild: true
+    dev: false
 
   /@radix-ui/number/1.0.0:
     resolution: {integrity: sha512-Ofwh/1HX69ZfJRiRBMTy7rgjAzHmwe4kW9C9Y99HTRUcYLUuVT0KESFj15rPjRgKJs20GPq8Bm5aEDJ8DuA3vA==}
@@ -3747,6 +3748,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 4.8.1
+    dev: false
 
   /prop-types/15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}

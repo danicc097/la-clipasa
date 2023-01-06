@@ -28,7 +28,7 @@
     },
     "build": {
       "dependsOn": [
-        // "^db:generate", // TODO
+        // "^db:generate", // don't want frontend and backend to run at the same time
         "^build"
       ],
       "cache": false,
