@@ -27,6 +27,8 @@ export default async (req: NextRequest) => {
   console.log('twithc id is, ', twitchId)
   try {
     switch (req.method) {
+      // will add moderators and admin by hand in db.
+      // no need for PUT/PATCH
       case 'POST': {
         let payload: UserUpdateOrCreate
         try {
@@ -41,13 +43,21 @@ export default async (req: NextRequest) => {
         const headerTwitchId = req.headers.get('X-twitch-id') as string
         if (!headerTwitchId) return new Response(JSON.stringify('no header twitch id'), { status: 401 })
 
+        if (twitchId !== headerTwitchId) {
+          return new Response(JSON.stringify('cannot create a different user'), { status: 403 })
+        }
+
         const user = await prisma.user.upsert({
           where: { twitchId: twitchId },
           update: {
             displayName: payload.displayName,
+            isSubscriber: payload.isSubscriber,
+            isFollower: payload.isFollower,
           },
           create: {
             displayName: payload.displayName,
+            isSubscriber: payload.isSubscriber,
+            isFollower: payload.isFollower,
             twitchId: headerTwitchId,
           },
         })

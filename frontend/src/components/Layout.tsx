@@ -26,7 +26,7 @@ export default function Layout({ children }: LayoutProps) {
   // doing query cache invalidation, etc. here since client is not yet initialized
   // in App and layout is used once. Maybe there's better options
   const queryClient = useQueryClient()
-  const { isAuthenticated } = useAuthenticatedUser()
+  const { isAuthenticated, isFollower, isSubscriber } = useAuthenticatedUser()
   const { hash } = useLocation()
   const { twitchToken, setTwitchToken } = useUISlice()
   const twitchUser = useTwitchUser()
@@ -61,12 +61,24 @@ export default function Layout({ children }: LayoutProps) {
   }, [twitchToken, updateUserAfterLogin])
 
   useEffect(() => {
-    if (updateUserAfterLogin && isAuthenticated) {
-      console.log('UPDATING USER AFTER OAUTH2 LOGIN')
-      userPostMutation.mutate({ displayName: twitchUser?.data?.data?.[0]?.display_name })
+    if (updateUserAfterLogin && isAuthenticated && twitchUserFollower.isFetched && twitchUserSubscriber.isFetched) {
+      userPostMutation.mutate({
+        displayName: twitchUser?.data?.data?.[0]?.display_name,
+        isFollower,
+        isSubscriber,
+      })
       setUpdateUserAfterLogin(false)
     }
-  }, [updateUserAfterLogin, isAuthenticated, twitchUser])
+  }, [
+    updateUserAfterLogin,
+    isAuthenticated,
+    isFollower,
+    isSubscriber,
+    twitchUserFollower.isFetched,
+    twitchUserSubscriber.isFetched,
+    userPostMutation,
+    twitchUser?.data?.data,
+  ])
 
   useEffect(() => {
     queryClient.invalidateQueries({
