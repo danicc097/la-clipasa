@@ -7,6 +7,7 @@ export const config = {
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 
+// will be called directly so no cors
 export default async (request: NextRequest) => {
   try {
     console.log(request.url)
