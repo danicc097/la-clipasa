@@ -33,6 +33,10 @@ enum Role {
   @@schema("public")
 }
 
+// IMPORTANT: https://www.prisma.io/docs/guides/database/production-troubleshooting
+// A migration might fail if:
+//     - You modify a migration before running it and introduce a syntax error
+//     - You add a mandatory (NOT NULL) column to a table that already has data
 // users display, login and id will be constantly updated since twitch's /validate endpoint
 // must be called on startup and every hour. update only if diff to save up db and edge fn queries
 model User {

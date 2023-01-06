@@ -9,6 +9,7 @@
     "db:push": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma db push --skip-generate --accept-data-loss --force-reset",
     "db:migrate-dev": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev",
     "db:seed": "prisma db seed",
+    "prod-rollback": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" prisma migrate resolve --rolled-back ",
     "prisma-dev": "prisma",
     "prisma-dev:reset": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate reset",
     "prisma-dev:create-migration": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev --create-only",

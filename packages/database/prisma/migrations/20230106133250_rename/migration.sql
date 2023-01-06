@@ -8,8 +8,12 @@
 */
 -- AlterTable
 ALTER TABLE "public"."User" DROP COLUMN "isSubscriber",
-ADD COLUMN     "dummyField" TEXT NOT NULL,
+ADD COLUMN     "dummyField" TEXT,
 ADD COLUMN     "renameIsSubscriber" BOOLEAN NOT NULL DEFAULT false;
+
+update "User" set "dummyField" = 'dummy-default';
+
+ALTER TABLE "public"."User" ALTER COLUMN "dummyField" SET NOT NULL;
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_dummyField_key" ON "public"."User"("dummyField");
