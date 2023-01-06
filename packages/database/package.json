@@ -5,15 +5,15 @@
   "types": "./index.ts",
   "private": true,
   "scripts": {
-    "db:generate": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy",
-    "db:push": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma db push --skip-generate --accept-data-loss --force-reset",
-    "db:migrate-dev": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev",
+    "db:generate": "{ . ./.env || true; } && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy",
+    "db:push": "{ . ./.env || true; } && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma db push --skip-generate --accept-data-loss --force-reset",
+    "db:migrate-dev": "{ . ./.env || true; } && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev",
     "db:seed": "prisma db seed",
     "prisma-dev": "prisma",
-    "prisma-dev:reset": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate reset",
-    "prisma-dev:deploy": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
-    "prisma-dev:create-migration": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev --create-only",
-    "prisma:migrate": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
+    "prisma-dev:reset": "{ . ./.env || true; } && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate reset",
+    "prisma-dev:deploy": "{ . ./.env || true; } && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
+    "prisma-dev:create-migration": "{ . ./.env || true; } && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev --create-only",
+    "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
   },
   "prisma": {

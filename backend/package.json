@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "vercel-build": "next build",
+    "vercel-build": "pnpm run migrate && next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
+    "lint:fix": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix .",
+    "migrate": "cd ../packages/database && pnpm run prisma:migrate"
   },
   "dependencies": {
     "next": "13.1.1",
