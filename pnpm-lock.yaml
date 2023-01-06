@@ -141,7 +141,7 @@ importers:
   packages/database:
     specifiers:
       '@faker-js/faker': ^7.6.0
-      '@prisma/client': ^4.8.0
+      '@prisma/client': ^4.8.1
       '@types/lodash': ^4.14.191
       '@types/node': 18.11.18
       eslint-config-custom: workspace:*
@@ -149,7 +149,7 @@ importers:
       prisma: ^4.8.1
       ts-node: ^10.9.1
     dependencies:
-      '@prisma/client': 4.8.0_prisma@4.8.1
+      '@prisma/client': 4.8.1_prisma@4.8.1
     devDependencies:
       '@faker-js/faker': 7.6.0
       '@types/lodash': 4.14.191
@@ -1162,8 +1162,8 @@ packages:
       tslib: 2.4.1
     dev: true
 
-  /@prisma/client/4.8.0_prisma@4.8.1:
-    resolution: {integrity: sha512-Y1riB0p2W52kh3zgssP/YAhln3RjBFcJy3uwEiyjmU+TQYh6QTZDRFBo3JtBWuq2FyMOl1Rye8jxzUP+n0l5Cg==}
+  /@prisma/client/4.8.1_prisma@4.8.1:
+    resolution: {integrity: sha512-d4xhZhETmeXK/yZ7K0KcVOzEfI5YKGGEr4F5SBV04/MU4ncN/HcE28sy3e4Yt8UFW0ZuImKFQJE+9rWt9WbGSQ==}
     engines: {node: '>=14.17'}
     requiresBuild: true
     peerDependencies:
