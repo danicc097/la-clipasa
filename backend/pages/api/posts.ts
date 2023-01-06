@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
-import { Prisma, PrismaClient, PrismaEdge } from 'database'
+import { Prisma, PrismaClient } from 'database'
 import { discordPostUpload } from '../../src/services/discord'
+import prisma from '../../lib/prisma'
 
 // TODO https://github.com/prisma/prisma/issues/6219#issuecomment-1264724714
 // https://github.com/prisma/prisma/issues/10305#issuecomment-1148988650
 // https://www.prisma.io/blog/database-access-on-the-edge-8F0t1s1BqOJE?utm_source=summari
-// possibly need data proxy after all
-// if not working go for raw sql which should have been the first option anyway
-const prisma = new PrismaEdge.PrismaClient()
+// need data proxy after all, and prisma edge library if using edge functions
+// see https://github.com/prisma/prisma/issues/11712
+// Prisma's Data Proxy allows connecting to a database via HTTP (Prisma proxies HTTP to a regular TCP database connection).
+// Cloudflare Workers (or Functions) can't make TCP connections directly and databases
+// can't make HTTP connections by default (only way is an external service such as Postgrest or Data Proxy),
+// so the only way is to use the Data Proxy to connect via HTTP.
 
 // can't use shared import
 export const config = {
@@ -39,5 +43,12 @@ export default async (req: NextRequest) => {
         return new Response(JSON.stringify(post), { status: 201 })
       }
     }
-  } catch (error) {}
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      console.log('error.message')
+      console.log(error.message.match(/Argument .*/g))
+    }
+    // console.log(error)
+    return new Response(JSON.stringify(error), { status: 500 })
+  }
 }

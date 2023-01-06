@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd packages/database || exit
-pnpm run prisma-dev:generate
+pnpm run db:generate
 cd - || exit

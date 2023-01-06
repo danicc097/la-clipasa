@@ -5,14 +5,13 @@
   "types": "./index.ts",
   "private": true,
   "scripts": {
-    "db:generate": "dotenv -e .env.development -- prisma generate",
+    "db:generate": "dotenv -e .env.development -- prisma generate --data-proxy",
     "db:push": "dotenv -e .env.development -- prisma db push --skip-generate --accept-data-loss --force-reset",
     "db:migrate-dev": "dotenv -e .env.development -- prisma migrate dev",
     "db:seed": "dotenv -e .env.development -- prisma db seed",
     "prisma-dev": "dotenv -e .env.development -- prisma",
     "prisma-dev:reset": "dotenv -e .env.development -- prisma migrate reset",
     "prisma-dev:deploy": "dotenv -e .env.development -- prisma migrate deploy",
-    "prisma-dev:generate": "dotenv -e .env.development -- prisma generate",
     "prisma-dev:create-migration": "dotenv -e .env.development -- prisma migrate dev --create-only",
     "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
