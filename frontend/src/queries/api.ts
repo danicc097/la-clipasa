@@ -41,7 +41,7 @@ export function useUserPostMutation() {
     retryDelay: 1000,
     mutationFn: async (body: UserUpdateOrCreate): Promise<User | AxiosError> => {
       const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/users/${twitchId}`, body, {
-        proxy: import.meta.env.VITE_URL, // https://github.com/axios/axios/issues/1358#issuecomment-624709818
+        // proxy: import.meta.env.VITE_URL, // https://github.com/axios/axios/issues/1358#issuecomment-624709818
         headers: {
           Authorization: `Bearer ${twitchToken}`,
         },

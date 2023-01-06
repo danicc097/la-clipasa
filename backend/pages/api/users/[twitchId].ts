@@ -62,10 +62,12 @@ export default async (req: NextRequest) => {
   } catch (error) {
     if (!error) return new Response('internal server error', { status: 500 })
 
-    if (error instanceof Prisma.PrismaClientValidationError) {
-      console.log('error.message')
-      console.log(error.message.match(/Argument .*/g))
-    }
+    try {
+      if (error instanceof Prisma.PrismaClientValidationError) {
+        console.log('error.message')
+        console.log(error.message.match(/Argument .*/g))
+      }
+    } catch (error) {}
     // console.log(error)
     return new Response(JSON.stringify(error), { status: 500 })
   }
