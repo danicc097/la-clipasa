@@ -12,9 +12,9 @@
     "prod-rollback": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" prisma migrate resolve --rolled-back ",
     "prod-applied": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" prisma migrate resolve --applied ",
     "prisma-dev": "prisma",
-    "prisma-dev:reset": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate reset",
+    "prisma-dev:reset": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate reset",
     "prisma-dev:create-migration": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev --create-only",
-    "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" npx prisma migrate deploy",
+    "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
   },
   "prisma": {
