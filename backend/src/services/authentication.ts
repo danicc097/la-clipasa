@@ -1,7 +1,7 @@
 import { TwitchTokenValidateResponse } from 'types'
 import { formatURLWithQueryParams } from '../utils/url'
 
-export async function validateTwitchToken(token: string | null): Promise<string | null> {
+export async function validateTwitchToken(token?: string): Promise<string | null> {
   if (!token) return null
 
   const res = await fetch('https://id.twitch.tv/oauth2/validate', {
@@ -15,7 +15,6 @@ export async function validateTwitchToken(token: string | null): Promise<string 
   }
 
   const json: TwitchTokenValidateResponse = await res.json()
-  console.log(json)
 
   return json.user_id
 }
