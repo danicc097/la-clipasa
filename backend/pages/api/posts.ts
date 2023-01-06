@@ -29,6 +29,17 @@ export default async (req: NextRequest) => {
         break
       }
       case 'POST': {
+        // curl -X POST "https://edge-functions-backend.vercel.app/api/posts"  -H 'Authorization: Bearer 1btt566hxkovfzn4qwt2a6h8sdotnk' -H 'Client-Id: r2r4w2bedvlt0qmfexgpnzqvv1ymfq' -d '{"title":"title", "link":"link", "content":"content", "userId": "a32065f5-fc9e-4dfd-b292-4709d211a86c"}'
+
+        const headerTwitchId = req.headers.get('x-twitch-id')
+        if (!headerTwitchId) return new Response('unauthenticated', { status: 401 })
+
+        const user = await prisma.user.findFirst({ where: { twitchId: headerTwitchId } })
+
+        if (headerTwitchId !== user?.twitchId) {
+          console.log(`twitch id differs: ${headerTwitchId} - ${user?.twitchId}`)
+          return new Response(JSON.stringify('cannot post as a different user'), { status: 403 })
+        }
         let payload: Prisma.PostUncheckedCreateInput
         try {
           payload = await req.json()
