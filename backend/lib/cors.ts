@@ -14,7 +14,7 @@ interface CorsOptions {
 }
 
 const defaultOptions: CorsOptions = {
-  origin: ['http://localhost:5143'],
+  origin: ['http://localhost:5143', 'https://edge-functions-frontend.vercel.app'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,
@@ -33,7 +33,21 @@ function isOriginAllowed(origin: string, allowed: StaticOrigin): boolean {
 function getOriginHeaders(reqOrigin: string | undefined, origin: StaticOrigin) {
   const headers = new Headers()
 
-  headers.set('Access-Control-Allow-Origin', '*')
+  if (origin === '*') {
+    // Allow any origin
+    headers.set('Access-Control-Allow-Origin', '*')
+  } else if (typeof origin === 'string') {
+    // Fixed origin
+    headers.set('Access-Control-Allow-Origin', origin)
+    headers.append('Vary', 'Origin')
+  } else {
+    const allowed = isOriginAllowed(reqOrigin ?? '', origin)
+
+    if (allowed && reqOrigin) {
+      headers.set('Access-Control-Allow-Origin', reqOrigin)
+    }
+    headers.append('Vary', 'Origin')
+  }
 
   return headers
 }
