@@ -12,7 +12,7 @@
     "prisma-dev": "prisma",
     "prisma-dev:reset": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate reset",
     "prisma-dev:create-migration": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev --create-only",
-    "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
+    "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
   },
   "prisma": {

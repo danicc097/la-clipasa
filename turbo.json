@@ -31,6 +31,7 @@
         "^db:generate",
         "^build"
       ],
+      "cache": false,
       "outputs": [
         "dist/**",
         "backend/.next/**",
