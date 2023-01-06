@@ -28,7 +28,7 @@
     },
     "build": {
       "dependsOn": [
-        "^db:generate",
+        // "^db:generate", // TODO
         "^build"
       ],
       "cache": false,
