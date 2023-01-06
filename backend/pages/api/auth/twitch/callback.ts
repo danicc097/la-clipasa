@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import prisma from '../../../../lib/prisma'
 
 // can't use shared import
 export const config = {
@@ -6,8 +7,9 @@ export const config = {
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 
-export default async (request: NextRequest, response: any) => {
+export default async (request: NextRequest) => {
   try {
+    console.log(request.url)
     // TODO previews URL will be broken
     // but can extract slug and craft a sibling deployed package url from https://$NEXT_PUBLIC_VERCEL_URL
     // NEXT_PUBLIC_VERCEL_URL (The URL of the deployment. Example: my-site-7q03y4pi5.vercel.app)
@@ -18,6 +20,13 @@ export default async (request: NextRequest, response: any) => {
     // see:
     // https://github.com/vercel/vercel/discussions/6045
     // https://vercel.com/docs/concepts/deployments/generated-urls
+
+    // cannot create user or update user here, twitch sets token in hash so
+    // its not accessible.
+    // will explicitly  POST /users from the client which will upsert
+    // (https://www.prisma.io/docs/concepts/components/prisma-client/crud#update-or-create-records)
+    // the user on twitchId to save up calls
+
     return NextResponse.redirect(process.env.UI_URL ?? '/')
   } catch (error: any) {
     console.log(JSON.stringify(error))
