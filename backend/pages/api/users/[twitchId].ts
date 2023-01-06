@@ -38,7 +38,8 @@ export default async (req: NextRequest) => {
         }
         // curl -X POST "https://edge-functions-backend.vercel.app/api/posts"  -H 'Authorization: Bearer 1btt566hxkovfzn4qwt2a6h8sdotnk' -H 'Client-Id: r2r4w2bedvlt0qmfexgpnzqvv1ymfq' -d '{"title":"title", "link":"link", "content":"content", "userId": "a32065f5-fc9e-4dfd-b292-4709d211a86c"}'
 
-        const headerTwitchId = req.headers.get('x-twitch-id') as string
+        const headerTwitchId = req.headers.get('X-twitch-id') as string
+        if (!headerTwitchId) return new Response(JSON.stringify('no header twitch id'), { status: 401 })
 
         const user = await prisma.user.upsert({
           where: { twitchId: twitchId },

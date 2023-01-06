@@ -12,6 +12,21 @@ import cors from './lib/cors'
 export default async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers)
 
+  const discord = request.nextUrl.pathname.match(/\/api\/discord*/)
+  const getPost = request.nextUrl.pathname.match(/\/api\/posts*/) && request.method === 'GET'
+  const twitchAuth = request.nextUrl.pathname.match(/\/api\/auth*/)
+
+  const publicRoute = getPost || twitchAuth || discord
+
+  if (!publicRoute) {
+    const token = request.headers.get('Authorization')?.split('Bearer ')[1]
+    const twitchId = await validateTwitchToken(token)
+    if (!token || !twitchId) {
+      return cors(request, new Response('unauthenticated', { status: 401 }))
+    }
+    requestHeaders.set('X-twitch-id', twitchId)
+  }
+
   return cors(
     request,
     NextResponse.next({

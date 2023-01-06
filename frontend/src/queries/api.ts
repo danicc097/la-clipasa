@@ -36,7 +36,7 @@ export function useUserPostMutation() {
   return useMutation({
     mutationKey: [`apiUserPost-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error: AxiosError) => {
-      if (![401, 404].includes(error?.response?.status) && error.code !== 'ERR_NETWORK' && failureCount < 2) return true
+      if (![401, 404].includes(error?.response?.status) && failureCount < 2) return true
     },
     retryDelay: 1000,
     mutationFn: async (body: UserUpdateOrCreate): Promise<User | AxiosError> => {

@@ -19,6 +19,7 @@ const defaultOptions: CorsOptions = {
   preflightContinue: false,
   optionsSuccessStatus: 204,
   allowedHeaders: '*',
+  // 'Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-twitch-id',
   credentials: true,
 }
 
