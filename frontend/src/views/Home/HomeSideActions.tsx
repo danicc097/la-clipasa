@@ -21,10 +21,43 @@ import { truncate } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
 import CategoryBadges, { uniqueCategories } from 'src/components/CategoryBadges'
 import { emotesTextToHtml, htmlToEmotesText } from 'src/services/twitch'
+import { getCaretCoordinates, getCaretIndex } from 'src/utils/input'
 import { isURL } from 'src/utils/url'
 import type { NewPostRequest, PostCategoryNames } from 'types'
 
+const tooltipWithPx = 40
+
 const useStyles = createStyles((theme) => ({
+  tooltip: {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    width: `${tooltipWithPx}px`,
+    display: 'none',
+    zIndex: 10,
+    background: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4],
+    color: theme.colorScheme === 'light' ? theme.colors.dark[4] : theme.colors.gray[4],
+    borderRadius: '0.25rem',
+    padding: '0.4rem',
+    fontSize: '0.8rem',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    fontWeight: 700,
+
+    '::after': {
+      content: '" "',
+      position: 'absolute',
+      top: '100%',
+      left: '50%',
+      marginLeft: '-5px',
+      borderWidth: '5px',
+      borderStyle: 'solid',
+      borderColor: `${
+        theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]
+      } transparent transparent transparent`,
+    },
+  },
+
   sideActions: {
     alignSelf: 'flex-start',
     marginTop: '1rem',
@@ -70,15 +103,32 @@ interface BadgeCardProps {
   }[]
 }
 
-const EMOJI_SIZE = 28
+const EMOJI_SIZE = 24
+
+function toggleTooltip(event, contenteditable) {
+  const tooltip = document.getElementById('tooltip')
+  if (contenteditable.contains(event.target)) {
+    console.log('placing tooltip over target')
+    const { x, y } = getCaretCoordinates()
+    tooltip.setAttribute('aria-hidden', 'false')
+    tooltip.setAttribute('style', `display: inline-block; left: ${x - tooltipWithPx / 2}px; top: ${y - 36}px`)
+  } else {
+    tooltip.setAttribute('aria-hidden', 'true')
+    tooltip.setAttribute('style', 'display: none;')
+  }
+}
 
 export default function HomeSideActions({ title, description, country, badges }: BadgeCardProps) {
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
-  const inputRef = useRef(null)
+  const contentEditableRef = useRef(null)
+  /**
+   * contains a cleaner innerHTML than contentEditableRef
+   */
   const titleInputRef = useRef(null)
   const [titleInput, setTitleInput] = useState('some text before calieAMOR2 and after')
-  const [cursorPosition, setCursorPosition] = useState(0)
+  const [typedEmote, setTypedEmote] = useState('calieAMOR2')
+  const [caretPosition, setCaretPosition] = useState(0)
 
   const form = useForm<NewPostRequest>({
     initialValues: {
@@ -106,81 +156,96 @@ export default function HomeSideActions({ title, description, country, badges }:
 
   const renderNewPostModal = () => (
     <>
-      <Modal
+      {/* <Modal
         opened={newPostModalOpened}
         onClose={() => setNewPostModalOpened(false)}
         title="Create a new post"
         zIndex={20000}
-      >
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <div>
-            <Input
-              ref={inputRef}
-              component="div"
-              contentEditable
-              withAsterisk
-              label="Title"
-              placeholder="Enter a title"
-              {...form.getInputProps('title')}
-              onInput={(e) => {
-                // TODO see https://codesandbox.io/s/caret-coordinates-index-contenteditable-forked-yy6p8t?file=/index.html
-                // for both (1) cursor positioning after setTitleInput is called
-                // and (2) having tooltip showing current emote:
-                // if endswith is a valid emote, do not replace it directly after typing,
-                // show tooltip instead and return early, setting state "awaitEmoteCompletion" to true without replacing.
-                // theres a listener on keypress, if awaitEmoteCompletion && key is tab -> setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
-                // called from listener handler
-                const selectionStart = titleInputRef.current.selectionStart
-                const selectionEnd = titleInputRef.current.selectionEnd
-                setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
-                // TODO remember cursor position when replacing inner html
-                titleInputRef.current.selectionStart = selectionStart
-                titleInputRef.current.selectionEnd = selectionEnd
+      > */}
+      <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <div>
+          <Input
+            ref={contentEditableRef}
+            component="div"
+            contentEditable
+            withAsterisk
+            label="Title"
+            placeholder="Enter a title"
+            {...form.getInputProps('title')}
+            onInput={(e) => {
+              // TODO see https://codesandbox.io/s/caret-coordinates-index-contenteditable-forked-yy6p8t?file=/index.html
+              // for both (1) cursor positioning after setTitleInput is called
+              // and (2) having tooltip showing current emote:
+              // if endswith is a valid emote, do not replace it directly after typing,
+              // show tooltip instead and return early, setting state "awaitEmoteCompletion" to true without replacing.
+              // theres a listener on keypress, if awaitEmoteCompletion && key is tab -> setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
+              // called from listener handler
+              const selectionStart = titleInputRef.current.selectionStart
+              const selectionEnd = titleInputRef.current.selectionEnd
+              setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
+              // TODO remember cursor position when replacing inner html
+              titleInputRef.current.selectionStart = selectionStart
+              titleInputRef.current.selectionEnd = selectionEnd
+            }}
+            onClick={(e) => {
+              toggleTooltip(e, contentEditableRef.current)
+              setCaretPosition(getCaretIndex(contentEditableRef.current))
+            }}
+            onKeyUp={(e) => {
+              toggleTooltip(e, contentEditableRef.current)
+              setCaretPosition(getCaretIndex(contentEditableRef.current))
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || (e.key === 'Shift' && e.code === 'Enter')) {
+                e.preventDefault()
+              }
+            }}
+          >
+            <div
+              css={css`
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+              `}
+              ref={titleInputRef}
+              // TODO replacing on every text input, unless it's inside <img(.*)> else infinite recursion
+              dangerouslySetInnerHTML={{
+                __html: emotesTextToHtml(titleInput, EMOJI_SIZE),
               }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || (e.key === 'Shift' && e.code === 'Enter')) {
-                  e.preventDefault()
-                }
-              }}
-            >
-              <div
-                css={css`
-                  width: 100%;
-                  white-space: nowrap;
-                  overflow: hidden;
-                `}
-                ref={titleInputRef}
-                // TODO replacing on every text input, unless it's inside <img(.*)> else infinite recursion
-                dangerouslySetInnerHTML={{
-                  __html: emotesTextToHtml(titleInput, EMOJI_SIZE),
-                }}
-              ></div>
-            </Input>
-          </div>
+            ></div>
+          </Input>
+        </div>
 
-          <TextInput withAsterisk label="Link" placeholder="Enter a link" {...form.getInputProps('link')} />
+        <TextInput withAsterisk label="Link" placeholder="Enter a link" {...form.getInputProps('link')} />
 
-          <TextInput label="Content" placeholder="Enter a message" {...form.getInputProps('content')} />
-          <Text size={'xs'} opacity={'60%'}>
-            Leave message empty to show link by default.
-          </Text>
+        <TextInput label="Content" placeholder="Enter a message" {...form.getInputProps('content')} />
+        <Text size={'xs'} opacity={'60%'}>
+          Leave message empty to show link by default.
+        </Text>
 
-          <Group position="right" mt="md">
-            <Button variant="gradient" gradient={{ from: '#1864ab', to: '#497baa', deg: 225 }} type="submit">
-              Submit
-            </Button>
-          </Group>
-        </form>
-      </Modal>
+        <Group position="right" mt="md">
+          <Button variant="gradient" gradient={{ from: '#1864ab', to: '#497baa', deg: 225 }} type="submit">
+            Submit
+          </Button>
+        </Group>
+      </form>
+      {/* </Modal> */}
     </>
   )
 
   return (
     <>
-      {renderNewPostModal()}
+      {/* TODO reenable when caret working {renderNewPostModal()} */}
 
+      <span
+        className={classes.tooltip}
+        id="tooltip"
+        aria-hidden="true"
+        dangerouslySetInnerHTML={{ __html: emotesTextToHtml(typedEmote, EMOJI_SIZE) }}
+      ></span>
       <Group className={classes.sideActions}>
         <Card radius="md" p="md" className={classes.card}>
+          {renderNewPostModal()}
           <Card.Section className={classes.section} mt="md">
             <Group position="apart">
               <Text size="lg" weight={500}>

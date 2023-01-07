@@ -1,6 +1,6 @@
 import emoteSrc from './emotes.json'
 
-// alternatively check every time we log in. can GET more than user with &login=<loginname>
+// alternatively check every time we log in. can GET more than 1 user with &login=<loginname>
 export const broadcaster = {
   id: 52341091,
   name: 'caliebre',
@@ -9,8 +9,7 @@ export const broadcaster = {
 export const imgAttributes = 'style="pointer-events: none;"'
 
 /**
- * Returns an html string
-
+ * Returns an html string with known emotes replaced.
  * @example
   function Title() {
     return <h1 dangerouslySetInnerHTML={{ __html: emotesTextToHtml(title) }} />;
@@ -31,7 +30,6 @@ export function emotesTextToHtml(text: string, size: number) {
   return newHtml
 }
 
-// TODO
 export function htmlToEmotesText(html: string) {
   const plainText = html.replace(/<img[^>]+className\s*=\s*"([^"]*)"[^>]*>/gi, (match, className) => {
     return className
