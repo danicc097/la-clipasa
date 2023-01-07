@@ -22,13 +22,14 @@ export function emotesTextToHtml(text: string, size: number) {
     emote = emote.toLowerCase()
     newHtml = newHtml.replace(
       new RegExp(`${emote}`, 'gi'),
-      `<img className="${emote}" src="${emoteSrc[emote]}" width="${size}" height="${size}">`,
+      `<img title="${emote}" className="${emote}" src="${emoteSrc[emote]}" width="${size}" height="${size}">`,
     )
   })
 
   return newHtml
 }
 
+// TODO
 export function htmlToEmotesText(html: string) {
   const plainText = html.replace(/<img[^>]+className\s*=\s*"([^"]*)"[^>]*>/gi, (match, className) => {
     return className
