@@ -6,7 +6,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ./src"
+    "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ./src",
+    "test": "vitest watch",
+    "test:no-watch": "vitest run"
   },
   "dependencies": {
     "@babel/core": "^7.20.7",

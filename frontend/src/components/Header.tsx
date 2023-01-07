@@ -138,7 +138,7 @@ export default function Header({ tabs }: HeaderProps) {
         css={css`
           position: sticky;
           top: 0;
-          z-index: 99999;
+          z-index: 10000;
         `}
       >
         <MantineHeader height={60} px="md" sx={{ height: '100%' }} className={classes.header}>

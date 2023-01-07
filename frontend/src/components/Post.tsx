@@ -15,18 +15,18 @@ import {
   Button,
 } from '@mantine/core'
 import { IconHeart, IconBookmark, IconShare, IconVolumeOff, IconAlertTriangle, IconAlertOctagon } from '@tabler/icons'
-import emojiRana from 'src/assets/emoji-rana.png'
-import emojiOro from 'src/assets/emoji-oro.png'
-import emojiDiamante from 'src/assets/emoji-diamante.png'
 import { css } from '@emotion/react'
-import { ArrayElement, PostCategoryNames, RequiredKeys, Union } from 'types'
-import postDiamante from 'src/assets/post-diamante.png'
-import postOro from 'src/assets/post-oro.png'
-import postRana from 'src/assets/post-rana.png'
+import type { ArrayElement, PostCategoryNames, RequiredKeys, Union } from 'types'
 import { truncateIntegerToString } from 'src/utils/string'
-import { useState } from 'react'
+import { HTMLProps, useState } from 'react'
 import { truncate } from 'lodash-es'
-import { Prisma } from 'database' // cant use PostCategory exported const
+import type { PostCategory, Prisma } from 'database' // cant use PostCategory exported const
+import CategoryBadges, {
+  CardBackground,
+  PostCategoryKey,
+  uniqueCategoryBackground,
+} from 'src/components/CategoryBadges'
+import { parseEmotesText } from 'src/services/twitch'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -93,14 +93,11 @@ const useStyles = createStyles((theme) => {
   }
 })
 
-type PostCategoryKey = keyof typeof PostCategoryNames
-
-interface PostProps {
+interface PostProps extends HTMLProps<HTMLButtonElement> {
   /**
    * Overrides a default image for a category
    */
   image?: string
-  className?: string
   categories: Array<PostCategoryKey>
   title: string
   footer: JSX.Element
@@ -112,73 +109,17 @@ interface PostProps {
   }
 }
 
-const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
-  MEME_ARTESANAL: emojiRana,
-  DIAMANTE: emojiDiamante,
-  RANA: emojiRana,
-  ORO: emojiOro,
-}
-
-const EMOJI_SIZE = 16
-
-const categoryPreEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {}
-
-const categoryPostEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {
-  SIN_SONIDO: <IconVolumeOff size={EMOJI_SIZE} />,
-  NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
-}
-
-const categoryColorGradient: Record<PostCategoryKey, MantineGradient> = {
-  MEME_ARTESANAL: { from: 'teal', to: 'lime' },
-  DIAMANTE: { from: '#1c95b1', to: '#16758b' },
-  RANA: { from: 'teal', to: 'lime' },
-  ORO: { from: 'yellow', to: 'yellow' },
-  SIN_SONIDO: { from: 'gray', to: 'gray' },
-  NO_SE_YO: { from: 'red', to: 'red' },
-}
-
-/**
- * Restricted to 1 per post.
- */
-const uniqueCategories = {
-  DIAMANTE: true,
-  ORO: true,
-  RANA: true,
-}
-
-type UniqueCategoriesKeys<T extends object> = Extract<keyof T, keyof typeof uniqueCategories>
-
-type CardBackground = {
-  image: string
-  color: (theme: ColorScheme) => string
-}
-
-const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategoryNames>, CardBackground> = {
-  DIAMANTE: {
-    image: postDiamante,
-    color: (theme: ColorScheme) => (theme === 'light' ? '#b5d6e2' : '#36525a'),
-  },
-  RANA: {
-    image: postRana,
-    color: (theme: ColorScheme) => (theme === 'light' ? '#b4dbbd' : '#334838'),
-  },
-  ORO: {
-    image: postOro,
-    color: (theme: ColorScheme) => (theme === 'light' ? '#d9d3a1' : '#2f2b22'),
-  },
-}
-
 /**
  * Interesting possiblities:
  *  - broadcast polls for each post (just for admin or moderator)
  *
  */
 export default function Post(props: PostProps) {
+  const { image, categories, title, footer, likes, author, ...htmlProps } = props
   const { classes, theme } = useStyles()
-  const cardBackground: CardBackground =
-    uniqueCategoryBackground[props.categories.find((c) => uniqueCategoryBackground[c])]
-  const cardBackgroundImage = props.image ? props.image : cardBackground ? cardBackground.image : 'auto'
-  const cardBackgroundColor = props.image ? 'auto' : cardBackground ? cardBackground.color(theme.colorScheme) : 'auto'
+  const cardBackground: CardBackground = uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
+  const cardBackgroundImage = image ? image : cardBackground ? cardBackground.image : 'auto'
+  const cardBackgroundColor = image ? 'auto' : cardBackground ? cardBackground.color(theme.colorScheme) : 'auto'
   const [saveBeacon, setSaveBeacon] = useState(false)
   const [likeBeacon, setLikeBeacon] = useState(false)
   const [hasLiked, setHasLiked] = useState(true)
@@ -189,7 +130,7 @@ export default function Post(props: PostProps) {
       <Card.Section className={classes.footer}>
         <Group position="apart">
           <Text size="xs" color="dimmed">
-            {props.footer}
+            {footer}
           </Text>
           <Group spacing={8}>
             <Button
@@ -212,7 +153,7 @@ export default function Post(props: PostProps) {
                 />
               }
             >
-              <ActionIcon>{truncateIntegerToString(props.likes)}</ActionIcon>
+              <ActionIcon>{truncateIntegerToString(likes)}</ActionIcon>
             </Button>
             <ActionIcon
               className={`${classes.action} ${hasSaved && saveBeacon ? 'beacon' : ''}`}
@@ -238,63 +179,15 @@ export default function Post(props: PostProps) {
     )
   }
 
-  function renderCategories() {
-    return (
-      <Group position="left">
-        {props.categories.map((category, i) => (
-          <Badge
-            onClick={() => {
-              null
-            }}
-            key={i}
-            variant="gradient"
-            gradient={categoryColorGradient[category] ?? null}
-            css={css`
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              cursor: pointer;
-
-              :hover {
-                filter: brightness(1.2);
-              }
-            `}
-          >
-            <div
-              css={css`
-                display: flex;
-                align-items: center;
-                justify-content: center;
-
-                *:not(:first-child) {
-                  margin-left: 3px;
-                }
-              `}
-            >
-              {categoryEmojis[category] && (
-                <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
-              )}
-              <div>{PostCategoryNames[category] ?? category}</div>
-              {categoryPostEmojis[category]}
-              {categoryEmojis[category] && (
-                <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
-              )}
-            </div>
-          </Badge>
-        ))}
-      </Group>
-    )
-  }
-
   function renderMetadata() {
     return (
       <Group mt="lg">
         {/* TODO twitch GET /users?<...> and replace with profile image */}
-        <Avatar src={props.author.image} radius="sm" />
+        <Avatar src={author.image} radius="sm" />
         <div>
-          <Text weight={500}>{props.author.name}</Text>
+          <Text weight={500}>{author.name}</Text>
           <Text size="xs" color="dimmed">
-            {props.author.description}
+            {author.description}
           </Text>
         </div>
       </Group>
@@ -310,15 +203,15 @@ export default function Post(props: PostProps) {
         css={css`
           padding-right: 3rem; // leave space for bg decorations
         `}
-      >
-        {truncate(props.title, { length: 100 })}
-      </Text>
+        dangerouslySetInnerHTML={{ __html: parseEmotesText(truncate(title, { length: 100 }), 28) }}
+      ></Text>
     )
   }
 
   // TODO skeleton https://mantine.dev/core/skeleton/
   return (
     <Card
+      {...(htmlProps as any)}
       p="lg"
       radius={12}
       className={`${classes.card} ${props.className ?? ''}`}
@@ -344,7 +237,7 @@ export default function Post(props: PostProps) {
         }
       `}
     >
-      {props.categories.length > 0 && renderCategories()}
+      {categories.length > 0 && <CategoryBadges categories={categories} />}
       {renderTitle()}
       {renderMetadata()}
       {renderFooter()}

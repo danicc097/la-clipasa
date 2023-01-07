@@ -45,7 +45,7 @@
     "db:seed": {
       "cache": false
     },
-    "test": {
+    "test:no-watch": {
       "dependsOn": [
         "^build"
       ],
