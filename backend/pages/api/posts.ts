@@ -49,7 +49,7 @@ export default async (req: NextRequest) => {
         }
         const post = await prisma.post.create({ data: payload }) // obviously must explicitly set fields later
 
-        await discordPostUpload(post)
+        // await discordPostUpload(post)
 
         return new Response(JSON.stringify(post), { status: 201 })
       }

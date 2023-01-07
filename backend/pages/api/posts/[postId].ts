@@ -39,7 +39,7 @@ export default async (req: NextRequest) => {
 
         const post = await prisma.post.update({ data: payload, where: { id: Number(postId) } }) // obviously must explicitly set fields later
 
-        await discordPostUpload(post)
+        // await discordPostUpload(post)
 
         return new Response(JSON.stringify(post), { status: 201 })
       }
