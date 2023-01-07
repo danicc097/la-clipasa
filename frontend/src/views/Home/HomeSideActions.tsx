@@ -123,14 +123,19 @@ export default function HomeSideActions({ title, description, country, badges }:
               placeholder="Enter a title"
               {...form.getInputProps('title')}
               onInput={(e) => {
-                const selectionStart = e.currentTarget.selectionStart
-                const selectionEnd = e.currentTarget.selectionEnd
-                console.log(titleInputRef.current.innerHTML)
-                console.log(htmlToEmotesText(titleInputRef.current.innerHTML))
+                // TODO see https://codesandbox.io/s/caret-coordinates-index-contenteditable-forked-yy6p8t?file=/index.html
+                // for both (1) cursor positioning after setTitleInput is called
+                // and (2) having tooltip showing current emote:
+                // if endswith is a valid emote, do not replace it directly after typing,
+                // show tooltip instead and return early, setting state "awaitEmoteCompletion" to true without replacing.
+                // theres a listener on keypress, if awaitEmoteCompletion && key is tab -> setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
+                // called from listener handler
+                const selectionStart = titleInputRef.current.selectionStart
+                const selectionEnd = titleInputRef.current.selectionEnd
                 setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
                 // TODO remember cursor position when replacing inner html
-                e.currentTarget.selectionStart = selectionStart
-                e.currentTarget.selectionEnd = selectionEnd
+                titleInputRef.current.selectionStart = selectionStart
+                titleInputRef.current.selectionEnd = selectionEnd
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || (e.key === 'Shift' && e.code === 'Enter')) {

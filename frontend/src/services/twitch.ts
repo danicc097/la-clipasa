@@ -6,6 +6,8 @@ export const broadcaster = {
   name: 'caliebre',
 }
 
+export const imgAttributes = 'style="pointer-events: none;"'
+
 /**
  * Returns an html string
 
@@ -22,7 +24,7 @@ export function emotesTextToHtml(text: string, size: number) {
     emote = emote.toLowerCase()
     newHtml = newHtml.replace(
       new RegExp(`${emote}`, 'gi'),
-      `<img title="${emote}" className="${emote}" src="${emoteSrc[emote]}" width="${size}" height="${size}">`,
+      `<img ${imgAttributes} title="${emote}" className="${emote}" src="${emoteSrc[emote]}" width="${size}" height="${size}">`,
     )
   })
 
