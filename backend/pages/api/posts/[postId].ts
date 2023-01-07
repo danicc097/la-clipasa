@@ -15,7 +15,7 @@ export default async (req: NextRequest) => {
   const postId = searchParams.get('postId')
 
   if (!Number.isInteger(postId)) {
-    return new Response(JSON.stringify('post id must be an integer'), { status: 422 })
+    return new Response(JSON.stringify('invalid post id'), { status: 422 })
   }
   // individual post visualization when clicking on post or visiting it
   // (visit renders same thing as modal, which should include moderation actions, etc. already)
@@ -31,11 +31,25 @@ export default async (req: NextRequest) => {
         } catch (error) {
           return new Response('missing payload', { status: 400 })
         }
+        // will also use this route to moderate, pin messages.
+        // if payload contains `pinned`, `moderated` -> find user by twitch id and
+        // add to update data else ignore and save up that call
+        // we dont really need user to be follower or subscriber for basic
+        // post upload.
+
         const post = await prisma.post.update({ data: payload, where: { id: Number(postId) } }) // obviously must explicitly set fields later
 
         await discordPostUpload(post)
 
         return new Response(JSON.stringify(post), { status: 201 })
+      }
+      case 'DELETE': {
+        await prisma.post.delete({
+          where: { id: Number(postId) },
+          select: null,
+        })
+
+        return new Response(null, { status: 204 })
       }
     }
   } catch (error) {}

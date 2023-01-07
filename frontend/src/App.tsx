@@ -105,6 +105,7 @@ export default function App() {
                             {/* TODO
                             - reject url is not isURL
                             - show free services to upload if its not a link
+                            - this should really be a modal on Home, not a dedicated route
                             */}
                             <div>Upload post</div>
                           </ProtectedRoute>
@@ -116,7 +117,7 @@ export default function App() {
                       element={
                         <React.Suspense fallback={<FallbackLoader />}>
                           <ProtectedRoute>
-                            <div>Analytics page</div>
+                            <div> TODO: - Analytics page wiht plotly</div>
                           </ProtectedRoute>
                         </React.Suspense>
                       }
