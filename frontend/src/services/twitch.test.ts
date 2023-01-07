@@ -1,4 +1,5 @@
-import { emoteSrc, parseEmotesText } from 'src/services/twitch'
+import { parseEmotesText } from 'src/services/twitch'
+import emoteSrc from './emotes.json'
 import { describe, expect, it, test } from 'vitest'
 
 describe('roles and scopes', async () => {

@@ -1,20 +1,32 @@
-import { ActionIcon, Badge, Button, Card, Group, Modal, Text, TextInput, createStyles } from '@mantine/core'
+import {
+  ActionIcon,
+  Badge,
+  Button,
+  Card,
+  Group,
+  Modal,
+  Popover,
+  Text,
+  TextInput,
+  Tooltip,
+  createStyles,
+} from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { IconHeart } from '@tabler/icons'
 import type { PostCategory } from 'database'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import CategoryBadges, { uniqueCategories } from 'src/components/CategoryBadges'
 import { isURL } from 'src/utils/url'
-import { NewPostRequest, PostCategoryNames } from 'types'
+import type { NewPostRequest, PostCategoryNames } from 'types'
 
 const useStyles = createStyles((theme) => ({
   sideActions: {
     alignSelf: 'flex-start',
     marginTop: '1rem',
-    [theme.fn.smallerThan('xl')]: {
-      // TODO burger menu on Header left
-      display: 'none',
-    },
+    // [theme.fn.smallerThan('xl')]: {
+    //   // TODO burger menu on Header left
+    //   display: 'none',
+    // },
   },
 
   card: {
@@ -56,12 +68,9 @@ interface BadgeCardProps {
 export default function HomeSideActions({ title, description, country, badges }: BadgeCardProps) {
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
-
-  const features = badges.map((badge) => (
-    <Badge color={theme.colorScheme === 'dark' ? 'dark' : 'gray'} key={badge.label} leftSection={badge.emoji}>
-      {badge.label}
-    </Badge>
-  ))
+  const inputRef = useRef(null)
+  const overlayRef = useRef(null)
+  const [cursorPosition, setCursorPosition] = useState({ transform: `translate3d(0px, 0px, 0)` })
 
   const form = useForm<NewPostRequest>({
     initialValues: {
@@ -96,8 +105,23 @@ export default function HomeSideActions({ title, description, country, badges }:
         zIndex={20000}
       >
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <TextInput withAsterisk label="Title" placeholder="Enter a title" {...form.getInputProps('title')} />
+          {/* <img
+            src={'https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_b2a90f8e209e40d697364649cf5a2d2c/default/dark/3.0'}
+            width={24}
+            height={24}
+            style={{ position: 'absolute', zIndex: 99999999, ...cursorPosition }}
+          /> */}
+          <div>
+            <TextInput
+              ref={inputRef}
+              withAsterisk
+              label="Title"
+              placeholder="Enter a title"
+              {...form.getInputProps('title')}
+            />
+          </div>
           <TextInput withAsterisk label="Link" placeholder="Enter a link" {...form.getInputProps('link')} />
+
           <TextInput label="Content" placeholder="Enter a message" {...form.getInputProps('content')} />
           <Text size={'xs'} opacity={'60%'}>
             Leave message empty to show link by default.

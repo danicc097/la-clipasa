@@ -1,11 +1,9 @@
+import emoteSrc from './emotes.json'
+
 // alternatively check every time we log in. can GET more than user with &login=<loginname>
 export const broadcaster = {
   id: 52341091,
   name: 'caliebre',
-}
-
-export const emoteSrc = {
-  calieAMOR: 'https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_b2a90f8e209e40d697364649cf5a2d2c/default/dark/3.0',
 }
 
 /**
