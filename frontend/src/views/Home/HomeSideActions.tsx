@@ -19,11 +19,11 @@ import { IconHeart } from '@tabler/icons'
 import type { PostCategory } from 'database'
 import { truncate } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
-import CategoryBadges, { uniqueCategories } from 'src/components/CategoryBadges'
+import CategoryBadges, { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadges'
 import { emotesTextToHtml, htmlToEmotesText } from 'src/services/twitch'
 import { getCaretCoordinates, getCaretIndex } from 'src/utils/input'
 import { isURL } from 'src/utils/url'
-import type { NewPostRequest, PostCategoryNames } from 'types'
+import { NewPostRequest, PostCategoryNames } from 'types'
 
 const tooltipWithPx = 40
 
@@ -125,7 +125,7 @@ export default function HomeSideActions({ title, description, country, badges }:
    * contains a cleaner innerHTML than contentEditableRef
    */
   const titleInputRef = useRef(null)
-  const [titleInput, setTitleInput] = useState('some text before calieAMOR2 and after')
+  const [titleInput, setTitleInput] = useState('<br>')
   const [typedEmote, setTypedEmote] = useState('calieAMOR2')
   const [caretPosition, setCaretPosition] = useState(0)
 
@@ -154,11 +154,35 @@ export default function HomeSideActions({ title, description, country, badges }:
   })
 
   useEffect(() => {
-    contentEditableRef.current.selectionStart = caretPosition
-    contentEditableRef.current.selectionEnd = caretPosition
-    titleInputRef.current.selectionStart = caretPosition
-    titleInputRef.current.selectionEnd = caretPosition
-  }, [caretPosition, titleInput])
+    try {
+      if (!titleInputRef.current) return
+      console.log(titleInput)
+      console.log(titleInput.length)
+      console.log(caretPosition)
+
+      const range = document.createRange()
+      const sel = window.getSelection()
+      const nodeIdx = 0
+      const pos = caretPosition > titleInput.length ? titleInput.length : caretPosition
+      console.log('titleInputRef.current')
+      console.log(titleInputRef.current)
+      console.log(titleInputRef.current.childNodes[nodeIdx])
+      // TODO contenteditable node is useless, need to account for pos in contenteditable based on <img> rendered,
+      //  therefore need add/remove 1 to child nodeIdx to account for new emojis added/deleted
+      // (if we always start with empty string as title then it should be trivial unless someone decides to delete/add
+      // an emote afterwards which wil fail to set cursor properly but we don't care at that point since the user was
+      // not typing)
+      // TODO working now starting empty, need to have nodeIdx = nodeIdx + 1 when a new emote is added
+      // some text before calieAMOR2 and after
+      range.setStart(titleInputRef.current.childNodes[nodeIdx], pos)
+      range.collapse(true)
+
+      sel.removeAllRanges()
+      sel.addRange(range)
+    } catch (error: any) {
+      console.log('failed to set cursor position: ', error)
+    }
+  }, [titleInput])
 
   const renderNewPostModal = () => (
     <>
@@ -179,6 +203,10 @@ export default function HomeSideActions({ title, description, country, badges }:
             label="Title"
             placeholder="Enter a title"
             {...form.getInputProps('title')}
+            css={css`
+              text-align: center;
+              vertical-align: middle;
+            `}
             onInput={(e) => {
               // for both (1) cursor positioning after setTitleInput is called
               // and (2) having tooltip showing current emote:
@@ -186,10 +214,15 @@ export default function HomeSideActions({ title, description, country, badges }:
               // show tooltip instead and return early, setting state "awaitEmoteCompletion" to true without replacing.
               // theres a listener on keypress, if awaitEmoteCompletion && key is tab -> setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
               // called from listener handler
-              const caretPosition = getCaretIndex(contentEditableRef.current)
+              const caretPosition = getCaretIndex(titleInputRef.current)
+              // TODO remove newlines in case of copypasting (and general sanitizing)
               setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
               setCaretPosition(caretPosition)
               // TODO remember cursor position when replacing inner html
+            }}
+            onChange={(e) => {
+              const caretPosition = getCaretIndex(contentEditableRef.current)
+              setCaretPosition(caretPosition)
             }}
             onClick={(e) => {
               toggleTooltip(e, titleInputRef.current)
@@ -271,7 +304,7 @@ export default function HomeSideActions({ title, description, country, badges }:
               Filter by category
             </Text>
             <Group spacing={7} mt={5}>
-              <CategoryBadges categories={Object.keys(uniqueCategories) as PostCategory[]} />
+              <CategoryBadges categories={Object.keys(PostCategoryNames) as PostCategory[]} />
             </Group>
           </Card.Section>
 

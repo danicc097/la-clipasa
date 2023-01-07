@@ -14,7 +14,6 @@ import { css } from '@emotion/react'
 export type PostCategoryKey = keyof typeof PostCategoryNames
 
 export const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
-  MEME_ARTESANAL: emojiRana,
   DIAMANTE: emojiDiamante,
   RANA: emojiRana,
   ORO: emojiOro,
