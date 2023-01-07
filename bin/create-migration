@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd packages/database || exit
+pnpm run db-local:create-migration
+cd - || exit

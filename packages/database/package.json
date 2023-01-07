@@ -6,14 +6,15 @@
   "private": true,
   "scripts": {
     "db:generate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy",
-    "db:push": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma db push --skip-generate --accept-data-loss --force-reset",
-    "db:migrate-dev": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate dev",
+    "db-local:generate": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma generate",
+    "db-local:push": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma db push --skip-generate --accept-data-loss --force-reset",
+    "db-local:migrate": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma migrate dev",
+    "db-local:create-migration": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma migrate dev --create-only && pnpm run db-local:generate",
     "db:seed": "prisma db seed",
     "prod-rollback": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" prisma migrate resolve --rolled-back ",
     "prod-applied": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" prisma migrate resolve --applied ",
     "prisma-dev": "prisma",
     "prisma-dev:reset": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate reset",
-    "prisma-dev:create-migration": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma migrate dev --create-only",
     "prisma:migrate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate deploy",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
   },

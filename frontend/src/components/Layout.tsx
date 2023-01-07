@@ -15,7 +15,7 @@ import {
   useTwitchUserFollower,
   useTwitchUserSubscriber,
 } from 'src/queries/twitch'
-import { useUserPostMutation } from 'src/queries/api'
+import { useUserPostMutation } from 'src/queries/api/users'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 
 type LayoutProps = {

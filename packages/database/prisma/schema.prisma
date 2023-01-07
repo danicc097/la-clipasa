@@ -42,9 +42,15 @@ enum Role {
 // ALTER TABLE "public"."User" ADD COLUMN "dummyField" TEXT;
 // UPDATE "User" SET "dummyField" = 'dummy-default';
 // ALTER TABLE "public"."User" ALTER COLUMN "dummyField" SET NOT NULL;
+
+// manual indexes and partial indexes, track
+// https://github.com/prisma/prisma/issues/16658
+// https://github.com/prisma/prisma/issues/3076
+
 model User {
   id           String      @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
   displayName  String
+  profileImage String?
   twitchId     String      @unique
   isSubscriber Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync
   isFollower   Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync
@@ -77,13 +83,16 @@ model Post {
   isModerated Boolean        @default(false)
   createdAt   DateTime       @default(now()) @db.Timestamptz(3)
   updatedAt   DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
-  deletedAt   DateTime?      @db.Timestamptz(3)
   categories  PostCategory[]
   likedPost   LikedPost[]
   savedPost   SavedPost[]
   User        User           @relation(fields: [userId], references: [id])
 
-  @@index([userId, categories, createdAt(sort: Desc)], type: BTree) // filter "My posts"
+  textsearchable_index_col Unsupported("tsvector")?
+
+  @@index([textsearchable_index_col], type: Gin)
+  // TODO when prisma allows manual indexes or specific postgres extension indexes switch to GIN btree
+  @@index([userId, isModerated, categories, createdAt(sort: Desc)], type: BTree) // filter "My posts"
   @@schema("public")
 }
 

@@ -20,10 +20,14 @@
     "VITE_URL"
   ],
   "pipeline": {
-    "db:generate": {
+    "db-local:generate": {
       "cache": false
     },
-    "db:push": {
+    // prisma cant run in non-interactive mode (turbo)
+    // "db-local:create-migration": {
+    //   "cache": false
+    // },
+    "db-local:push": {
       "cache": false
     },
     "build": {
