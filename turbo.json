@@ -56,7 +56,7 @@
     },
     "dev": {
       "dependsOn": [
-        "^db:generate"
+        "^db-local:generate"
       ],
       "cache": false
     },

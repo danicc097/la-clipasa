@@ -23,7 +23,7 @@ export const RoleNames: Record<DatabaseRole, string> = {
   USER: 'user',
 }
 
-export type UserUpdateOrCreate = Pick<User, 'displayName' | 'isFollower' | 'isSubscriber'>
+export type UserUpdateOrCreateRequest = Pick<User, 'displayName' | 'isFollower' | 'isSubscriber'>
 
 /**
  *

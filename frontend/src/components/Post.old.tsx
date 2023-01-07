@@ -23,13 +23,6 @@ function instagramVideoToEmbed(url: string) {
 export default function Post() {
   const [modalOpen, setModalOpen] = useState(false)
 
-  useEffect(() => {
-    const s = document.createElement('script')
-    s.setAttribute('src', 'https://platform.twitter.com/widgets.js')
-    s.setAttribute('async', 'true')
-    document.head.appendChild(s)
-  })
-
   return (
     <div className="ui styled fluid">
       {/* <Modal onClose={() => setModalOpen(false)} onOpen={() => setModalOpen(true)} open={modalOpen}>
@@ -45,14 +38,18 @@ export default function Post() {
             </a>
           </blockquote>{' '} */}
       {/* {instagramVideoToEmbed("https://www.instagram.com/p/CjxXTbmISOd")} */}
-      {/* <video width="100%" height="100%" controls>
+      {/*
+      works:
+      <video width="100%" height="100%" controls>
             <source
               src="https://cdn.discordapp.com/attachments/1058424616726565007/1058546769199366204/file_example_MP4_480_1_5MG.mp4"
               type="video/mp4"
             />
             Your browser does not support the video tag.
           </video> */}
-      {/* <Embed
+      {/*
+      works:
+      <Embed
             className="fullscreen"
             id="QHbK9C5mA94"
             placeholder="https://img.youtube.com/vi/QHbK9C5mA94/mqdefault.jpg"

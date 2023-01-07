@@ -87,6 +87,13 @@ export default function Layout({ children }: LayoutProps) {
     })
   }, [])
 
+  useEffect(() => {
+    const s = document.createElement('script')
+    s.setAttribute('src', 'https://platform.twitter.com/widgets.js') // also see  "react-twitter-embed"
+    s.setAttribute('async', 'true')
+    document.head.appendChild(s)
+  })
+
   return (
     <>
       <Helmet>

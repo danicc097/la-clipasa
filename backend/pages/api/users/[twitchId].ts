@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
 import { Post, Prisma, PrismaClient } from 'database'
 import prisma from '../../../lib/prisma'
-import { UserUpdateOrCreate } from 'types'
+import { UserUpdateOrCreateRequest } from 'types'
 import cors from '../../../lib/cors'
 
 // can't use shared import
@@ -30,7 +30,7 @@ export default async (req: NextRequest) => {
       // will add moderators and admin by hand in db.
       // no need for PUT/PATCH
       case 'POST': {
-        let payload: UserUpdateOrCreate
+        let payload: UserUpdateOrCreateRequest
         try {
           payload = await req.json()
           console.log(payload)

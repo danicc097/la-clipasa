@@ -3,7 +3,7 @@ import { useQuery, useQueryClient, QueryClient, useMutation } from '@tanstack/re
 import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY, useUISlice } from 'src/slices/ui'
 import type { User } from 'database'
 import { useTwitchUser } from 'src/queries/twitch'
-import type { UserUpdateOrCreate } from 'types'
+import type { UserUpdateOrCreateRequest } from 'types'
 
 export function useUser() {
   const { twitchToken } = useUISlice()
@@ -42,7 +42,7 @@ export function useUserPostMutation() {
       if (![401, 404].includes(error?.response?.status) && failureCount < 2) return true
     },
     retryDelay: 1000,
-    mutationFn: async (body: UserUpdateOrCreate): Promise<User> => {
+    mutationFn: async (body: UserUpdateOrCreateRequest): Promise<User> => {
       const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/users/${twitchId}`, body, {
         headers: {
           Authorization: `Bearer ${twitchToken}`,

@@ -76,6 +76,7 @@ importers:
       '@vitejs/plugin-react': ^2.1.0
       axios: ^1.2.2
       database: workspace:*
+      dayjs: ^1.11.7
       dotenv: ^16.0.3
       eslint-config-custom: workspace:*
       js-cookie: ^3.0.1
@@ -115,6 +116,7 @@ importers:
       '@types/react-helmet': 6.1.6
       axios: 1.2.2
       database: link:../packages/database
+      dayjs: 1.11.7
       dotenv: 16.0.3
       js-cookie: 3.0.1
       lodash: 4.17.21
@@ -1969,6 +1971,10 @@ packages:
   /damerau-levenshtein/1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
     dev: true
+
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
+    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
