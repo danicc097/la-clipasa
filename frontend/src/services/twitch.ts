@@ -7,24 +7,32 @@ export const broadcaster = {
 }
 
 /**
- * FIXME: Parses emotes text
- * we can actually use
+ * Returns an html string
 
  * @example
   function Title() {
-    return <h1 dangerouslySetInnerHTML={{ __html: parseEmotesText(title) }} />;
+    return <h1 dangerouslySetInnerHTML={{ __html: emotesTextToHtml(title) }} />;
   }
  */
-export function parseEmotesText(text: string, size: number) {
+export function emotesTextToHtml(text: string, size: number) {
   let newHtml = text
-  const emotes = newHtml.match(new RegExp(`${Object.keys(emoteSrc).join('|')}`, 'g'))
+  const emotes = newHtml.match(new RegExp(`${Object.keys(emoteSrc).join('|')}`, 'gi'))
 
   emotes?.forEach((emote) => {
+    emote = emote.toLowerCase()
     newHtml = newHtml.replace(
-      new RegExp(`${emote}`, 'g'),
-      `<Image className="${emote}" src="${emoteSrc[emote]}" width="${size}" height="${size}" /> `,
+      new RegExp(`${emote}`, 'gi'),
+      `<img className="${emote}" src="${emoteSrc[emote]}" width="${size}" height="${size}">`,
     )
   })
 
   return newHtml
+}
+
+export function htmlToEmotesText(html: string) {
+  const plainText = html.replace(/<img[^>]+className\s*=\s*"([^"]*)"[^>]*>/gi, (match, className) => {
+    return className
+  })
+
+  return plainText
 }

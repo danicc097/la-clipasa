@@ -20,7 +20,7 @@ import type { PostCategory } from 'database'
 import { truncate } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
 import CategoryBadges, { uniqueCategories } from 'src/components/CategoryBadges'
-import { parseEmotesText } from 'src/services/twitch'
+import { emotesTextToHtml, htmlToEmotesText } from 'src/services/twitch'
 import { isURL } from 'src/utils/url'
 import type { NewPostRequest, PostCategoryNames } from 'types'
 
@@ -77,8 +77,8 @@ export default function HomeSideActions({ title, description, country, badges }:
   const { classes, theme } = useStyles()
   const inputRef = useRef(null)
   const titleInputRef = useRef(null)
-  const [cursorPosition, setCursorPosition] = useState({ transform: `translate3d(0px, 0px, 0)` })
   const [titleInput, setTitleInput] = useState('some text before calieAMOR2 and after')
+  const [cursorPosition, setCursorPosition] = useState(0)
 
   const form = useForm<NewPostRequest>({
     initialValues: {
@@ -123,10 +123,14 @@ export default function HomeSideActions({ title, description, country, badges }:
               placeholder="Enter a title"
               {...form.getInputProps('title')}
               onInput={(e) => {
-                console.log(titleInputRef.current.innerHTML) // then parse and replace <img>'s className
-                setTitleInput(parseEmotesText(titleInputRef.current.innerHTML, EMOJI_SIZE))
+                const selectionStart = e.currentTarget.selectionStart
+                const selectionEnd = e.currentTarget.selectionEnd
+                console.log(titleInputRef.current.innerHTML)
+                console.log(htmlToEmotesText(titleInputRef.current.innerHTML))
+                setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
                 // TODO remember cursor position when replacing inner html
-                // e.currentTarget.positio
+                e.currentTarget.selectionStart = selectionStart
+                e.currentTarget.selectionEnd = selectionEnd
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || (e.key === 'Shift' && e.code === 'Enter')) {
@@ -143,7 +147,7 @@ export default function HomeSideActions({ title, description, country, badges }:
                 ref={titleInputRef}
                 // TODO replacing on every text input, unless it's inside <img(.*)> else infinite recursion
                 dangerouslySetInnerHTML={{
-                  __html: parseEmotesText(titleInput, EMOJI_SIZE),
+                  __html: emotesTextToHtml(titleInput, EMOJI_SIZE),
                 }}
               ></div>
             </Input>

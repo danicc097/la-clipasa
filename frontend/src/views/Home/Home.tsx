@@ -37,7 +37,7 @@ import type { NewPostRequest } from 'types'
 import { capitalize } from 'lodash-es'
 import { isURL } from 'src/utils/url'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
-import { parseEmotesText } from 'src/services/twitch'
+import { emotesTextToHtml } from 'src/services/twitch'
 
 const useStyles = createStyles((theme) => ({}))
 

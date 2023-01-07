@@ -26,7 +26,7 @@ import CategoryBadges, {
   PostCategoryKey,
   uniqueCategoryBackground,
 } from 'src/components/CategoryBadges'
-import { parseEmotesText } from 'src/services/twitch'
+import { emotesTextToHtml } from 'src/services/twitch'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -203,7 +203,7 @@ export default function Post(props: PostProps) {
         css={css`
           padding-right: 3rem; // leave space for bg decorations
         `}
-        dangerouslySetInnerHTML={{ __html: parseEmotesText(truncate(title, { length: 100 }), 28) }}
+        dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(title, { length: 100 }), 28) }}
       ></Text>
     )
   }
