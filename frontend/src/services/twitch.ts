@@ -22,7 +22,7 @@ export function parseEmotesText(text: string, size: number) {
   emotes?.forEach((emote) => {
     newHtml = newHtml.replace(
       new RegExp(`${emote}`, 'g'),
-      `<Image src="${emoteSrc[emote]}" width="${size}" height="${size}" /> `,
+      `<Image className="${emote}" src="${emoteSrc[emote]}" width="${size}" height="${size}" /> `,
     )
   })
 

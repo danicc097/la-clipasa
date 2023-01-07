@@ -1,21 +1,26 @@
+import { css } from '@emotion/react'
 import {
   ActionIcon,
   Badge,
   Button,
   Card,
   Group,
+  Input,
   Modal,
   Popover,
   Text,
   TextInput,
+  Textarea,
   Tooltip,
   createStyles,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { IconHeart } from '@tabler/icons'
 import type { PostCategory } from 'database'
+import { truncate } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
 import CategoryBadges, { uniqueCategories } from 'src/components/CategoryBadges'
+import { parseEmotesText } from 'src/services/twitch'
 import { isURL } from 'src/utils/url'
 import type { NewPostRequest, PostCategoryNames } from 'types'
 
@@ -65,12 +70,15 @@ interface BadgeCardProps {
   }[]
 }
 
+const EMOJI_SIZE = 28
+
 export default function HomeSideActions({ title, description, country, badges }: BadgeCardProps) {
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
   const inputRef = useRef(null)
-  const overlayRef = useRef(null)
+  const titleInputRef = useRef(null)
   const [cursorPosition, setCursorPosition] = useState({ transform: `translate3d(0px, 0px, 0)` })
+  const [titleInput, setTitleInput] = useState('some text before calieAMOR2 and after')
 
   const form = useForm<NewPostRequest>({
     initialValues: {
@@ -105,21 +113,42 @@ export default function HomeSideActions({ title, description, country, badges }:
         zIndex={20000}
       >
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          {/* <img
-            src={'https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_b2a90f8e209e40d697364649cf5a2d2c/default/dark/3.0'}
-            width={24}
-            height={24}
-            style={{ position: 'absolute', zIndex: 99999999, ...cursorPosition }}
-          /> */}
           <div>
-            <TextInput
+            <Input
               ref={inputRef}
+              component="div"
+              contentEditable
               withAsterisk
               label="Title"
               placeholder="Enter a title"
               {...form.getInputProps('title')}
-            />
+              onInput={(e) => {
+                console.log(titleInputRef.current.innerHTML) // then parse and replace <img>'s className
+                setTitleInput(parseEmotesText(titleInputRef.current.innerHTML, EMOJI_SIZE))
+                // TODO remember cursor position when replacing inner html
+                // e.currentTarget.positio
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || (e.key === 'Shift' && e.code === 'Enter')) {
+                  e.preventDefault()
+                }
+              }}
+            >
+              <div
+                css={css`
+                  width: 100%;
+                  white-space: nowrap;
+                  overflow: hidden;
+                `}
+                ref={titleInputRef}
+                // TODO replacing on every text input, unless it's inside <img(.*)> else infinite recursion
+                dangerouslySetInnerHTML={{
+                  __html: parseEmotesText(titleInput, EMOJI_SIZE),
+                }}
+              ></div>
+            </Input>
           </div>
+
           <TextInput withAsterisk label="Link" placeholder="Enter a link" {...form.getInputProps('link')} />
 
           <TextInput label="Content" placeholder="Enter a message" {...form.getInputProps('content')} />

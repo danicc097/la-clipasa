@@ -85,7 +85,7 @@ export default function Home() {
               }}
               categories={['SIN_SONIDO', 'DIAMANTE', 'NO_SE_YO']}
               title={
-                'Text with emote calieAMOR. A very very very very very very very very very very very very very very very very very very very very very very long post'
+                'Text with emote calieAMOR2. A very very very very very very very very very very very very very very very very very very very very very very long post'
               }
               className="post"
               footer={<div>footer div</div>}
