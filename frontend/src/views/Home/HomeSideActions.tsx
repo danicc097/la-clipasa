@@ -108,7 +108,6 @@ const EMOJI_SIZE = 24
 function toggleTooltip(event, contenteditable) {
   const tooltip = document.getElementById('tooltip')
   if (contenteditable.contains(event.target)) {
-    console.log('placing tooltip over target')
     const { x, y } = getCaretCoordinates()
     tooltip.setAttribute('aria-hidden', 'false')
     tooltip.setAttribute('style', `display: inline-block; left: ${x - tooltipWithPx / 2}px; top: ${y - 36}px`)
@@ -154,6 +153,13 @@ export default function HomeSideActions({ title, description, country, badges }:
     },
   })
 
+  useEffect(() => {
+    contentEditableRef.current.selectionStart = caretPosition
+    contentEditableRef.current.selectionEnd = caretPosition
+    titleInputRef.current.selectionStart = caretPosition
+    titleInputRef.current.selectionEnd = caretPosition
+  }, [caretPosition, titleInput])
+
   const renderNewPostModal = () => (
     <>
       {/* <Modal
@@ -163,6 +169,7 @@ export default function HomeSideActions({ title, description, country, badges }:
         zIndex={20000}
       > */}
       <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        {caretPosition}
         <div>
           <Input
             ref={contentEditableRef}
@@ -173,27 +180,28 @@ export default function HomeSideActions({ title, description, country, badges }:
             placeholder="Enter a title"
             {...form.getInputProps('title')}
             onInput={(e) => {
-              // TODO see https://codesandbox.io/s/caret-coordinates-index-contenteditable-forked-yy6p8t?file=/index.html
               // for both (1) cursor positioning after setTitleInput is called
               // and (2) having tooltip showing current emote:
               // if endswith is a valid emote, do not replace it directly after typing,
               // show tooltip instead and return early, setting state "awaitEmoteCompletion" to true without replacing.
               // theres a listener on keypress, if awaitEmoteCompletion && key is tab -> setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
               // called from listener handler
-              const selectionStart = titleInputRef.current.selectionStart
-              const selectionEnd = titleInputRef.current.selectionEnd
+              const caretPosition = getCaretIndex(contentEditableRef.current)
               setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
+              setCaretPosition(caretPosition)
               // TODO remember cursor position when replacing inner html
-              titleInputRef.current.selectionStart = selectionStart
-              titleInputRef.current.selectionEnd = selectionEnd
             }}
             onClick={(e) => {
-              toggleTooltip(e, contentEditableRef.current)
-              setCaretPosition(getCaretIndex(contentEditableRef.current))
+              toggleTooltip(e, titleInputRef.current)
+              const caretPosition = getCaretIndex(contentEditableRef.current)
+              console.log(caretPosition)
+              setCaretPosition(caretPosition)
             }}
             onKeyUp={(e) => {
-              toggleTooltip(e, contentEditableRef.current)
-              setCaretPosition(getCaretIndex(contentEditableRef.current))
+              toggleTooltip(e, titleInputRef.current)
+              const caretPosition = getCaretIndex(contentEditableRef.current)
+              if (caretPosition === 0) return
+              setCaretPosition(caretPosition)
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || (e.key === 'Shift' && e.code === 'Enter')) {
