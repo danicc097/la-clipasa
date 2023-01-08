@@ -123,7 +123,7 @@ export default function HomeSideActions() {
   /**
    * contains a cleaner innerHTML than contentEditableRef
    */
-  const titleInputRef = useRef(null)
+  const titleInputRef = useRef<HTMLInputElement>(null)
   const initialTitleInput = '<br>'
   const [titleInput, setTitleInput] = useState(htmlToEmotesText(storedNewPostForm?.title ?? initialTitleInput))
   const [typedEmote, setTypedEmote] = useState('')
@@ -213,6 +213,21 @@ export default function HomeSideActions() {
     localStorage.setItem(NEW_POST_FORM_KEY, JSON.stringify(form.values))
   }, [form.values])
 
+  // not working atm
+  function getStringUpToCursor(input: HTMLInputElement) {
+    // Get the index of the character where the selection starts
+    // or the index of the cursor if there is no selection
+    const range = document.createRange()
+    const sel = window.getSelection()
+    range.setStart(input, caretPosition)
+    range.collapse(true)
+    sel.removeAllRanges()
+    sel.addRange(range)
+    console.log('range ', range.toString())
+    // Return the substring up to the cursor position
+    return range.toString()
+  }
+
   const renderNewPostModal = () => (
     <>
       <Modal
@@ -224,6 +239,14 @@ export default function HomeSideActions() {
       >
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           {caretPosition}
+          <TextInput
+            ref={titleInputRef}
+            disabled
+            withAsterisk
+            label="Title"
+            placeholder="Enter a title"
+            {...form.getInputProps('title')}
+          />
           <div>
             <Text size={'sm'}>
               Title
