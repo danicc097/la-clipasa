@@ -7,6 +7,7 @@ import {
   Checkbox,
   Code,
   Container,
+  Flex,
   Group,
   ScrollArea,
   Space,
@@ -45,7 +46,7 @@ const useStyles = createStyles((theme) => ({}))
 export default function Home() {
   const { classes } = useStyles()
   // TODO show HomeSideActions as menu
-  const [burgerOpened, setBurgerOpened] = useState(false)
+  const { burgerOpened, setBurgerOpened } = useUISlice()
   const title = burgerOpened ? 'Close navigation' : 'Open navigation'
 
   return (
@@ -62,7 +63,7 @@ export default function Home() {
           backgroundPosition: '50% 50%',
         }}
       />
-      <Group style={{ padding: 0 }} position="apart">
+      <Flex style={{ padding: 0 }} direction="row" justify={'space-between'}>
         <ScrollArea style={{ height: '100vh', alignSelf: 'flex-start', marginTop: '1rem' }} type="never">
           <Container
             css={css`
@@ -129,8 +130,15 @@ export default function Home() {
               ))}
           </Container>
         </ScrollArea>
-        <HomeSideActions />
-      </Group>
+        <Space p={5} />
+        <HomeSideActions
+          css={css`
+            @media only screen and (max-width: 1200px) {
+              display: none;
+            }
+          `}
+        />
+      </Flex>
     </>
   )
 }

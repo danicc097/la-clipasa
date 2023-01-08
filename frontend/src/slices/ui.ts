@@ -7,6 +7,8 @@ export type Theme = 'dark' | 'light'
 interface UIState {
   twitchToken: string
   setTwitchToken: (token: string) => void
+  burgerOpened: boolean
+  setBurgerOpened: (opened: boolean) => void
 }
 export const TWITCH_ACCESS_TOKEN_COOKIE = 'twitchAccessToken'
 
@@ -19,6 +21,8 @@ const useUISlice = create<UIState>()(
         return {
           twitchToken: Cookies.get(TWITCH_ACCESS_TOKEN_COOKIE),
           setTwitchToken: (token: string) => set(setTwitchToken(token), false, `setTwitchToken`),
+          burgerOpened: false,
+          setBurgerOpened: (opened: boolean) => set(setBurgerOpened(opened), false, `setBurgerOpened`),
         }
       },
       { version: 2, name: UI_SLICE_PERSIST_KEY },
@@ -40,6 +44,14 @@ function setTwitchToken(token: string): UIAction {
     })
     return {
       twitchToken: token,
+    }
+  }
+}
+
+function setBurgerOpened(opened: boolean): UIAction {
+  return (state: UIState) => {
+    return {
+      burgerOpened: opened,
     }
   }
 }

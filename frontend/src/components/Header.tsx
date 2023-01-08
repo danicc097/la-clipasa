@@ -29,6 +29,7 @@ import broadcasterIcon from 'src/assets/caliebre-logo.png'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { broadcaster } from 'src/services/twitch'
+import { useUISlice } from 'src/slices/ui'
 
 const useStyles = createStyles((theme) => ({
   banner: {
@@ -85,6 +86,12 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
+  burger: {
+    [theme.fn.largerThan('xl')]: {
+      display: 'none',
+    },
+  },
+
   tabsList: {
     borderBottom: '0 !important',
   },
@@ -109,11 +116,13 @@ interface HeaderProps {
   tabs: string[]
 }
 
+export const HEADER_HEIGHT = 60
+
 export default function Header({ tabs }: HeaderProps) {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { classes, theme, cx } = useStyles()
-  const [opened, { toggle }] = useDisclosure(false)
+  // const [opened, { toggle }] = useDisclosure(false)
   const [userMenuOpened, setUserMenuOpened] = useState(false)
   const twitchUser = useTwitchUser()
   const { isFollower, isSubscriber } = useAuthenticatedUser()
@@ -129,6 +138,10 @@ export default function Header({ tabs }: HeaderProps) {
   const twitchBroadcasterLive = useTwitchBroadcasterLive()
   const broadcasterLive = twitchBroadcasterLive.data?.data?.length > 0
 
+  const { burgerOpened, setBurgerOpened } = useUISlice()
+
+  const title = burgerOpened ? 'Close navigation' : 'Open navigation'
+
   return (
     <>
       <a href="/">
@@ -141,15 +154,23 @@ export default function Header({ tabs }: HeaderProps) {
           z-index: 10000;
         `}
       >
-        <MantineHeader height={60} px="md" sx={{ height: '100%' }} className={classes.header}>
+        <MantineHeader height={HEADER_HEIGHT} px="md" sx={{ height: '100%' }} className={classes.header}>
           <Group
             position="apart"
             css={css`
               align-self: center;
             `}
           >
-            {broadcasterLive ? renderLiveAvatar(twitchBroadcasterLive?.data?.data?.[0]?.title) : <div></div>}
-
+            <Group>
+              <Burger
+                className={classes.burger}
+                size={'sm'}
+                opened={burgerOpened}
+                onClick={() => setBurgerOpened(!burgerOpened)}
+                title={title}
+              />
+              {broadcasterLive ? renderLiveAvatar(twitchBroadcasterLive?.data?.data?.[0]?.title) : <div></div>}
+            </Group>
             <Menu
               width={220}
               position="bottom-end"

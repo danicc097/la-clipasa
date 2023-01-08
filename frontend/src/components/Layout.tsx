@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { Code, Image, ScrollArea } from '@mantine/core'
+import { Code, Drawer, Flex, Group, Image, ScrollArea, createStyles } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-import Header from 'src/components/Header'
+import Header, { HEADER_HEIGHT } from 'src/components/Header'
 import { css } from '@emotion/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUISlice } from 'src/slices/ui'
@@ -17,6 +17,13 @@ import {
 } from 'src/queries/twitch'
 import { useUserPostMutation } from 'src/queries/api/users'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
+import HomeSideActions from 'src/views/Home/HomeSideActions'
+
+const useStyles = createStyles((theme) => ({
+  sidebar: {
+    [theme.fn.smallerThan('xs')]: {},
+  },
+}))
 
 type LayoutProps = {
   children: React.ReactElement
@@ -34,7 +41,8 @@ export default function Layout({ children }: LayoutProps) {
   const twitchUserSubscriber = useTwitchUserSubscriber()
   const twitchBroadcasterLive = useTwitchBroadcasterLive()
   const userPostMutation = useUserPostMutation()
-
+  const { classes } = useStyles()
+  const { burgerOpened, setBurgerOpened } = useUISlice()
   const [updateUserAfterLogin, setUpdateUserAfterLogin] = useState(false)
 
   useEffect(() => {
@@ -103,6 +111,7 @@ export default function Layout({ children }: LayoutProps) {
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <Header tabs={[]}></Header>
+
       {/* TODO when header becomes sticky, main should have a padding top of height=header height*/}
       <main
         css={css`
@@ -115,6 +124,31 @@ export default function Layout({ children }: LayoutProps) {
       >
         {children}
       </main>
+      <Drawer
+        css={css`
+          /* margin-top: ${HEADER_HEIGHT}px; */
+          height: 100%;
+          min-width: 100%;
+          z-index: 10000;
+        `}
+        transition="rotate-left"
+        transitionDuration={250}
+        transitionTimingFunction="ease"
+        opened={burgerOpened}
+        onClose={() => {
+          setBurgerOpened(false)
+        }}
+      >
+        <Flex align={'center'} direction="column">
+          <HomeSideActions
+            css={css`
+              @media only screen and (min-width: 1200px) {
+                display: none;
+              }
+            `}
+          />
+        </Flex>
+      </Drawer>
       <Footer></Footer>
     </>
   )
