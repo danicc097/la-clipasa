@@ -20,9 +20,10 @@ import type { PostCategory } from 'database'
 import { truncate } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
 import CategoryBadges, { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadges'
+import useUndo from 'src/hooks/useUndoRedo'
 import { emotesTextToHtml, htmlToEmotesText, anyKnownEmoteRe } from 'src/services/twitch'
 import { getCaretCoordinates, getCaretIndex, pasteHtmlAtCaret } from 'src/utils/input'
-import { sanitizeContentEditableInput } from 'src/utils/string'
+import { sanitizeContentEditableInput, sanitizeContentEditableInputBeforeSubmit } from 'src/utils/string'
 import { isURL } from 'src/utils/url'
 import { NewPostRequest, PostCategoryNames } from 'types'
 
@@ -130,6 +131,7 @@ export default function HomeSideActions() {
   const [caretPosition, setCaretPosition] = useState(0)
   const [awaitEmoteCompletion, setAwaitEmoteCompletion] = useState(false)
   const [pastedTitle, setPastedTitle] = useState(false)
+  const [insertSpaceAfterEmote, setInsertSpaceAfterEmote] = useState(false)
 
   const form = useForm<NewPostRequest>({
     initialValues: {
@@ -152,6 +154,31 @@ export default function HomeSideActions() {
       content: (value) => (value?.length > 300 ? 'Message can have at most 300 characters.' : null),
     },
   })
+
+  // const { redo, undo, value } = useUndo(titleInput)
+
+  // TODO get rid of this
+  const titleInputHistory = useRef<string[]>([])
+  const titleInputHistoryStack = useRef<string[]>([])
+
+  function saveTitleInputHistory() {
+    titleInputHistory.current.push(titleInput)
+  }
+
+  function undoTitleInput() {
+    if (titleInputHistory.current.length > 0) {
+      const previousTitle = titleInputHistory.current.pop()
+      titleInputHistoryStack.current.unshift(titleInput)
+      setTitleInput(previousTitle)
+    }
+  }
+
+  function redoTitleInput() {
+    if (titleInputHistoryStack.current.length > 0) {
+      const previousTitle = titleInputHistoryStack.current.shift()
+      setTitleInput(previousTitle)
+    }
+  }
 
   useEffect(() => {
     const tooltip = document.getElementById('tooltip')
@@ -193,9 +220,7 @@ export default function HomeSideActions() {
     }
 
     try {
-      if (!pastedTitle) {
-        setCaretInNodeChildren(titleInputRef.current, caretPosition)
-      }
+      setCaretInNodeChildren(titleInputRef.current, caretPosition)
     } catch (error: any) {
       console.log('failed to set cursor position: ', error)
     }
@@ -209,19 +234,70 @@ export default function HomeSideActions() {
     localStorage.setItem(NEW_POST_FORM_KEY, JSON.stringify(form.values))
   }, [form.values])
 
+  // FIXME does nothing
+  useEffect(() => {
+    if (insertSpaceAfterEmote) {
+      let evt = new KeyboardEvent('keypress', { key: 'ArrowRight' })
+      let success = contentEditableRef.current.dispatchEvent(evt)
+      console.log('keypress success: ', success)
+      evt = new KeyboardEvent('keypress', { key: 'Spacebar' })
+      success = contentEditableRef.current.dispatchEvent(evt)
+      console.log('keypress success: ', success)
+      setInsertSpaceAfterEmote(false)
+    }
+  }, [insertSpaceAfterEmote])
+
+  function getRangeContents(range: Range): string {
+    const clonedRange = range.cloneContents()
+
+    const iterator = document.createNodeIterator(clonedRange, NodeFilter.SHOW_TEXT)
+
+    let text = ''
+    let currentNode
+    while ((currentNode = iterator.nextNode())) {
+      text += currentNode.textContent
+    }
+
+    return text
+  }
+
   // not working atm
-  function getStringUpToCursor(input: HTMLInputElement) {
-    // Get the index of the character where the selection starts
-    // or the index of the cursor if there is no selection
-    const range = document.createRange()
-    const sel = window.getSelection()
-    range.setStart(input, caretPosition)
-    range.collapse(true)
-    sel.removeAllRanges()
-    sel.addRange(range)
-    console.log('range ', range.toString())
-    // Return the substring up to the cursor position
-    return range.toString()
+  function getStringUpToCursor(el, pos) {
+    for (const node of el.childNodes) {
+      if (node.nodeType == 3) {
+        // inside a text node
+        if (node.length >= pos) {
+          const range = document.createRange()
+          const sel = window.getSelection()
+          range.setStart(node, pos)
+          range.collapse(true)
+          sel.removeAllRanges()
+          sel.addRange(range)
+          const content = getRangeContents(range)
+
+          console.log('content: ', content)
+          return -1 // we are done
+        } else {
+          pos = pos - node.length // pos given is absolute account for all text children
+        }
+      } else {
+        pos = getStringUpToCursor(node, pos)
+        if (pos == -1) {
+          return -1 // no need to finish the for loop
+        }
+      }
+    }
+
+    return pos // continue searching
+  }
+
+  function renderRequiredAsterisk() {
+    return (
+      <span style={{ color: 'red' }} aria-hidden="true">
+        {' '}
+        *
+      </span>
+    )
   }
 
   const renderNewPostModal = () => (
@@ -237,8 +313,15 @@ export default function HomeSideActions() {
         size="60%"
         closeOnEscape={false} // user may press escape to enter emote
       >
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          {caretPosition}
+        <form
+          onSubmit={form.onSubmit((values) => {
+            values.title = sanitizeContentEditableInputBeforeSubmit(values.title)
+            console.log(values)
+          })}
+        >
+          {/* {caretPosition} */}
+          {/*
+          Alternatively use regular input and tooltip is shown when endswith emote
           <TextInput
             ref={titleInputRef}
             disabled
@@ -246,21 +329,17 @@ export default function HomeSideActions() {
             label="Title"
             placeholder="Enter a title"
             {...form.getInputProps('title')}
-          />
+          /> */}
           <div>
             <Text size={'sm'}>
               Title
-              <span style={{ color: 'red' }} aria-hidden="true">
-                {' '}
-                *
-              </span>
+              {renderRequiredAsterisk()}
             </Text>
             <Input
               ref={contentEditableRef}
               component="div"
               suppressContentEditableWarning
               contentEditable
-              withAsterisk
               label="Title"
               placeholder="Enter a title"
               {...form.getInputProps('title')}
@@ -286,17 +365,8 @@ export default function HomeSideActions() {
               }}
               onInput={(e) => {
                 if (pastedTitle) return
-                // if (awaitEmoteCompletion) {
-                //   e.preventDefault()
-                //   return
-                // }
-                // for both (1) cursor positioning after setTitleInput is called
-                // and (2) having tooltip showing current emote:
-                // if endswith is a valid emote, do not replace it directly after typing,
-                // show tooltip instead and return early, setting state "awaitEmoteCompletion" to true without replacing.
-                // theres a listener on keypress, if awaitEmoteCompletion && key is tab -> setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
-                // called from listener handler
                 let newCaretPos = getCaretIndex(titleInputRef.current)
+                // getStringUpToCursor(titleInputRef.current, newCaretPos)
                 // dont want a match once emote text is converted to img
                 const emoteMatch = titleInputRef.current.innerHTML.match(new RegExp(`(${anyKnownEmoteRe})$`, 'gi'))
                 const endsWithEmote = emoteMatch?.length > 0
@@ -323,9 +393,21 @@ export default function HomeSideActions() {
               //   const newCaretPos = getCaretIndex(titleInputRef.current)
               //   setCaretPosition(newCaretPos)
               // }}
+              // onBlur={(e) => {
+              //   if (pastedTitle) return
+              //   setAwaitEmoteCompletion(false)
+              //   const newCaretPos = getCaretIndex(titleInputRef.current)
+              //   setCaretPosition(newCaretPos)
+              // }}
+              // onFocus={(e) => {
+              //   if (pastedTitle) return
+              //   setAwaitEmoteCompletion(false)
+              //   const newCaretPos = getCaretIndex(titleInputRef.current)
+              //   setCaretPosition(newCaretPos)
+              // }}
               onClick={(e) => {
                 if (pastedTitle) return
-
+                setAwaitEmoteCompletion(false)
                 const newCaretPos = getCaretIndex(titleInputRef.current)
                 setCaretPosition(newCaretPos)
               }}
@@ -343,11 +425,22 @@ export default function HomeSideActions() {
               onKeyDown={(e) => {
                 if (pastedTitle) return
 
+                if (e.ctrlKey && e.key == 'z') {
+                  undoTitleInput()
+                  return
+                }
+
+                if (e.ctrlKey && e.key == 'y') {
+                  redoTitleInput()
+                  return
+                }
                 if (awaitEmoteCompletion) {
                   const validKey =
                     e.key === 'Spacebar' ||
                     e.key === ' ' ||
                     e.key === 'Tab' ||
+                    e.key === 'Delete' ||
+                    e.key === 'Enter' ||
                     e.key === 'Escape' ||
                     e.key === 'Backspace'
 
@@ -359,8 +452,10 @@ export default function HomeSideActions() {
                   const title = htmlToEmotesText(titleInputRef.current.innerHTML)
                   setTitleInput(title)
                   form.setFieldValue('title', title)
+                  setAwaitEmoteCompletion(false)
+                  setInsertSpaceAfterEmote(true)
+                  saveTitleInputHistory()
                 }
-                setAwaitEmoteCompletion(false)
                 if (e.key === 'Enter' || e.key === 'Tab' || (e.key === 'Shift' && e.code === 'Enter')) {
                   e.preventDefault()
                 }
@@ -397,7 +492,6 @@ export default function HomeSideActions() {
 
   return (
     <>
-      {/* TODO reenable when caret working,  {renderNewPostModal()} */}
       {renderNewPostModal()}
       <span
         className={classes.tooltip}

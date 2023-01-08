@@ -23,5 +23,5 @@ export function sanitizeContentEditableInput(str: string) {
 }
 
 export function sanitizeContentEditableInputBeforeSubmit(str: string) {
-  return str.replace(/&nbsp;|\u202F|\u00A0/g, ' ')
+  return str.replace(/&nbsp;|\u202F|\u00A0/g, ' ').trim()
 }
