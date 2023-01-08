@@ -4,10 +4,13 @@ import {
   Badge,
   Button,
   Card,
+  Flex,
   Group,
   Input,
+  Menu,
   Modal,
   Popover,
+  Space,
   Text,
   TextInput,
   Textarea,
@@ -15,7 +18,7 @@ import {
   createStyles,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { IconHeart } from '@tabler/icons'
+import { IconBookmark, IconCross, IconCrossOff, IconFilterOff, IconHeart, IconSend } from '@tabler/icons'
 import type { PostCategory } from 'database'
 import { truncate } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
@@ -132,6 +135,8 @@ export default function HomeSideActions() {
   const [awaitEmoteCompletion, setAwaitEmoteCompletion] = useState(false)
   const [pastedTitle, setPastedTitle] = useState(false)
   const [insertSpaceAfterEmote, setInsertSpaceAfterEmote] = useState(false)
+  const [filterLiked, setFilterLiked] = useState(false)
+  const [filterSaved, setFilterSaved] = useState(false)
 
   const form = useForm<NewPostRequest>({
     initialValues: {
@@ -154,6 +159,8 @@ export default function HomeSideActions() {
       content: (value) => (value?.length > 300 ? 'Message can have at most 300 characters.' : null),
     },
   })
+
+  const filterBg = theme.colorScheme === 'light' ? theme.colors.violet[5] : theme.colors.violet[4]
 
   // const { redo, undo, value } = useUndo(titleInput)
 
@@ -512,6 +519,50 @@ export default function HomeSideActions() {
             </Text>
           </Card.Section>
 
+          <Menu>
+            <Card.Section className={classes.section} mt="md">
+              <Text mt="md" className={classes.label} color="dimmed">
+                Personal filters
+              </Text>
+              <Space pb={10} />
+              <Flex mih={50} gap="md" justify="flex-start" align="center" direction="column">
+                <Button
+                  fullWidth
+                  opacity={!filterLiked && '90%'}
+                  bg={!filterLiked ? theme.colors.gray[6] : filterBg}
+                  leftIcon={
+                    !filterLiked && (
+                      <IconHeart fill={theme.colors.red[6]} size={20} color={theme.colors.red[6]} stroke={1.5} />
+                    )
+                  }
+                  rightIcon={filterLiked && <IconFilterOff fill={'white'} size={20} color={'white'} stroke={1.5} />}
+                  onClick={() => setFilterLiked(!filterLiked)}
+                >
+                  <Text>Liked posts</Text>
+                </Button>
+                <Button
+                  fullWidth
+                  opacity={!filterSaved && '90%'}
+                  bg={!filterSaved ? theme.colors.gray[6] : filterBg}
+                  leftIcon={
+                    !filterSaved && (
+                      <IconBookmark
+                        fill={theme.colors.yellow[6]}
+                        size={20}
+                        color={theme.colors.yellow[6]}
+                        stroke={1.5}
+                      />
+                    )
+                  }
+                  rightIcon={filterSaved && <IconFilterOff fill={'white'} size={20} color={'white'} stroke={1.5} />}
+                  onClick={() => setFilterSaved(!filterSaved)}
+                >
+                  <Text>Saved posts</Text>
+                </Button>
+              </Flex>
+            </Card.Section>
+          </Menu>
+
           <Card.Section className={classes.section}>
             <Text mt="md" className={classes.label} color="dimmed">
               Filter by category
@@ -522,7 +573,12 @@ export default function HomeSideActions() {
           </Card.Section>
 
           <Group mt="xs">
-            <Button radius="md" style={{ flex: 1 }} onClick={() => setNewPostModalOpened(true)}>
+            <Button
+              leftIcon={<IconSend size={20} stroke={1.5} />}
+              radius="md"
+              style={{ flex: 1 }}
+              onClick={() => setNewPostModalOpened(true)}
+            >
               Submit post
             </Button>
             {/* <ActionIcon variant="default" radius="md" size={36}>

@@ -222,13 +222,6 @@ export default function Header({ tabs }: HeaderProps) {
                   </Text>
                 </Menu.Item>
                 <Menu.Divider />
-                <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
-                  Liked posts
-                </Menu.Item>
-                <Menu.Item icon={<IconBookmark size={14} color={theme.colors.yellow[6]} stroke={1.5} />}>
-                  Saved posts
-                </Menu.Item>
-                <Menu.Divider />
                 <ThemeSwitcher />
                 <Menu.Divider />
                 <Menu.Label>Settings</Menu.Label>
