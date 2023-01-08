@@ -19,6 +19,8 @@ export const anyKnownEmoteRe = `${Object.keys(emoteSrc).join('|')}`
   }
  */
 export function emotesTextToHtml(text: string, size: number) {
+  if (!text) return
+
   let newHtml = text
   const emotes = new Set(newHtml.match(new RegExp(anyKnownEmoteRe, 'gi')))
 
@@ -34,6 +36,8 @@ export function emotesTextToHtml(text: string, size: number) {
 }
 
 export function htmlToEmotesText(html: string) {
+  if (!html) return
+
   let plainText = html.replace(/<img[^>]+className\s*=\s*"([^"]*)"[^>]*>/gi, (match, className) => {
     return className
   })

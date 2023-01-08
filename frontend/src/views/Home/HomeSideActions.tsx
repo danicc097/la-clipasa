@@ -108,6 +108,14 @@ interface BadgeCardProps {
 
 const EMOJI_SIZE = 24
 
+const NEW_POST_FORM_KEY = 'newPostForm'
+let storedNewPostForm: any = {}
+try {
+  storedNewPostForm = JSON.parse(localStorage.getItem(NEW_POST_FORM_KEY)) ?? {}
+} catch (error) {
+  console.log(error)
+}
+
 export default function HomeSideActions() {
   const [newPostModalOpened, setNewPostModalOpened] = useState(true)
   const { classes, theme } = useStyles()
@@ -116,21 +124,21 @@ export default function HomeSideActions() {
    * contains a cleaner innerHTML than contentEditableRef
    */
   const titleInputRef = useRef(null)
-  const [titleInput, setTitleInput] = useState('<br>')
-  const [typedEmote, setTypedEmote] = useState('calieAMOR2')
+  const initialTitleInput = '<br>'
+  const [titleInput, setTitleInput] = useState(htmlToEmotesText(storedNewPostForm?.title ?? initialTitleInput))
+  const [typedEmote, setTypedEmote] = useState('')
   const [caretPosition, setCaretPosition] = useState(0)
   const [awaitEmoteCompletion, setAwaitEmoteCompletion] = useState(false)
+  const [pastedTitle, setPastedTitle] = useState(false)
 
   const form = useForm<NewPostRequest>({
     initialValues: {
-      content: null,
-      link: null,
-      title: null,
+      ...storedNewPostForm,
     },
 
     validate: {
       title: (value) =>
-        value === null || value === ''
+        !value || value.trim() === '' || value.trim() === '<br>'
           ? 'Title cannot be empty'
           : value?.length > 200
           ? 'Title can have at most 200 characters.'
@@ -144,6 +152,10 @@ export default function HomeSideActions() {
       content: (value) => (value?.length > 300 ? 'Message can have at most 300 characters.' : null),
     },
   })
+
+  useEffect(() => {
+    console.log(titleInput)
+  }, [titleInput])
 
   useEffect(() => {
     const tooltip = document.getElementById('tooltip')
@@ -185,15 +197,21 @@ export default function HomeSideActions() {
 
   useEffect(() => {
     try {
-      setCaretInNodeChildren(titleInputRef.current, caretPosition)
+      if (!pastedTitle) {
+        setCaretInNodeChildren(titleInputRef.current, caretPosition)
+      }
     } catch (error: any) {
       console.log('failed to set cursor position: ', error)
     }
-  }, [titleInput])
+  }, [titleInput, pastedTitle])
 
   useEffect(() => {
     console.log('caretPosition: ', caretPosition)
   }, [caretPosition])
+
+  useEffect(() => {
+    localStorage.setItem(NEW_POST_FORM_KEY, JSON.stringify(form.values))
+  }, [form.values])
 
   const renderNewPostModal = () => (
     <>
@@ -202,10 +220,18 @@ export default function HomeSideActions() {
         onClose={() => setNewPostModalOpened(false)}
         title="Create a new post"
         zIndex={20000}
+        size="60%"
       >
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           {caretPosition}
           <div>
+            <Text size={'sm'}>
+              Title
+              <span style={{ color: 'red' }} aria-hidden="true">
+                {' '}
+                *
+              </span>
+            </Text>
             <Input
               ref={contentEditableRef}
               component="div"
@@ -215,17 +241,28 @@ export default function HomeSideActions() {
               label="Title"
               placeholder="Enter a title"
               {...form.getInputProps('title')}
-              css={css`
-                text-align: center;
-                vertical-align: middle;
-                display: block;
-              `}
+              style={{
+                // height: '100px',
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                display: 'block',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                wordWrap: 'break-word',
+              }}
+              styles={{
+                input: {
+                  ...(form.errors['title'] && { color: '#e03131', borderColor: '#e03131' }),
+                },
+              }}
               onPaste={(e) => {
                 e.preventDefault()
                 const data = e.clipboardData.getData('text/plain')
                 pasteHtmlAtCaret(htmlToEmotesText(data))
+                setPastedTitle(true)
               }}
               onInput={(e) => {
+                if (pastedTitle) return
                 // if (awaitEmoteCompletion) {
                 //   e.preventDefault()
                 //   return
@@ -254,7 +291,9 @@ export default function HomeSideActions() {
                 }
                 // TODO remove newlines in case of copypasting (and general sanitizing)
                 if (!awaitEmoteCompletion) {
-                  setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
+                  const title = htmlToEmotesText(titleInputRef.current.innerHTML)
+                  setTitleInput(title)
+                  form.setFieldValue('title', title)
                 }
                 setCaretPosition(newCaretPos)
                 // TODO remember cursor position when replacing inner html
@@ -264,14 +303,25 @@ export default function HomeSideActions() {
               //   setCaretPosition(newCaretPos)
               // }}
               onClick={(e) => {
+                if (pastedTitle) return
+
                 const newCaretPos = getCaretIndex(titleInputRef.current)
                 setCaretPosition(newCaretPos)
               }}
-              // onKeyUp={(e) => {
-              //   const newCaretPos = getCaretIndex(titleInputRef.current)
-              //   setCaretPosition(newCaretPos)
-              // }}
+              onKeyUp={(e) => {
+                if (pastedTitle) {
+                  const title = htmlToEmotesText(titleInputRef.current.innerHTML)
+                  setTitleInput(title)
+                  form.setFieldValue('title', title)
+                  setPastedTitle(false)
+                  return
+                }
+                const newCaretPos = getCaretIndex(titleInputRef.current)
+                setCaretPosition(newCaretPos)
+              }}
               onKeyDown={(e) => {
+                if (pastedTitle) return
+
                 if (awaitEmoteCompletion) {
                   const validKey =
                     e.key === 'Spacebar' ||
@@ -285,7 +335,9 @@ export default function HomeSideActions() {
                     return
                   }
 
-                  setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
+                  const title = htmlToEmotesText(titleInputRef.current.innerHTML)
+                  setTitleInput(title)
+                  form.setFieldValue('title', title)
                 }
                 setAwaitEmoteCompletion(false)
                 if (e.key === 'Enter' || e.key === 'Tab' || (e.key === 'Shift' && e.code === 'Enter')) {
@@ -294,22 +346,20 @@ export default function HomeSideActions() {
               }}
             >
               <div
-                css={css`
-                  width: 100%;
-                  white-space: nowrap;
-                  overflow: hidden;
-                `}
                 ref={titleInputRef}
                 dangerouslySetInnerHTML={{
                   __html: emotesTextToHtml(titleInput, EMOJI_SIZE),
                 }}
               ></div>
             </Input>
+            <Text size={'xs'} color="red">
+              {form.errors['title']}
+            </Text>
           </div>
 
-          <TextInput withAsterisk label="Link" placeholder="Enter a link" {...form.getInputProps('link')} />
+          <TextInput withAsterisk label="Link" {...form.getInputProps('link')} />
 
-          <TextInput label="Content" placeholder="Enter a message" {...form.getInputProps('content')} />
+          <TextInput label="Content" {...form.getInputProps('content')} />
           <Text size={'xs'} opacity={'60%'}>
             Leave message empty to show link by default.
           </Text>

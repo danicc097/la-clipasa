@@ -19,5 +19,9 @@ export function truncateIntegerToString(num: number): string {
 }
 
 export function sanitizeContentEditableInput(str: string) {
-  return str.replace(/(\r\n|\n|\r)/gm, '').replace(/&nbsp;|\u202F|\u00A0/g, '')
+  return str.replace(/(\r\n|\n|\r)/gm, '')
+}
+
+export function sanitizeContentEditableInputBeforeSubmit(str: string) {
+  return str.replace(/&nbsp;|\u202F|\u00A0/g, ' ')
 }
