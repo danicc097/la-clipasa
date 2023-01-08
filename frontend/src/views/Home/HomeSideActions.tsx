@@ -20,7 +20,7 @@ import type { PostCategory } from 'database'
 import { truncate } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
 import CategoryBadges, { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadges'
-import { emotesTextToHtml, htmlToEmotesText } from 'src/services/twitch'
+import { emotesTextToHtml, htmlToEmotesText, knownEmoteRe, anyKnownEmoteRe } from 'src/services/twitch'
 import { getCaretCoordinates, getCaretIndex } from 'src/utils/input'
 import { isURL } from 'src/utils/url'
 import { NewPostRequest, PostCategoryNames } from 'types'
@@ -128,6 +128,7 @@ export default function HomeSideActions({ title, description, country, badges }:
   const [titleInput, setTitleInput] = useState('<br>')
   const [typedEmote, setTypedEmote] = useState('calieAMOR2')
   const [caretPosition, setCaretPosition] = useState(0)
+  const contentEditableChildCount = useRef(0)
 
   const form = useForm<NewPostRequest>({
     initialValues: {
@@ -156,17 +157,17 @@ export default function HomeSideActions({ title, description, country, badges }:
   useEffect(() => {
     try {
       if (!titleInputRef.current) return
-      console.log(titleInput)
-      console.log(titleInput.length)
-      console.log(caretPosition)
 
       const range = document.createRange()
       const sel = window.getSelection()
-      const nodeIdx = 0
-      const pos = caretPosition > titleInput.length ? titleInput.length : caretPosition
+      // TODO nodeIdx should be dynamic based on caretPosition -> get number of children in range
+      const nodeIdx = contentEditableChildCount.current - 1
+      let pos = caretPosition // this will not be correct when we have caret on a new child (new emote or text after it)
       console.log('titleInputRef.current')
       console.log(titleInputRef.current)
-      console.log(titleInputRef.current.childNodes[nodeIdx])
+      const cursorPreviousChild = titleInputRef.current.childNodes[nodeIdx]
+      console.log('cursorPreviousChild')
+      console.log(cursorPreviousChild)
       // TODO contenteditable node is useless, need to account for pos in contenteditable based on <img> rendered,
       //  therefore need add/remove 1 to child nodeIdx to account for new emojis added/deleted
       // (if we always start with empty string as title then it should be trivial unless someone decides to delete/add
@@ -174,8 +175,16 @@ export default function HomeSideActions({ title, description, country, badges }:
       // not typing)
       // TODO working now starting empty, need to have nodeIdx = nodeIdx + 1 when a new emote is added
       // some text before calieAMOR2 and after
-      range.setStart(titleInputRef.current.childNodes[nodeIdx], pos)
-      range.collapse(true)
+      if (!(cursorPreviousChild instanceof Node)) {
+        return
+      }
+
+      if (pos > cursorPreviousChild.nodeValue.length) {
+        pos = cursorPreviousChild.nodeValue.length
+        return
+      }
+      range.setStart(cursorPreviousChild, pos)
+      // range.collapse(true)
 
       sel.removeAllRanges()
       sel.addRange(range)
@@ -215,8 +224,18 @@ export default function HomeSideActions({ title, description, country, badges }:
               // theres a listener on keypress, if awaitEmoteCompletion && key is tab -> setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
               // called from listener handler
               const caretPosition = getCaretIndex(titleInputRef.current)
+              const currentText = htmlToEmotesText(titleInputRef.current.innerHTML)
+              const endsWithEmote = currentText.match(new RegExp(`(${anyKnownEmoteRe})$`, 'gi'))?.length > 0
+
+              const titleInputChildrenCount = titleInputRef.current.childNodes.length
+              console.log('titleInputChildrenCount: ', titleInputChildrenCount)
+              contentEditableChildCount.current = titleInputChildrenCount
+
+              if (endsWithEmote) {
+                console.log('endswith emote, should exit early and wait for tab')
+              }
               // TODO remove newlines in case of copypasting (and general sanitizing)
-              setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
+              setTitleInput(currentText)
               setCaretPosition(caretPosition)
               // TODO remember cursor position when replacing inner html
             }}

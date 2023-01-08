@@ -8,6 +8,8 @@ export const broadcaster = {
 
 export const imgAttributes = 'style="pointer-events: none;"'
 
+export const anyKnownEmoteRe = `${Object.keys(emoteSrc).join('|')}`
+
 /**
  * Returns an html string with known emotes replaced.
  * @example
@@ -17,7 +19,7 @@ export const imgAttributes = 'style="pointer-events: none;"'
  */
 export function emotesTextToHtml(text: string, size: number) {
   let newHtml = text
-  const emotes = newHtml.match(new RegExp(`${Object.keys(emoteSrc).join('|')}`, 'gi'))
+  const emotes = new Set(newHtml.match(new RegExp(anyKnownEmoteRe, 'gi')))
 
   emotes?.forEach((emote) => {
     emote = emote.toLowerCase()

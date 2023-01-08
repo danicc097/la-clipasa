@@ -5,10 +5,17 @@ import { describe, expect, it, test } from 'vitest'
 describe('roles and scopes', async () => {
   const size = 20
   test('parse emote text to html', () => {
-    const text = 'some: :external-emote:, and CALIEAMOR2'
-    const html = emotesTextToHtml(text, size)
+    let text = 'some: :external-emote:, and CALIEAMOR2'
+    let html = emotesTextToHtml(text, size)
     expect(html).toBe(
       `some: :external-emote:, and <img ${imgAttributes} title="calieamor2" className="calieamor2" src="${emoteSrc['calieamor2']}" width="${size}" height="${size}">`,
+    )
+
+    text = 'some: :external-emote:, and CALIEAMOR2 and CALIEAMOR2'
+    html = emotesTextToHtml(text, size)
+    console.log(html)
+    expect(html).toBe(
+      `some: :external-emote:, and <img ${imgAttributes} title="calieamor2" className="calieamor2" src="${emoteSrc['calieamor2']}" width="${size}" height="${size}"> and <img ${imgAttributes} title="calieamor2" className="calieamor2" src="${emoteSrc['calieamor2']}" width="${size}" height="${size}">`,
     )
   })
 
