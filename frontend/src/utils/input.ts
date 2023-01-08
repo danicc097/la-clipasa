@@ -42,3 +42,37 @@ export function getCaretIndex(element) {
   }
   return position
 }
+
+// https://jsfiddle.net/Xeoncross/4tUDk/
+export function pasteHtmlAtCaret(html) {
+  let sel, range
+  if (window.getSelection) {
+    // IE9 and non-IE
+    sel = window.getSelection()
+    if (sel.getRangeAt && sel.rangeCount) {
+      range = sel.getRangeAt(0)
+      range.deleteContents()
+
+      // Range.createContextualFragment() would be useful here but is
+      // non-standard and not supported in all browsers (IE9, for one)
+      const el = document.createElement('div')
+      el.innerHTML = html
+      const frag = document.createDocumentFragment()
+
+      let node, lastNode
+      while ((node = el.firstChild)) {
+        lastNode = frag.appendChild(node)
+      }
+      range.insertNode(frag)
+
+      // Preserve the selection
+      if (lastNode) {
+        range = range.cloneRange()
+        range.setStartAfter(lastNode)
+        range.collapse(true)
+        sel.removeAllRanges()
+        sel.addRange(range)
+      }
+    }
+  }
+}

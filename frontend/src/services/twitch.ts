@@ -1,3 +1,4 @@
+import { sanitizeContentEditableInput } from 'src/utils/string'
 import emoteSrc from './emotes.json'
 
 // alternatively check every time we log in. can GET more than 1 user with &login=<loginname>
@@ -33,11 +34,11 @@ export function emotesTextToHtml(text: string, size: number) {
 }
 
 export function htmlToEmotesText(html: string) {
-  const plainText = html
-    .replace(/<img[^>]+className\s*=\s*"([^"]*)"[^>]*>/gi, (match, className) => {
-      return className
-    })
-    .replace(/(\r\n|\n|\r)/gm, '')
+  let plainText = html.replace(/<img[^>]+className\s*=\s*"([^"]*)"[^>]*>/gi, (match, className) => {
+    return className
+  })
+
+  plainText = sanitizeContentEditableInput(plainText)
 
   return plainText
 }
