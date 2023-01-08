@@ -17,3 +17,7 @@ export function truncateIntegerToString(num: number): string {
   }
   return num.toString()
 }
+
+export function sanitizeContentEditableInput(str: string) {
+  return str.replace(/(\r\n|\n|\r)/gm, '')
+}

@@ -20,8 +20,9 @@ import type { PostCategory } from 'database'
 import { truncate } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
 import CategoryBadges, { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadges'
-import { emotesTextToHtml, htmlToEmotesText, knownEmoteRe, anyKnownEmoteRe } from 'src/services/twitch'
+import { emotesTextToHtml, htmlToEmotesText, anyKnownEmoteRe } from 'src/services/twitch'
 import { getCaretCoordinates, getCaretIndex } from 'src/utils/input'
+import { sanitizeContentEditableInput } from 'src/utils/string'
 import { isURL } from 'src/utils/url'
 import { NewPostRequest, PostCategoryNames } from 'types'
 
@@ -161,11 +162,11 @@ export default function HomeSideActions({ title, description, country, badges }:
       const range = document.createRange()
       const sel = window.getSelection()
       // TODO nodeIdx should be dynamic based on caretPosition -> get number of children in range
-      const nodeIdx = contentEditableChildCount.current - 1
-      let pos = caretPosition // this will not be correct when we have caret on a new child (new emote or text after it)
+      const nodeIdx = contentEditableChildCount.current
+      const pos = caretPosition // this will not be correct when we have caret on a new child (new emote or text after it)
       console.log('titleInputRef.current')
       console.log(titleInputRef.current)
-      const cursorPreviousChild = titleInputRef.current.childNodes[nodeIdx]
+      const cursorPreviousChild = titleInputRef.current.childNodes[nodeIdx - 1]
       console.log('cursorPreviousChild')
       console.log(cursorPreviousChild)
       // TODO contenteditable node is useless, need to account for pos in contenteditable based on <img> rendered,
@@ -180,10 +181,12 @@ export default function HomeSideActions({ title, description, country, badges }:
       }
 
       if (pos > cursorPreviousChild.nodeValue.length) {
-        pos = cursorPreviousChild.nodeValue.length
+        // pos = titleInputRef.current.childNodes[nodeIdx].nodeValue.length
+        // range.setStart(contentEditableRef.current, contentEditableRef.current.childNodes.length)
         return
+      } else {
+        range.setStart(cursorPreviousChild, pos)
       }
-      range.setStart(cursorPreviousChild, pos)
       // range.collapse(true)
 
       sel.removeAllRanges()
@@ -215,7 +218,14 @@ export default function HomeSideActions({ title, description, country, badges }:
             css={css`
               text-align: center;
               vertical-align: middle;
+              display: block;
             `}
+            onPaste={(e) => {
+              e.preventDefault()
+              const data = e.clipboardData.getData('text/plain')
+              const sanitizedData = sanitizeContentEditableInput(data)
+              setTitleInput(sanitizedData)
+            }}
             onInput={(e) => {
               // for both (1) cursor positioning after setTitleInput is called
               // and (2) having tooltip showing current emote:

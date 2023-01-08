@@ -33,9 +33,11 @@ export function emotesTextToHtml(text: string, size: number) {
 }
 
 export function htmlToEmotesText(html: string) {
-  const plainText = html.replace(/<img[^>]+className\s*=\s*"([^"]*)"[^>]*>/gi, (match, className) => {
-    return className
-  })
+  const plainText = html
+    .replace(/<img[^>]+className\s*=\s*"([^"]*)"[^>]*>/gi, (match, className) => {
+      return className
+    })
+    .replace(/(\r\n|\n|\r)/gm, '')
 
   return plainText
 }
