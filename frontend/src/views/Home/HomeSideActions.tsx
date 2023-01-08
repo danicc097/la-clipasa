@@ -129,7 +129,7 @@ export default function HomeSideActions({ title, description, country, badges }:
   const [titleInput, setTitleInput] = useState('<br>')
   const [typedEmote, setTypedEmote] = useState('calieAMOR2')
   const [caretPosition, setCaretPosition] = useState(0)
-  const contentEditableChildCount = useRef(0)
+  const titleInputChildCount = useRef(0)
 
   const form = useForm<NewPostRequest>({
     initialValues: {
@@ -155,46 +155,67 @@ export default function HomeSideActions({ title, description, country, badges }:
     },
   })
 
+  //
+  function setCaretInNodeChildren(el, pos) {
+    // Loop through all child nodes, substracting child node length if  (if its text type 3, other elements
+    // do not count towards caret pos)
+    for (const node of el.childNodes) {
+      if (node.nodeType == 3) {
+        // inside a text node
+        if (node.length >= pos) {
+          const range = document.createRange(),
+            sel = window.getSelection()
+          range.setStart(node, pos)
+          range.collapse(true)
+          sel.removeAllRanges()
+          sel.addRange(range)
+          return -1 // we are done
+        } else {
+          pos -= node.length // pos given is absolute account for all text children
+        }
+      } else {
+        pos = setCaretInNodeChildren(node, pos)
+        if (pos == -1) {
+          return -1 // no need to finish the for loop
+        }
+      }
+    }
+    return pos // needed because of recursion stuff
+  }
+
   useEffect(() => {
     try {
       if (!titleInputRef.current) return
 
-      const range = document.createRange()
-      const sel = window.getSelection()
-      // TODO nodeIdx should be dynamic based on caretPosition -> get number of children in range
-      const nodeIdx = contentEditableChildCount.current
-      const pos = caretPosition // this will not be correct when we have caret on a new child (new emote or text after it)
+      const pos = caretPosition
       console.log('titleInputRef.current')
       console.log(titleInputRef.current)
-      const cursorPreviousChild = titleInputRef.current.childNodes[nodeIdx - 1]
-      console.log('cursorPreviousChild')
-      console.log(cursorPreviousChild)
-      // TODO contenteditable node is useless, need to account for pos in contenteditable based on <img> rendered,
-      //  therefore need add/remove 1 to child nodeIdx to account for new emojis added/deleted
-      // (if we always start with empty string as title then it should be trivial unless someone decides to delete/add
-      // an emote afterwards which wil fail to set cursor properly but we don't care at that point since the user was
-      // not typing)
-      // TODO working now starting empty, need to have nodeIdx = nodeIdx + 1 when a new emote is added
-      // some text before calieAMOR2 and after
-      if (!(cursorPreviousChild instanceof Node)) {
-        return
-      }
 
-      if (pos > cursorPreviousChild.nodeValue.length) {
-        // pos = titleInputRef.current.childNodes[nodeIdx].nodeValue.length
-        // range.setStart(contentEditableRef.current, contentEditableRef.current.childNodes.length)
-        return
-      } else {
-        range.setStart(cursorPreviousChild, pos)
-      }
-      // range.collapse(true)
-
-      sel.removeAllRanges()
-      sel.addRange(range)
+      setCaretInNodeChildren(titleInputRef.current, pos)
     } catch (error: any) {
       console.log('failed to set cursor position: ', error)
     }
   }, [titleInput])
+
+  // havent tried this yet but wont work as is most likely
+  // function replaceCaret(el: HTMLElement) {
+  //   // Place the caret at the end of the element
+  //   const target = document.createTextNode('')
+  //   el.appendChild(target)
+  //   // do not move caret if element was not focused
+  //   const isTargetFocused = document.activeElement === el
+  //   if (target !== null && target.nodeValue !== null && isTargetFocused) {
+  //     const sel = window.getSelection()
+  //     if (sel !== null) {
+  //       const range = document.createRange()
+  //       range.setStart(target, target.nodeValue.length)
+  //       range.collapse(true)
+  //       sel.removeAllRanges()
+  //       sel.addRange(range)
+  //     }
+  //     if (el instanceof HTMLElement) el.focus()
+  //   }
+  // }
 
   const renderNewPostModal = () => (
     <>
@@ -210,6 +231,7 @@ export default function HomeSideActions({ title, description, country, badges }:
           <Input
             ref={contentEditableRef}
             component="div"
+            suppressContentEditableWarning
             contentEditable
             withAsterisk
             label="Title"
@@ -239,7 +261,7 @@ export default function HomeSideActions({ title, description, country, badges }:
 
               const titleInputChildrenCount = titleInputRef.current.childNodes.length
               console.log('titleInputChildrenCount: ', titleInputChildrenCount)
-              contentEditableChildCount.current = titleInputChildrenCount
+              titleInputChildCount.current = titleInputChildrenCount
 
               if (endsWithEmote) {
                 console.log('endswith emote, should exit early and wait for tab')
