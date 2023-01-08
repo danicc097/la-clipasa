@@ -44,6 +44,9 @@ const useStyles = createStyles((theme) => ({}))
 // TODO padding before footer including image (right now empty background)
 export default function Home() {
   const { classes } = useStyles()
+  // TODO show HomeSideActions as menu
+  const [burgerOpened, setBurgerOpened] = useState(false)
+  const title = burgerOpened ? 'Close navigation' : 'Open navigation'
 
   return (
     <>
@@ -60,23 +63,15 @@ export default function Home() {
         }}
       />
       <Group style={{ padding: 0 }} position="apart">
-        {/* <Posts /> */}
-        <ScrollArea style={{ height: '100vh' }} type="never">
+        <ScrollArea style={{ height: '100vh', alignSelf: 'flex-start', marginTop: '1rem' }} type="never">
           <Container
             css={css`
               .post:not(:first-child) {
                 margin-top: 1rem;
               }
-              min-width: 100%;
+              width: 100%;
             `}
           >
-            <Space />
-            {/*
-             TODO
-              - allow channel emotes in titles when using post upload:
-              https://dev.twitch.tv/docs/api/reference#get-channel-emotes
-
-             */}
             <Post
               author={{
                 name: 'some_user',
@@ -134,12 +129,7 @@ export default function Home() {
               ))}
           </Container>
         </ScrollArea>
-        <HomeSideActions
-          badges={[{ emoji: 'emoji', label: 'emoji' }]}
-          country="spain"
-          description="description"
-          title="title"
-        />
+        <HomeSideActions />
       </Group>
     </>
   )

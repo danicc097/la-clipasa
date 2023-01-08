@@ -69,7 +69,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   card: {
-    maxWidth: '15vw',
+    maxWidth: '25vw',
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
   },
 
@@ -118,7 +118,7 @@ function toggleTooltip(event, contenteditable) {
   }
 }
 
-export default function HomeSideActions({ title, description, country, badges }: BadgeCardProps) {
+export default function HomeSideActions() {
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
   const contentEditableRef = useRef(null)
@@ -341,12 +341,11 @@ export default function HomeSideActions({ title, description, country, badges }:
           <Card.Section className={classes.section} mt="md">
             <Group position="apart">
               <Text size="lg" weight={500}>
-                {title}
+                {'Title'}
               </Text>
-              <Badge size="sm">{country}</Badge>
             </Group>
             <Text size="sm" mt="xs">
-              {description}
+              {'description'}
             </Text>
           </Card.Section>
 
