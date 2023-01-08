@@ -154,10 +154,6 @@ export default function HomeSideActions() {
   })
 
   useEffect(() => {
-    console.log(titleInput)
-  }, [titleInput])
-
-  useEffect(() => {
     const tooltip = document.getElementById('tooltip')
     if (awaitEmoteCompletion) {
       const { x, y } = getCaretCoordinates()
@@ -169,33 +165,33 @@ export default function HomeSideActions() {
     }
   }, [awaitEmoteCompletion])
 
-  function setCaretInNodeChildren(el, pos) {
-    for (const node of el.childNodes) {
-      if (node.nodeType == 3) {
-        // inside a text node
-        if (node.length >= pos) {
-          const range = document.createRange()
-          const sel = window.getSelection()
-          range.setStart(node, pos)
-          range.collapse(true)
-          sel.removeAllRanges()
-          sel.addRange(range)
-          return -1 // we are done
+  useEffect(() => {
+    function setCaretInNodeChildren(el, pos) {
+      for (const node of el.childNodes) {
+        if (node.nodeType == 3) {
+          // inside a text node
+          if (node.length >= pos) {
+            const range = document.createRange()
+            const sel = window.getSelection()
+            range.setStart(node, pos)
+            range.collapse(true)
+            sel.removeAllRanges()
+            sel.addRange(range)
+            return -1 // we are done
+          } else {
+            pos = pos - node.length // pos given is absolute account for all text children
+          }
         } else {
-          pos = pos - node.length // pos given is absolute account for all text children
-        }
-      } else {
-        pos = setCaretInNodeChildren(node, pos)
-        if (pos == -1) {
-          return -1 // no need to finish the for loop
+          pos = setCaretInNodeChildren(node, pos)
+          if (pos == -1) {
+            return -1 // no need to finish the for loop
+          }
         }
       }
+
+      return pos // continue searching
     }
 
-    return pos // continue searching
-  }
-
-  useEffect(() => {
     try {
       if (!pastedTitle) {
         setCaretInNodeChildren(titleInputRef.current, caretPosition)
@@ -203,7 +199,7 @@ export default function HomeSideActions() {
     } catch (error: any) {
       console.log('failed to set cursor position: ', error)
     }
-  }, [titleInput, pastedTitle])
+  }, [titleInput, pastedTitle, caretPosition])
 
   useEffect(() => {
     console.log('caretPosition: ', caretPosition)
@@ -232,10 +228,14 @@ export default function HomeSideActions() {
     <>
       <Modal
         opened={newPostModalOpened}
-        onClose={() => setNewPostModalOpened(false)}
+        onClose={() => {
+          setNewPostModalOpened(false)
+          setAwaitEmoteCompletion(false)
+        }}
         title="Create a new post"
         zIndex={20000}
         size="60%"
+        closeOnEscape={false} // user may press escape to enter emote
       >
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           {caretPosition}
@@ -296,7 +296,6 @@ export default function HomeSideActions() {
                 // show tooltip instead and return early, setting state "awaitEmoteCompletion" to true without replacing.
                 // theres a listener on keypress, if awaitEmoteCompletion && key is tab -> setTitleInput(htmlToEmotesText(titleInputRef.current.innerHTML))
                 // called from listener handler
-                console.log(htmlToEmotesText(titleInputRef.current.innerHTML))
                 let newCaretPos = getCaretIndex(titleInputRef.current)
                 // dont want a match once emote text is converted to img
                 const emoteMatch = titleInputRef.current.innerHTML.match(new RegExp(`(${anyKnownEmoteRe})$`, 'gi'))
@@ -312,7 +311,6 @@ export default function HomeSideActions() {
                   setCaretPosition(newCaretPos)
                   return
                 }
-                // TODO remove newlines in case of copypasting (and general sanitizing)
                 if (!awaitEmoteCompletion) {
                   const title = htmlToEmotesText(titleInputRef.current.innerHTML)
                   setTitleInput(title)
