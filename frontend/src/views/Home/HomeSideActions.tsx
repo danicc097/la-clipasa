@@ -328,7 +328,12 @@ export default function HomeSideActions() {
         >
           {/* {caretPosition} */}
           {/*
-          Alternatively use regular input and tooltip is shown when endswith emote
+          TODO give up on this, not worth it
+          - Use regular input and tooltip is shown when endswith emote
+          - Emote input on mobile will surely be broken if using contenteditable the way it is now
+          - have an "eye" icon to show preview message on a popover and set its innerhtml there,
+          that will be enough.
+
           <TextInput
             ref={titleInputRef}
             disabled
