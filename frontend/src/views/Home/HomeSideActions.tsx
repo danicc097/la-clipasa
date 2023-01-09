@@ -327,42 +327,25 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                 Personal filters
               </Text>
               <Space pb={10} />
-              <Flex mih={50} gap="md" justify="flex-start" align="center" direction="column">
-                <Chip defaultChecked>Liked posts</Chip>
-                <Chip defaultChecked>Saved posts</Chip>
-                <Button
-                  fullWidth
-                  opacity={!filterLiked && '90%'}
-                  bg={!filterLiked ? theme.colors.gray[6] : filterBg}
-                  leftIcon={
-                    !filterLiked && (
-                      <IconHeart fill={theme.colors.red[6]} size={20} color={theme.colors.red[6]} stroke={1.5} />
-                    )
-                  }
-                  rightIcon={filterLiked && <IconFilterOff fill={'white'} size={20} color={'white'} stroke={1.5} />}
+              <Flex mih={50} gap="md" justify="flex-start" align="center" direction="row">
+                <Chip
+                  defaultChecked
+                  variant="filled"
+                  color="green"
+                  checked={filterLiked}
                   onClick={() => setFilterLiked(!filterLiked)}
                 >
-                  <Text>Liked posts</Text>
-                </Button>
-                <Button
-                  fullWidth
-                  opacity={!filterSaved && '90%'}
-                  bg={!filterSaved ? theme.colors.gray[6] : filterBg}
-                  leftIcon={
-                    !filterSaved && (
-                      <IconBookmark
-                        fill={theme.colors.yellow[6]}
-                        size={20}
-                        color={theme.colors.yellow[6]}
-                        stroke={1.5}
-                      />
-                    )
-                  }
-                  rightIcon={filterSaved && <IconFilterOff fill={'white'} size={20} color={'white'} stroke={1.5} />}
+                  Liked posts
+                </Chip>
+                <Chip
+                  defaultChecked
+                  variant="filled"
+                  color="green"
+                  checked={filterSaved}
                   onClick={() => setFilterSaved(!filterSaved)}
                 >
-                  <Text>Saved posts</Text>
-                </Button>
+                  Saved posts
+                </Chip>
               </Flex>
             </Card.Section>
           </Menu>
