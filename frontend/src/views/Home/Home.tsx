@@ -46,16 +46,14 @@ const useStyles = createStyles((theme) => ({}))
 export default function Home() {
   const { classes } = useStyles()
 
-  const queryParams: PostQueryParams = {
-    titleQuery: searchParams.get('titleQuery') ?? undefined,
-    limit: searchParams.get('limit') !== null ? Number(searchParams.get('limit')) : undefined,
-    authorId: searchParams.get('authorId') ?? undefined,
-    liked: searchParams.get('liked') !== null ? Boolean(searchParams.get('liked')) : undefined,
-    saved: searchParams.get('saved') !== null ? Boolean(searchParams.get('saved')) : undefined,
-    categories:
-      searchParams.getAll('categories').length > 0
-        ? (searchParams.getAll('categories').filter((c) => (PostCategory as any)[c]) as PostCategory[])
-        : undefined,
+  const getPostsQueryParams: PostQueryParams = {
+    titleQuery: undefined,
+    limit: undefined,
+    authorId: undefined,
+    liked: undefined,
+    saved: undefined,
+    categories: undefined,
+    cursor: undefined,
   }
 
   return (

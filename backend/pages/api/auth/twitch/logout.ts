@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { formatURLWithQueryParams } from '../../../../src/utils/url'
 
 // can't use shared import
 export const config = {

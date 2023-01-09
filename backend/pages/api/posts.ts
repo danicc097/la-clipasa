@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
 import { PostCategory, Prisma, PrismaClient } from 'database'
-import { discordPostUpload } from '../../src/services/discord'
-import prisma from '../../lib/prisma'
 import { PostCategoryNames, PostQueryParams } from 'types'
 import { cursorTo } from 'readline'
+import prisma from 'lib/prisma'
 
 // TODO https://github.com/prisma/prisma/issues/6219#issuecomment-1264724714
 // https://github.com/prisma/prisma/issues/10305#issuecomment-1148988650

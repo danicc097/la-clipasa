@@ -1,5 +1,5 @@
+import { formatURLWithQueryParams } from 'src/utils/url'
 import { TwitchTokenValidateResponse } from 'types'
-import { formatURLWithQueryParams } from '../utils/url'
 
 export async function validateTwitchToken(token?: string): Promise<string | null> {
   if (!token) return null

@@ -1,5 +1,5 @@
+import cors from 'lib/cors'
 import { NextRequest } from 'next/server'
-import cors from '../../lib/cors'
 
 export const config = {
   runtime: 'experimental-edge',

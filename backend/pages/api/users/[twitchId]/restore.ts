@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
 import { Post, Prisma, PrismaClient } from 'database'
-import prisma from '../../../../lib/prisma'
+import prisma from 'lib/prisma'
 
 // can't use shared import
 export const config = {
