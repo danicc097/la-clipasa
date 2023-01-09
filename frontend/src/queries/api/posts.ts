@@ -6,6 +6,10 @@ import { useTwitchUser } from 'src/queries/twitch'
 import type { PostCreateRequest } from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 
+/**
+ *
+ * see infinite scroll: https://tanstack.com/query/v4/docs/react/guides/infinite-queries
+ */
 export function usePosts() {
   const { twitchToken } = useUISlice()
   const { data: twitchUser } = useTwitchUser()
@@ -17,7 +21,7 @@ export function usePosts() {
       if (![401, 404].includes(error.response.status) && failureCount < 2) return true
     },
     retryDelay: 1000,
-    queryFn: async ({ signal }): Promise<Post[]> => {
+    queryFn: async ({ signal, pageParam }): Promise<Post[]> => {
       const { data } = await axios.get(
         formatURLWithQueryParams(`${import.meta.env.VITE_URL}/api/posts`, {
           limit: 10,
@@ -59,9 +63,6 @@ export function usePostById() {
   })
 }
 
-// will only be called on token renewal.
-// if user needs to refresh data instantly (new sub or follow to be able to post, etc.)
-// then logs out and back in
 export function usePostCreateMutation() {
   const { twitchToken } = useUISlice()
 

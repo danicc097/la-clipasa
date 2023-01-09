@@ -139,7 +139,6 @@ export default function Header({ tabs }: HeaderProps) {
   const broadcasterLive = twitchBroadcasterLive.data?.data?.length > 0
 
   const { burgerOpened, setBurgerOpened } = useUISlice()
-
   const title = burgerOpened ? 'Close navigation' : 'Open navigation'
 
   return (

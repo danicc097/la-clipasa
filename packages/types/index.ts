@@ -1,5 +1,5 @@
 export * from './utils'
-import type { PostCategory as DatabasePostCategory, Post, User } from 'database'
+import type { PostCategory as DatabasePostCategory, Post, PostCategory, User } from 'database'
 import type { Role as DatabaseRole } from 'database'
 
 // due to some obscure typescript shenanigans I don't really care about
@@ -26,6 +26,15 @@ export const RoleNames: Record<DatabaseRole, string> = {
 export type UserUpdateOrCreateRequest = Pick<User, 'displayName' | 'isFollower' | 'isSubscriber'>
 export type PostCreateRequest = Pick<Post, 'title' | 'content' | 'link'>
 
+export type PostQueryParams = {
+  limit: number | undefined
+  cursor: number | undefined
+  titleQuery: string | undefined
+  authorId: string | undefined
+  liked: boolean | undefined
+  saved: boolean | undefined
+  categories: PostCategory[] | undefined
+}
 /**
  *
  *

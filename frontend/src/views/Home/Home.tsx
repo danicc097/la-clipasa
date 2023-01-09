@@ -34,7 +34,7 @@ import { css } from '@emotion/react'
 import { showRelativeTimestamp } from 'src/utils/date'
 import dayjs from 'dayjs'
 import { useForm } from '@mantine/form'
-import type { PostCreateRequest } from 'types'
+import type { PostCreateRequest, PostQueryParams } from 'types'
 import { capitalize } from 'lodash-es'
 import { isURL } from 'src/utils/url'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
@@ -45,9 +45,18 @@ const useStyles = createStyles((theme) => ({}))
 // TODO padding before footer including image (right now empty background)
 export default function Home() {
   const { classes } = useStyles()
-  // TODO show HomeSideActions as menu
-  const { burgerOpened, setBurgerOpened } = useUISlice()
-  const title = burgerOpened ? 'Close navigation' : 'Open navigation'
+
+  const queryParams: PostQueryParams = {
+    titleQuery: searchParams.get('titleQuery') ?? undefined,
+    limit: searchParams.get('limit') !== null ? Number(searchParams.get('limit')) : undefined,
+    authorId: searchParams.get('authorId') ?? undefined,
+    liked: searchParams.get('liked') !== null ? Boolean(searchParams.get('liked')) : undefined,
+    saved: searchParams.get('saved') !== null ? Boolean(searchParams.get('saved')) : undefined,
+    categories:
+      searchParams.getAll('categories').length > 0
+        ? (searchParams.getAll('categories').filter((c) => (PostCategory as any)[c]) as PostCategory[])
+        : undefined,
+  }
 
   return (
     <>

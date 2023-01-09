@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
-import { Prisma, PrismaClient } from 'database'
+import { PostCategory, Prisma, PrismaClient } from 'database'
 import { discordPostUpload } from '../../src/services/discord'
 import prisma from '../../lib/prisma'
+import { PostCategoryNames, PostQueryParams } from 'types'
+import { cursorTo } from 'readline'
 
 // TODO https://github.com/prisma/prisma/issues/6219#issuecomment-1264724714
 // https://github.com/prisma/prisma/issues/10305#issuecomment-1148988650
@@ -23,14 +25,7 @@ export const config = {
 export default async (req: NextRequest) => {
   try {
     switch (req.method) {
-      // only get, no batch update/post
       case 'GET': {
-        // all posts with infinite scroll (https://react-query-v3.tanstack.com/guides/infinite-queries)
-        break
-      }
-      case 'POST': {
-        // curl -X POST "https://edge-functions-backend.vercel.app/api/posts"  -H 'Authorization: Bearer 1btt566hxkovfzn4qwt2a6h8sdotnk' -H 'Client-Id: r2r4w2bedvlt0qmfexgpnzqvv1ymfq' -d '{"title":"title", "link":"link", "content":"content", "userId": "a32065f5-fc9e-4dfd-b292-4709d211a86c"}'
-
         const headerTwitchId = req.headers.get('X-twitch-id')
         if (!headerTwitchId) return new Response('unauthenticated', { status: 401 })
 
@@ -40,6 +35,76 @@ export default async (req: NextRequest) => {
           console.log(`twitch id differs: ${headerTwitchId} - ${user?.twitchId}`)
           return new Response(JSON.stringify('cannot post as a different user'), { status: 403 })
         }
+
+        const { searchParams } = new URL(req.url)
+
+        // https://www.prisma.io/docs/concepts/components/prisma-client/null-and-undefined
+        const queryParams: PostQueryParams = {
+          titleQuery: searchParams.get('titleQuery') ?? undefined,
+          limit: searchParams.get('limit') !== null ? Number(searchParams.get('limit')) : undefined,
+          cursor: searchParams.get('cursor') !== null ? Number(searchParams.get('cursor')) : undefined,
+          authorId: searchParams.get('authorId') ?? undefined,
+          liked: searchParams.get('liked') !== null ? Boolean(searchParams.get('liked')) : undefined,
+          saved: searchParams.get('saved') !== null ? Boolean(searchParams.get('saved')) : undefined,
+          categories:
+            searchParams.getAll('categories').length > 0
+              ? (searchParams.getAll('categories').filter((c) => (PostCategory as any)[c]) as PostCategory[])
+              : undefined,
+        }
+
+        // all posts with infinite scroll (https://react-query-v3.tanstack.com/guides/infinite-queries)
+        const posts = await prisma.post.findMany({
+          take: queryParams.limit,
+          orderBy: {
+            createdAt: 'desc',
+          },
+          cursor: {
+            id: queryParams.cursor,
+          },
+          where: {
+            isModerated: true,
+            title: {
+              search: queryParams.titleQuery,
+            },
+            categories: {
+              hasEvery: queryParams.categories,
+            },
+            userId: queryParams.authorId, // filter by arbitrary user and "Edit my posts"
+            ...(queryParams.liked !== undefined && {
+              likedPost: {
+                every: {
+                  userId: { equals: user.id },
+                },
+              },
+            }),
+            ...(queryParams.saved !== undefined && {
+              savedPost: {
+                every: {
+                  userId: { equals: user.id },
+                },
+              },
+            }),
+          },
+          include: {
+            likedPost: true,
+            savedPost: true,
+          },
+        })
+
+        return new Response(JSON.stringify(posts), { status: 200 })
+      }
+      case 'POST': {
+        const headerTwitchId = req.headers.get('X-twitch-id')
+        if (!headerTwitchId) return new Response('unauthenticated', { status: 401 })
+
+        const user = await prisma.user.findFirst({ where: { twitchId: headerTwitchId } })
+
+        if (headerTwitchId !== user?.twitchId) {
+          console.log(`twitch id differs: ${headerTwitchId} - ${user?.twitchId}`)
+          return new Response(JSON.stringify('cannot post as a different user'), { status: 403 })
+        }
+
+        // curl -X POST "https://edge-functions-backend.vercel.app/api/posts"  -H 'Authorization: Bearer 1btt566hxkovfzn4qwt2a6h8sdotnk' -H 'Client-Id: r2r4w2bedvlt0qmfexgpnzqvv1ymfq' -d '{"title":"title", "link":"link", "content":"content", "userId": "a32065f5-fc9e-4dfd-b292-4709d211a86c"}'
         let payload: Prisma.PostUncheckedCreateInput
         try {
           payload = await req.json()
