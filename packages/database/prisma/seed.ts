@@ -21,7 +21,6 @@ export async function main() {
   for (let i = 0; i < 30; i++) {
     const post: Prisma.PostCreateArgs = {
       data: {
-        deletedAt: Math.random() < 0.8 ? null : new Date(),
         userId: (_.sample(users) as User).id,
         title: faker.lorem.sentence(),
         content: faker.internet.url(),

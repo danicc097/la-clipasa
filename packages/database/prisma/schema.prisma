@@ -83,7 +83,7 @@ model Post {
   savedPost   SavedPost[]
   User        User           @relation(fields: [userId], references: [id])
 
-  textsearchable_index_col Unsupported("tsvector")?
+  textsearchable_index_col Unsupported("tsvector")? @default(dbgenerated("''::tsvector"))
 
   @@index([textsearchable_index_col], type: Gin)
   // TODO when prisma allows manual indexes or specific postgres extension indexes switch to GIN btree
