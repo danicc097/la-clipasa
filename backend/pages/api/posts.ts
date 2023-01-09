@@ -47,7 +47,14 @@ export default async (req: NextRequest) => {
         } catch (error) {
           return new Response('missing payload', { status: 400 })
         }
-        const post = await prisma.post.create({ data: payload }) // obviously must explicitly set fields later
+        const post = await prisma.post.create({
+          data: {
+            link: payload.link,
+            title: payload.title,
+            content: payload.content,
+            userId: user.id,
+          },
+        }) // obviously must explicitly set fields later
 
         // await discordPostUpload(post)
 

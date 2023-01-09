@@ -15,7 +15,7 @@ import {
   useTwitchUserFollower,
   useTwitchUserSubscriber,
 } from 'src/queries/twitch'
-import { useUserPostMutation } from 'src/queries/api/users'
+import { useUserUpdateOrCreate } from 'src/queries/api/users'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
 
@@ -40,7 +40,7 @@ export default function Layout({ children }: LayoutProps) {
   const twitchUserFollower = useTwitchUserFollower()
   const twitchUserSubscriber = useTwitchUserSubscriber()
   const twitchBroadcasterLive = useTwitchBroadcasterLive()
-  const userPostMutation = useUserPostMutation()
+  const userUpdateOrCreateMutation = useUserUpdateOrCreate()
   const { classes } = useStyles()
   const { burgerOpened, setBurgerOpened } = useUISlice()
   const [updateUserAfterLogin, setUpdateUserAfterLogin] = useState(false)
@@ -71,7 +71,7 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     if (updateUserAfterLogin && isAuthenticated && twitchUserFollower.isFetched && twitchUserSubscriber.isFetched) {
-      userPostMutation.mutate({
+      userUpdateOrCreateMutation.mutate({
         displayName: twitchUser?.data?.data?.[0]?.display_name,
         isFollower,
         isSubscriber,
@@ -85,7 +85,7 @@ export default function Layout({ children }: LayoutProps) {
     isSubscriber,
     twitchUserFollower.isFetched,
     twitchUserSubscriber.isFetched,
-    userPostMutation,
+    userUpdateOrCreateMutation,
     twitchUser?.data?.data,
   ])
 

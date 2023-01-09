@@ -21,18 +21,21 @@ import {
   createStyles,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { showNotification } from '@mantine/notifications'
 import { IconBookmark, IconCross, IconCrossOff, IconEyeCheck, IconFilterOff, IconHeart, IconSend } from '@tabler/icons'
 import type { PostCategory } from 'database'
 import { truncate } from 'lodash-es'
 import { HTMLProps, useEffect, useRef, useState } from 'react'
 import CategoryBadges, { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadges'
+import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import useUndo from 'src/hooks/useUndoRedo'
+import { usePostCreateMutation } from 'src/queries/api/posts'
 import { emotesTextToHtml, htmlToEmotesText, anyKnownEmoteRe } from 'src/services/twitch'
 import { useUISlice } from 'src/slices/ui'
 import { getCaretCoordinates, getCaretIndex, pasteHtmlAtCaret } from 'src/utils/input'
 import { sanitizeContentEditableInput, sanitizeContentEditableInputBeforeSubmit } from 'src/utils/string'
 import { isURL } from 'src/utils/url'
-import { NewPostRequest, PostCategoryNames } from 'types'
+import { PostCreateRequest, PostCategoryNames } from 'types'
 
 const tooltipWithPx = 40
 
@@ -123,7 +126,7 @@ type HomeSideActionsProps = HTMLProps<HTMLDivElement>
 
 export default function HomeSideActions(props: HomeSideActionsProps) {
   const { ...htmlProps } = props
-
+  const postCreateMutation = usePostCreateMutation()
   const [titlePreviewPopoverOpened, setTitlePreviewPopoverOpened] = useState(false)
 
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
@@ -137,8 +140,9 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const [awaitEmoteCompletion, setAwaitEmoteCompletion] = useState(false)
   const [filterLiked, setFilterLiked] = useState(false)
   const [filterSaved, setFilterSaved] = useState(false)
+  const [calloutErrors, setCalloutErrors] = useState([])
 
-  const form = useForm<NewPostRequest>({
+  const form = useForm<PostCreateRequest>({
     initialValues: {
       ...storedNewPostForm,
     },
@@ -182,6 +186,27 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
     localStorage.setItem(NEW_POST_FORM_KEY, JSON.stringify(form.values))
   }, [form.values])
 
+  const handleSubmit = form.onSubmit((values) => {
+    values.title = sanitizeContentEditableInputBeforeSubmit(values.title)
+    postCreateMutation.mutate(values, {
+      onError(error, variables, context) {
+        // TODO helper extractErrorMessage that fallbacks to internal error
+        setCalloutErrors(['Internal server error'])
+      },
+      onSuccess(error, variables, context) {
+        setNewPostModalOpened(false)
+        showNotification({
+          id: 'post-created',
+          title: 'Post submitted',
+          message: 'New post created successfully',
+          color: 'green',
+          icon: <IconSend size={18} />,
+          autoClose: 5000,
+        })
+      },
+    })
+  })
+
   const renderNewPostModal = () => (
     <>
       <Modal
@@ -195,20 +220,8 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
         // size="60%"
         closeOnEscape={false} // user may press escape to enter emote
       >
-        <form
-          onSubmit={form.onSubmit((values) => {
-            values.title = sanitizeContentEditableInputBeforeSubmit(values.title)
-            console.log(values)
-          })}
-        >
-          {/* {caretPosition} */}
-          {/*
-          TODO give up on this, not worth it
-          - Use regular input and tooltip is shown when endswith emote
-          - Emote input on mobile will surely be broken if using contenteditable the way it is now
-          - have an "eye" icon to show preview message on a popover and set its innerhtml there,
-          that will be enough.
- */}
+        <ErrorCallout title="Error uploading post" errors={calloutErrors} />
+        <form onSubmit={handleSubmit}>
           <Popover
             opened={titlePreviewPopoverOpened}
             styles={{
@@ -272,7 +285,12 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
             Leave message empty to show link by default.
           </Text>
           <Group position="right" mt="md">
-            <Button variant="gradient" gradient={{ from: '#1864ab', to: '#497baa', deg: 225 }} type="submit">
+            <Button
+              variant="gradient"
+              gradient={{ from: '#1864ab', to: '#497baa', deg: 225 }}
+              type="submit"
+              loading={postCreateMutation.isLoading}
+            >
               Submit
             </Button>
           </Group>

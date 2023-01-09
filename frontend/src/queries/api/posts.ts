@@ -3,7 +3,7 @@ import { useQuery, useQueryClient, QueryClient, useMutation } from '@tanstack/re
 import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY, useUISlice } from 'src/slices/ui'
 import type { Post, User } from 'database'
 import { useTwitchUser } from 'src/queries/twitch'
-import type { UserUpdateOrCreateRequest } from 'types'
+import type { PostCreateRequest } from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 
 export function usePosts() {
@@ -62,19 +62,17 @@ export function usePostById() {
 // will only be called on token renewal.
 // if user needs to refresh data instantly (new sub or follow to be able to post, etc.)
 // then logs out and back in
-export function useUserPostMutation() {
+export function usePostCreateMutation() {
   const { twitchToken } = useUISlice()
-  const { data: twitchUser } = useTwitchUser()
-  const twitchId = twitchUser?.data[0].id
 
   return useMutation({
-    mutationKey: [`apiUserPost-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
+    mutationKey: [`apiPostCreate-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error: AxiosError) => {
-      if (![401, 404].includes(error?.response?.status) && failureCount < 2) return true
+      return false
     },
     retryDelay: 1000,
-    mutationFn: async (body: UserUpdateOrCreateRequest): Promise<User> => {
-      const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/users/${twitchId}`, body, {
+    mutationFn: async (body: PostCreateRequest): Promise<User> => {
+      const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/posts`, body, {
         headers: {
           Authorization: `Bearer ${twitchToken}`,
         },

@@ -24,7 +24,7 @@ export const RoleNames: Record<DatabaseRole, string> = {
 }
 
 export type UserUpdateOrCreateRequest = Pick<User, 'displayName' | 'isFollower' | 'isSubscriber'>
-export type NewPostRequest = Pick<Post, 'title' | 'content' | 'link'>
+export type PostCreateRequest = Pick<Post, 'title' | 'content' | 'link'>
 
 /**
  *

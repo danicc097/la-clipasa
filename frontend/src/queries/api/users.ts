@@ -31,7 +31,7 @@ export function useUser() {
 // will only be called on token renewal.
 // if user needs to refresh data instantly (new sub or follow to be able to post, etc.)
 // then logs out and back in
-export function useUserPostMutation() {
+export function useUserUpdateOrCreate() {
   const { twitchToken } = useUISlice()
   const { data: twitchUser } = useTwitchUser()
   const twitchId = twitchUser?.data[0].id
@@ -39,7 +39,7 @@ export function useUserPostMutation() {
   return useMutation({
     mutationKey: [`apiUserPost-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error: AxiosError) => {
-      if (![401, 404].includes(error?.response?.status) && failureCount < 2) return true
+      return false
     },
     retryDelay: 1000,
     mutationFn: async (body: UserUpdateOrCreateRequest): Promise<User> => {
