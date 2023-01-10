@@ -29,22 +29,13 @@ import { isURL } from 'src/utils/url'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { declareComponentKeys } from 'i18nifty'
+import { usePostsSlice } from 'src/slices/posts'
 
 const useStyles = createStyles((theme) => ({}))
 
 // TODO padding before footer including image (right now empty background)
 export default function Home() {
   const { classes } = useStyles()
-
-  const getPostsQueryParams: PostQueryParams = {
-    titleQuery: undefined,
-    limit: undefined,
-    authorId: undefined,
-    liked: undefined,
-    saved: undefined,
-    categories: undefined,
-    cursor: undefined,
-  }
 
   return (
     <>

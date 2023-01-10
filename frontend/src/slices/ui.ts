@@ -2,7 +2,9 @@ import Cookies from 'js-cookie'
 import create from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-export type Theme = 'dark' | 'light'
+export const TWITCH_ACCESS_TOKEN_COOKIE = 'twitchAccessToken'
+
+export const UI_SLICE_PERSIST_KEY = 'ui-slice'
 
 interface UIState {
   twitchToken: string
@@ -10,9 +12,6 @@ interface UIState {
   burgerOpened: boolean
   setBurgerOpened: (opened: boolean) => void
 }
-export const TWITCH_ACCESS_TOKEN_COOKIE = 'twitchAccessToken'
-
-export const UI_SLICE_PERSIST_KEY = 'ui-slice'
 
 const useUISlice = create<UIState>()(
   devtools(

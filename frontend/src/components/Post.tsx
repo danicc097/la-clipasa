@@ -164,7 +164,7 @@ export default function Post(props: PostProps) {
                 />
               }
             >
-              <ActionIcon>{truncateIntegerToString(likes)}</ActionIcon>
+              <ActionIcon component="div">{truncateIntegerToString(likes)}</ActionIcon>
             </Button>
             <ActionIcon
               className={`${classes.action} ${hasSaved && saveBeacon ? 'beacon' : ''}`}

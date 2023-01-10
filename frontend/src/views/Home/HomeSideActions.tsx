@@ -40,6 +40,7 @@ import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import useUndo from 'src/hooks/useUndoRedo'
 import { usePostCreateMutation } from 'src/queries/api/posts'
 import { emotesTextToHtml, htmlToEmotesText, anyKnownEmoteRe } from 'src/services/twitch'
+import { usePostsSlice } from 'src/slices/posts'
 import { useUISlice } from 'src/slices/ui'
 import { getCaretCoordinates, getCaretIndex, pasteHtmlAtCaret } from 'src/utils/input'
 import { sanitizeContentEditableInput, sanitizeContentEditableInputBeforeSubmit } from 'src/utils/string'
@@ -141,6 +142,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const { ...htmlProps } = props
   const postCreateMutation = usePostCreateMutation()
   const [titlePreviewPopoverOpened, setTitlePreviewPopoverOpened] = useState(false)
+  const { setGetPostsQueryParams, getPostsQueryParams } = usePostsSlice()
 
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
@@ -372,10 +374,20 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
 
           <Card.Section className={classes.section}>
             <Text mt="md" className={classes.label} color="dimmed">
+              Active category filters
+            </Text>
+            <Group spacing={7} mt={5}>
+              <CategoryBadges categories={[PostCategoryNames.DIAMANTE]} />
+            </Group>
+          </Card.Section>
+
+          <Card.Section className={classes.section}>
+            {/* TODO remove if active filter */}
+            <Text mt="md" className={classes.label} color="dimmed">
               Filter by category
             </Text>
             <Group spacing={7} mt={5}>
-              <CategoryBadges categories={Object.keys(PostCategoryNames) as PostCategory[]} />
+              <CategoryBadges categories={Object.keys(PostCategoryNames)} />
             </Group>
           </Card.Section>
 

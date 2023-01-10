@@ -68,7 +68,7 @@ export const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCa
   },
 }
 
-export default function CategoryBadges({ categories }: { categories: PostCategory[] }) {
+export default function CategoryBadges({ categories }: { categories: Array<PostCategoryKey | string> }) {
   return (
     <Group position="left">
       {categories.map((category, i) => (
