@@ -55,7 +55,11 @@ function setGetPostsQueryParams(params: PostQueryParams): PostsAction {
 
 function removeCategoryFilter(category: PostCategory): PostsAction {
   return (state: PostsState) => {
-    const categories = state.getPostsQueryParams.categories?.filter((c) => c !== category)
+    let categories = state.getPostsQueryParams?.categories
+    if (!categories) {
+      categories = []
+    }
+    categories = categories.filter((c) => c !== category)
 
     return {
       getPostsQueryParams: {
@@ -68,7 +72,11 @@ function removeCategoryFilter(category: PostCategory): PostsAction {
 
 function addCategoryFilter(category: PostCategory): PostsAction {
   return (state: PostsState) => {
-    const categories = [...state.getPostsQueryParams.categories]
+    let categories = state.getPostsQueryParams?.categories
+    if (!categories) {
+      categories = []
+    }
+
     if (categories.indexOf(category) === -1) categories.push(category)
 
     return {

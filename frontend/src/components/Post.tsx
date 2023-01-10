@@ -26,6 +26,7 @@ import { truncate } from 'lodash-es'
 import type { PostCategory, Prisma } from 'database' // cant use PostCategory exported const
 import CategoryBadge, { CardBackground, PostCategoryKey, uniqueCategoryBackground } from 'src/components/CategoryBadge'
 import { emotesTextToHtml } from 'src/services/twitch'
+import { usePostsSlice } from 'src/slices/posts'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -148,6 +149,7 @@ export default function Post(props: PostProps) {
   const [likeBeacon, setLikeBeacon] = useState(false)
   const [hasLiked, setHasLiked] = useState(true)
   const [hasSaved, setHasSaved] = useState(false)
+  const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
 
   function renderFooter() {
     return (
@@ -263,7 +265,14 @@ export default function Post(props: PostProps) {
       {categories.length > 0 && (
         <Group position="left">
           {categories.map((category, i) => (
-            <CategoryBadge key={i} category={category} />
+            <CategoryBadge
+              onClick={(e) => {
+                addCategoryFilter(category)
+              }}
+              className="disable-select"
+              key={i}
+              category={category}
+            />
           ))}
         </Group>
       )}

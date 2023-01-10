@@ -88,7 +88,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   burger: {
-    [theme.fn.largerThan('xl')]: {
+    [theme.fn.largerThan(1200)]: {
       display: 'none',
     },
   },

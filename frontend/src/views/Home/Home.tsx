@@ -74,8 +74,6 @@ export default function Home() {
               width: 100%;
             `}
           >
-            <PostSkeleton className="post" />
-            <PostSkeleton className="post" />
             <Post
               author={{
                 name: 'some_user',
@@ -87,7 +85,7 @@ export default function Home() {
                 'Text with emote calieAMOR2. A very very very very very very very very very very very very very very very very very very very very very very long post'
               }
               className="post"
-              footer={<div>footer div</div>}
+              footer={<div>Some extra info</div>}
               likes={100}
             />
             <Post
@@ -99,7 +97,7 @@ export default function Home() {
               categories={['SIN_SONIDO', 'RANA']}
               title={'Some title for this'}
               className="post"
-              footer={<div>footer div</div>}
+              footer={<div>Some extra info</div>}
               likes={4324}
             />
             <Post
@@ -111,10 +109,10 @@ export default function Home() {
               categories={['ORO']}
               title={'Some title for this'}
               className="post"
-              footer={<div>footer div</div>}
+              footer={<div>Some extra info</div>}
               likes={14324}
             />
-            {Array(7)
+            {Array(2)
               .fill(null)
               .map((e, idx) => (
                 <Post
@@ -127,10 +125,12 @@ export default function Home() {
                   categories={[]}
                   title={'Some title for this'}
                   className="post"
-                  footer={<div>footer div</div>}
+                  footer={<div>Some extra info</div>}
                   likes={2}
                 />
               ))}
+            <PostSkeleton className="post" />
+            <PostSkeleton className="post" />
           </Container>
         </ScrollArea>
         <Space p={5} />
