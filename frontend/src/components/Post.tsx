@@ -73,7 +73,24 @@ const useStyles = createStyles((theme) => {
   return {
     skeletonCard: {
       ...cardStyle,
+
+      backgroundColor: theme.colorScheme === 'light' ? '#abaaaa2c' : '#3f3a3a2f',
+      borderRadius: '15px',
       ':hover': {},
+      boxShadow: 'none',
+      animation: 'fade-in-color 1.8s infinite',
+
+      '@keyframes fade-in-color': {
+        '0%': {
+          opacity: theme.colorScheme === 'light' ? 0.3 : 1,
+        },
+        '50%': {
+          opacity: 0,
+        },
+        '100%': {
+          opacity: theme.colorScheme === 'light' ? 0.3 : 1,
+        },
+      },
     },
 
     card: cardStyle,
@@ -122,7 +139,7 @@ interface PostProps extends HTMLProps<HTMLButtonElement> {
  *
  */
 export default function Post(props: PostProps) {
-  const { image, categories, title, footer, likes, author, ...htmlProps } = props
+  const { image, categories, title, footer, likes, author, className, ...htmlProps } = props
   const { classes, theme } = useStyles()
   const cardBackground: CardBackground = uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = image ? image : cardBackground ? cardBackground.image : 'auto'
@@ -215,12 +232,11 @@ export default function Post(props: PostProps) {
     )
   }
 
-  // TODO skeleton https://mantine.dev/core/skeleton/
   return (
     <Card
       p="lg"
       radius={12}
-      className={`${classes.card} ${props.className ?? ''}`}
+      className={`${classes.card} ${className ?? ''}`}
       /* move to classes */
       css={css`
         background-repeat: no-repeat;
@@ -261,18 +277,14 @@ export default function Post(props: PostProps) {
 
 export function PostSkeleton(props: Partial<PostProps>) {
   const { classes, theme } = useStyles()
-  const { image, categories, title, footer, likes, author, ...htmlProps } = props
+  const { image, categories, title, footer, likes, author, className, ...htmlProps } = props
 
   return (
     <Flex
       direction={'column'}
       justify="center"
       p={15}
-      css={css`
-        background-color: #abaaaa16;
-        border-radius: 15px;
-      `}
-      className={`${classes.skeletonCard}  ${props.className ?? ''}`}
+      className={`${classes.skeletonCard} ${className ?? ''}`}
       {...(htmlProps as any)}
     >
       <Skeleton height={8} mt={6} width="90%" radius="xl" mb="xs" />
