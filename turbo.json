@@ -30,9 +30,12 @@
     "local:push": {
       "cache": false
     },
+    "db:generate": {
+      "cache": false
+    },
     "build": {
       "dependsOn": [
-        // "^dev:generate", // don't want frontend and backend to run at the same time
+        "^db:generate",
         "^build"
       ],
       "cache": false,

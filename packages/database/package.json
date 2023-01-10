@@ -12,6 +12,7 @@
     "local:migrate": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma migrate dev",
     "local:rollback": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma migrate resolve --rolled-back ",
     "local:create-migration": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma migrate dev --create-only && pnpm run local:generate",
+    "db:generate": "DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy",
     "dev:generate": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy",
     "dev:rollback": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma migrate resolve --rolled-back ",
     "dev:push": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma db push --skip-generate --accept-data-loss --force-reset",
