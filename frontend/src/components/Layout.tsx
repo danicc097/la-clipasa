@@ -23,6 +23,17 @@ const useStyles = createStyles((theme) => ({
   sidebar: {
     [theme.fn.smallerThan('xs')]: {},
   },
+
+  drawer: {
+    /* margin-top: ${HEADER_HEIGHT}px; */
+    height: ' 100%',
+    minWidth: '100%',
+    zIndex: 10000,
+
+    [theme.fn.largerThan('md')]: {
+      minWidth: '40%',
+    },
+  },
 }))
 
 type LayoutProps = {
@@ -125,13 +136,7 @@ export default function Layout({ children }: LayoutProps) {
         {children}
       </main>
       <Drawer
-        css={css`
-          /* margin-top: ${HEADER_HEIGHT}px; */
-          height: 100%;
-          min-width: 100%;
-          z-index: 10000;
-        `}
-        transition="rotate-left"
+        className={classes.drawer}
         transitionDuration={250}
         transitionTimingFunction="ease"
         opened={burgerOpened}

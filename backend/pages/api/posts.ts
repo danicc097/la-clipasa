@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
-import { PostCategory, Prisma, PrismaClient } from 'database'
+import { PostCategory, Prisma, PrismaClient, User } from 'database'
 import { PostCategoryNames, PostQueryParams } from 'types'
 import { cursorTo } from 'readline'
 import prisma from 'lib/prisma'
@@ -26,13 +26,10 @@ export default async (req: NextRequest) => {
     switch (req.method) {
       case 'GET': {
         const headerTwitchId = req.headers.get('X-twitch-id')
-        if (!headerTwitchId) return new Response('unauthenticated', { status: 401 })
 
-        const user = await prisma.user.findFirst({ where: { twitchId: headerTwitchId } })
-
-        if (headerTwitchId !== user?.twitchId) {
-          console.log(`twitch id differs: ${headerTwitchId} - ${user?.twitchId}`)
-          return new Response(JSON.stringify('cannot post as a different user'), { status: 403 })
+        let user: User | null = null
+        if (headerTwitchId) {
+          user = await prisma.user.findFirst({ where: { twitchId: headerTwitchId } })
         }
 
         const { searchParams } = new URL(req.url)
@@ -51,38 +48,47 @@ export default async (req: NextRequest) => {
               : undefined,
         }
 
+        const DEFAULT_LIMIT = 10
         // all posts with infinite scroll (https://react-query-v3.tanstack.com/guides/infinite-queries)
         const posts = await prisma.post.findMany({
-          take: queryParams.limit,
+          take: queryParams.limit ?? DEFAULT_LIMIT,
           orderBy: {
             createdAt: 'desc',
           },
-          cursor: {
-            id: queryParams.cursor,
-          },
+          ...(queryParams.cursor !== undefined && {
+            cursor: {
+              id: queryParams.cursor,
+            },
+          }),
           where: {
             isModerated: true,
-            title: {
-              search: queryParams.titleQuery,
-            },
-            categories: {
-              hasEvery: queryParams.categories,
-            },
+            ...(queryParams.titleQuery !== undefined && {
+              title: {
+                search: queryParams.titleQuery,
+              },
+            }),
+            ...(queryParams.categories !== undefined && {
+              categories: {
+                hasEvery: queryParams.categories,
+              },
+            }),
             userId: queryParams.authorId, // filter by arbitrary user and "Edit my posts"
-            ...(queryParams.liked !== undefined && {
-              likedPost: {
-                every: {
-                  userId: { equals: user.id },
+            ...(queryParams.liked !== undefined &&
+              user && {
+                likedPost: {
+                  every: {
+                    userId: { equals: user.id },
+                  },
                 },
-              },
-            }),
-            ...(queryParams.saved !== undefined && {
-              savedPost: {
-                every: {
-                  userId: { equals: user.id },
+              }),
+            ...(queryParams.saved !== undefined &&
+              user && {
+                savedPost: {
+                  every: {
+                    userId: { equals: user.id },
+                  },
                 },
-              },
-            }),
+              }),
           },
           include: {
             likedPost: true,

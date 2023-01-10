@@ -5,6 +5,7 @@ import type { Post, User } from 'database'
 import { useTwitchUser } from 'src/queries/twitch'
 import type { PostCreateRequest } from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
+import { usePostsSlice } from 'src/slices/posts'
 
 /**
  *
@@ -13,21 +14,15 @@ import { formatURLWithQueryParams } from 'src/utils/url'
 export function usePosts() {
   const { twitchToken } = useUISlice()
   const { data: twitchUser } = useTwitchUser()
+  const { getPostsQueryParams } = usePostsSlice()
   const twitchId = twitchUser?.data[0].id
 
   return useQuery<Post[], AxiosError>({
-    queryKey: [`apiUser-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
-    retry: (failureCount, error) => {
-      if (![401, 404].includes(error.response.status) && failureCount < 2) return true
-    },
-    retryDelay: 1000,
+    queryKey: [`apiGetPosts-Moderated`], // any state used inside the queryFn must be part of the queryKey
+    retry: false,
     queryFn: async ({ signal, pageParam }): Promise<Post[]> => {
       const { data } = await axios.get(
-        formatURLWithQueryParams(`${import.meta.env.VITE_URL}/api/posts`, {
-          limit: 10,
-          cursor: null,
-          query: '',
-        }),
+        formatURLWithQueryParams(`${import.meta.env.VITE_URL}/api/posts`, getPostsQueryParams),
         {
           headers: {
             Authorization: `Bearer ${twitchToken}`,

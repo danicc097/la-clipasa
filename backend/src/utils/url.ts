@@ -2,8 +2,6 @@ export type Params = {
   [key: string]: string | number | Array<string | number>
 }
 
-export type ParamsArray = Array<[string, string | number]>
-
 export const formatURLWithQueryParams = (base: string, params: Params) => {
   if (!params || Object.keys(params)?.length === 0) return base
 

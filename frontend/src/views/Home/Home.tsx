@@ -30,13 +30,16 @@ import HomeSideActions from 'src/views/Home/HomeSideActions'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { declareComponentKeys } from 'i18nifty'
 import { usePostsSlice } from 'src/slices/posts'
+import { usePosts } from 'src/queries/api/posts'
 
 const useStyles = createStyles((theme) => ({}))
 
 // TODO padding before footer including image (right now empty background)
 export default function Home() {
   const { classes } = useStyles()
+  const usePostsQuery = usePosts()
 
+  console.log(usePostsQuery.data)
   return (
     <>
       <div

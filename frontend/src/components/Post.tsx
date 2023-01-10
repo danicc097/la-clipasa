@@ -24,11 +24,7 @@ import { truncateIntegerToString } from 'src/utils/string'
 import { HTMLProps, useState } from 'react'
 import { truncate } from 'lodash-es'
 import type { PostCategory, Prisma } from 'database' // cant use PostCategory exported const
-import CategoryBadges, {
-  CardBackground,
-  PostCategoryKey,
-  uniqueCategoryBackground,
-} from 'src/components/CategoryBadges'
+import CategoryBadge, { CardBackground, PostCategoryKey, uniqueCategoryBackground } from 'src/components/CategoryBadge'
 import { emotesTextToHtml } from 'src/services/twitch'
 
 const useStyles = createStyles((theme) => {
@@ -222,7 +218,6 @@ export default function Post(props: PostProps) {
   // TODO skeleton https://mantine.dev/core/skeleton/
   return (
     <Card
-      {...(htmlProps as any)}
       p="lg"
       radius={12}
       className={`${classes.card} ${props.className ?? ''}`}
@@ -247,8 +242,16 @@ export default function Post(props: PostProps) {
           }
         }
       `}
+      {...(htmlProps as any)}
     >
-      {categories.length > 0 && <CategoryBadges categories={categories} />}
+      {categories.length > 0 && (
+        <Group position="left">
+          {categories.map((category, i) => (
+            <CategoryBadge key={i} category={category} />
+          ))}
+        </Group>
+      )}
+
       {renderTitle()}
       {renderMetadata()}
       {renderFooter()}
@@ -269,8 +272,8 @@ export function PostSkeleton(props: Partial<PostProps>) {
         background-color: #abaaaa16;
         border-radius: 15px;
       `}
-      {...(htmlProps as any)}
       className={`${classes.skeletonCard}  ${props.className ?? ''}`}
+      {...(htmlProps as any)}
     >
       <Skeleton height={8} mt={6} width="90%" radius="xl" mb="xs" />
       <Skeleton height={8} mt={6} width="90%" radius="xl" mb="xs" />

@@ -9,7 +9,8 @@ import emojiDiamante from 'src/assets/emoji-diamante.png'
 import { PostCategoryNames } from 'types'
 import { IconAlertOctagon, IconVolumeOff } from '@tabler/icons'
 import type { PostCategory } from 'database'
-import { css } from '@emotion/react'
+import { Interpolation, Theme, css } from '@emotion/react'
+import type { HTMLProps } from 'react'
 
 export type PostCategoryKey = keyof typeof PostCategoryNames
 
@@ -68,46 +69,49 @@ export const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCa
   },
 }
 
-export default function CategoryBadges({ categories }: { categories: Array<PostCategoryKey | string> }) {
+interface CategoryBadgeProps extends HTMLProps<HTMLElement> {
+  category: PostCategoryKey | string
+  css?: Interpolation<Theme>
+}
+
+export default function CategoryBadge(props: CategoryBadgeProps) {
+  const { category, css: CSS, ...htmlProps } = props
+
   return (
-    <Group position="left">
-      {categories.map((category, i) => (
-        <Badge
-          onClick={() => {
-            null
-          }}
-          key={i}
-          variant="gradient"
-          gradient={categoryColorGradient[category] ?? null}
-          css={css`
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
+    <Badge
+      variant="gradient"
+      gradient={categoryColorGradient[category] ?? null}
+      css={[
+        CSS,
+        css`
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          cursor: pointer;
 
-            :hover {
-              filter: brightness(1.2);
-            }
-          `}
-        >
-          <div
-            css={css`
-              display: flex;
-              align-items: center;
-              justify-content: center;
+          :hover {
+            filter: brightness(1.2);
+          }
+        `,
+      ]}
+      {...(htmlProps as any)}
+    >
+      <div
+        css={css`
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
-              *:not(:first-child) {
-                margin-left: 3px;
-              }
-            `}
-          >
-            {categoryEmojis[category] && <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />}
-            <div>{PostCategoryNames[category] ?? category}</div>
-            {categoryPostEmojis[category]}
-            {categoryEmojis[category] && <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />}
-          </div>
-        </Badge>
-      ))}
-    </Group>
+          *:not(:first-child) {
+            margin-left: 3px;
+          }
+        `}
+      >
+        {categoryEmojis[category] && <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />}
+        <div>{PostCategoryNames[category] ?? category}</div>
+        {categoryPostEmojis[category]}
+        {categoryEmojis[category] && <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />}
+      </div>
+    </Badge>
   )
 }

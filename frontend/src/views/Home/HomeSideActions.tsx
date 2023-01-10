@@ -31,14 +31,12 @@ import {
   IconHeart,
   IconSearch,
   IconSend,
-  IconX,
 } from '@tabler/icons'
 import type { PostCategory } from 'database'
-import { truncate } from 'lodash-es'
-import { HTMLProps, useEffect, useRef, useState } from 'react'
-import CategoryBadges, { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadges'
+import { remove, truncate } from 'lodash-es'
+import { HTMLProps, useCallback, useEffect, useRef, useState } from 'react'
+import CategoryBadge, { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadge'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
-import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import useUndo from 'src/hooks/useUndoRedo'
 import { usePostCreateMutation } from 'src/queries/api/posts'
 import { emotesTextToHtml, htmlToEmotesText, anyKnownEmoteRe } from 'src/services/twitch'
@@ -95,10 +93,10 @@ const useStyles = createStyles((theme) => ({
 
   card: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-    maxWidth: '20vw',
+    width: '25vw',
     [theme.fn.smallerThan(1200)]: {
+      minWidth: '35vw',
       maxWidth: '100vw',
-      minWidth: '60vw',
       background: 'none',
     },
   },
@@ -144,8 +142,8 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const { ...htmlProps } = props
   const postCreateMutation = usePostCreateMutation()
   const [titlePreviewPopoverOpened, setTitlePreviewPopoverOpened] = useState(false)
-  const { setGetPostsQueryParams, getPostsQueryParams } = usePostsSlice()
-  const { isAuthenticated } = useAuthenticatedUser()
+  const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
+
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
   const emoteTooltipRef = useRef(null)
@@ -221,6 +219,45 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
     })
   })
 
+  function renderActiveCategoryFilters() {
+    return getPostsQueryParams.categories?.map((category, i) => (
+      <CategoryBadge
+        className="disable-select"
+        key={i}
+        category={category}
+        onClick={(e) => removeCategoryFilter(category)}
+      />
+    ))
+  }
+
+  function renderCategoryFilters() {
+    return Object.keys(PostCategoryNames)
+      .filter((c: PostCategory) => {
+        if (!getPostsQueryParams.categories) return true
+        return !getPostsQueryParams.categories.includes(c)
+      })
+      .map((category: PostCategory, i) => {
+        return (
+          <CategoryBadge
+            className="disable-select"
+            key={i}
+            onClick={(e) => {
+              addCategoryFilter(category)
+            }}
+            css={css`
+              filter: grayscale(0.8);
+
+              :hover {
+                filter: none;
+              }
+            `}
+            category={category}
+          />
+        )
+      })
+  }
+
+  // TODO reusable form
   const renderNewPostModal = () => (
     <>
       <Modal
@@ -345,72 +382,65 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
               mt="md"
             />
           </Card.Section>
-          {isAuthenticated && (
-            <Menu>
-              <Card.Section className={classes.section}>
-                <Text mt="md" className={classes.label} color="dimmed">
-                  Personal filters
-                </Text>
-                <Space pb={10} />
-                <Flex mih={50} gap="md" justify="center" align="center" direction="row" wrap={'wrap'}>
-                  <Chip
-                    defaultChecked
-                    variant="filled"
-                    color="green"
-                    checked={filterLiked}
-                    onClick={() => setFilterLiked(!filterLiked)}
-                  >
-                    Liked posts
-                  </Chip>
-                  <Chip
-                    defaultChecked
-                    variant="filled"
-                    color="green"
-                    checked={filterSaved}
-                    onClick={() => setFilterSaved(!filterSaved)}
-                  >
-                    Saved posts
-                  </Chip>
-                </Flex>
-              </Card.Section>
-            </Menu>
-          )}
+          <Menu>
+            <Card.Section className={classes.section}>
+              <Text mt="md" className={classes.label} color="dimmed">
+                Personal filters
+              </Text>
+              <Space pb={10} />
+              <Flex mih={50} gap="md" justify="center" align="center" direction="row" wrap={'wrap'}>
+                <Chip
+                  defaultChecked
+                  variant="filled"
+                  color="green"
+                  checked={filterLiked}
+                  onClick={() => setFilterLiked(!filterLiked)}
+                >
+                  Liked posts
+                </Chip>
+                <Chip
+                  defaultChecked
+                  variant="filled"
+                  color="green"
+                  checked={filterSaved}
+                  onClick={() => setFilterSaved(!filterSaved)}
+                >
+                  Saved posts
+                </Chip>
+              </Flex>
+            </Card.Section>
+          </Menu>
 
           <Card.Section className={classes.section}>
             <Text mt="md" className={classes.label} color="dimmed">
               Active category filters
             </Text>
             <Group spacing={7} mt={5}>
-              <CategoryBadges categories={[PostCategoryNames.DIAMANTE]} />
+              {renderActiveCategoryFilters()}
             </Group>
           </Card.Section>
-
           <Card.Section className={classes.section}>
-            {/* TODO remove if active filter */}
             <Text mt="md" className={classes.label} color="dimmed">
               Filter by category
             </Text>
             <Group spacing={7} mt={5}>
-              <CategoryBadges categories={Object.keys(PostCategoryNames)} />
+              {renderCategoryFilters()}
             </Group>
           </Card.Section>
-          {isAuthenticated && (
-            <Group mt="xs">
-              <Button
-                leftIcon={<IconSend size={20} stroke={1.5} />}
-                radius="md"
-                style={{ flex: 1 }}
-                onClick={() => {
-                  setNewPostModalOpened(true)
-                }}
-              >
-                Submit post
-              </Button>
-            </Group>
-          )}
-          {/* <ActionIcon variant="default" radius="md" size={36}>
+
+          <Group mt="xs">
+            <Button
+              leftIcon={<IconSend size={20} stroke={1.5} />}
+              radius="md"
+              style={{ flex: 1 }}
+              onClick={() => setNewPostModalOpened(true)}
+            >
+              Submit post
+            </Button>
+            {/* <ActionIcon variant="default" radius="md" size={36}>
               <IconHeart size={18} className={classes.like} stroke={1.5} />
             </ActionIcon> */}
+          </Group>
         </Card>
       </Group>
     </div>
