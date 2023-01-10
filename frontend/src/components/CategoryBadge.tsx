@@ -102,9 +102,7 @@ export default function CategoryBadge(props: CategoryBadgeProps) {
           align-items: center;
           justify-content: center;
 
-          *:not(:first-child) {
-            margin-left: 3px;
-          }
+          gap: 3px;
         `}
       >
         {categoryEmojis[category] && <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />}
