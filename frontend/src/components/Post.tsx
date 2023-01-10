@@ -13,6 +13,9 @@ import {
   MantineTheme,
   ColorScheme,
   Button,
+  Flex,
+  Skeleton,
+  CSSObject,
 } from '@mantine/core'
 import { IconHeart, IconBookmark, IconShare, IconVolumeOff, IconAlertTriangle, IconAlertOctagon } from '@tabler/icons'
 import { css } from '@emotion/react'
@@ -31,7 +34,7 @@ import { emotesTextToHtml } from 'src/services/twitch'
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
 
-  const actionStyle = {
+  const actionStyle: CSSObject = {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
     //   button: {
@@ -43,34 +46,41 @@ const useStyles = createStyles((theme) => {
     }),
   }
 
-  return {
-    card: {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-      minWidth: '100%',
-      float: 'left',
-      overflow: 'hidden',
-      // should rework it with gradient shadow instead of border
-      // border: `6px solid ${theme.colorScheme === 'dark' ? '#212327' : '#ddd8e4'}`,
-      boxShadow: `inset 2px 2px 15px ${theme.colorScheme === 'dark' ? '#524f541d' : '#9993a436'},
+  const cardStyle: CSSObject = {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    minWidth: '100%',
+    float: 'left',
+    overflow: 'hidden',
+    // should rework it with gradient shadow instead of border
+    // border: `6px solid ${theme.colorScheme === 'dark' ? '#212327' : '#ddd8e4'}`,
+    boxShadow: `inset 2px 2px 15px ${theme.colorScheme === 'dark' ? '#524f541d' : '#9993a436'},
     0 2px 10px ${theme.colorScheme === 'dark' ? '#3f3c4025' : '#d5d0df1c'}`,
-      transition: 'all .3s ease-in-out',
+    transition: 'all .3s ease-in-out',
 
-      [theme.fn.smallerThan('sm')]: {
-        width: '90vw',
-      },
+    [theme.fn.smallerThan('sm')]: {
+      width: '90vw',
+    },
 
-      ':hover': {
-        WebkitTransition: 'all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)',
-        transition: 'all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)',
-        transform: 'translate3d(0px, -2px, 0)',
-        cursor: 'pointer',
-        boxShadow: `
+    ':hover': {
+      WebkitTransition: 'all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)',
+      transition: 'all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)',
+      transform: 'translate3d(0px, -2px, 0)',
+      cursor: 'pointer',
+      boxShadow: `
           1px 2px 2px hsl(${shadowColor} / 0.333),
           2px 4px 4px hsl(${shadowColor} / 0.333),
           1px 3px 3px hsl(${shadowColor} / 0.333)
         `,
-      },
     },
+  }
+
+  return {
+    skeletonCard: {
+      ...cardStyle,
+      ':hover': {},
+    },
+
+    card: cardStyle,
 
     title: {
       fontSize: '1.5rem',
@@ -243,5 +253,36 @@ export default function Post(props: PostProps) {
       {renderMetadata()}
       {renderFooter()}
     </Card>
+  )
+}
+
+export function PostSkeleton(props: Partial<PostProps>) {
+  const { classes, theme } = useStyles()
+  const { image, categories, title, footer, likes, author, ...htmlProps } = props
+
+  return (
+    <Flex
+      direction={'column'}
+      justify="center"
+      p={15}
+      css={css`
+        background-color: #abaaaa16;
+        border-radius: 15px;
+      `}
+      {...(htmlProps as any)}
+      className={`${classes.skeletonCard}  ${props.className ?? ''}`}
+    >
+      <Skeleton height={8} mt={6} width="90%" radius="xl" mb="xs" />
+      <Skeleton height={8} mt={6} width="90%" radius="xl" mb="xs" />
+      <Skeleton height={8} mt={6} width="70%" radius="xl" mb="xs" />
+      <Space mb={10} />
+      <Flex direction={'row'} align={'center'}>
+        <Skeleton height={40} circle />
+        <Space ml={10} />
+        <Skeleton height={8} width="20%" radius="xl" />
+      </Flex>
+      <Space mb={20} />
+      <Skeleton height={8} mt={6} width="70%" radius="xl" mb="xs" />
+    </Flex>
   )
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Posts from '../../components/Post.old'
-import Post from '../../components/Post'
+import Post, { PostSkeleton } from '../../components/Post'
 import Cookies from 'js-cookie'
 import Header from '../../components/Header'
 import {
@@ -10,6 +10,7 @@ import {
   Flex,
   Group,
   ScrollArea,
+  Skeleton,
   Space,
   Text,
   TextInput,
@@ -79,6 +80,8 @@ export default function Home() {
               width: 100%;
             `}
           >
+            <PostSkeleton className="post" />
+            <PostSkeleton className="post" />
             <Post
               author={{
                 name: 'some_user',
