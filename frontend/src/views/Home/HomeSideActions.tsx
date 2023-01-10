@@ -347,7 +347,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                 Personal filters
               </Text>
               <Space pb={10} />
-              <Flex mih={50} gap="md" justify="flex-start" align="center" direction="row">
+              <Flex mih={50} gap="md" justify="center" align="center" direction="row" wrap={'wrap'}>
                 <Chip
                   defaultChecked
                   variant="filled"
