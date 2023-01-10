@@ -84,12 +84,6 @@ const useStyles = createStyles((theme) => ({
   sideActions: {
     alignSelf: 'flex-start',
     marginTop: '1rem',
-    // need to use https://mantine.dev/core/media-query/ instead,
-    //  cannot share the same style logic for all instances
-    // [theme.fn.smallerThan('xl')]: {
-    //   minWidth: '100%',
-    //   display: 'none',
-    // },
   },
 
   card: {

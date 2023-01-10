@@ -19,8 +19,6 @@ IMPORTANT:
 export default async (req: NextRequest) => {
   try {
     switch (req.method) {
-      // TODO setup cache for this edge function and retry with backoff on 429. This has x-ratelimit-limit of 5
-      // maybe will need to move POST elsewhere
       // see:
       // https://vercel.com/guides/using-databases-with-vercel#optimize-for-high-cache-hit-rates
       // https://vercel.com/docs/concepts/edge-network/caching
@@ -30,7 +28,6 @@ export default async (req: NextRequest) => {
       //
       // https://discord.com/developers/docs/topics/rate-limits
       // should log and avoid 401, 403, or 429.
-      // TODO GET could be a serverless func (lambda under the hood)
       case 'GET': {
         // IMPORTANT: we will not use discord for post fetching, will use db posts. Leaving this for convenience to check
         // created messages
