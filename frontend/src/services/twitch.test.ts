@@ -13,7 +13,6 @@ describe('roles and scopes', async () => {
 
     text = 'some: :external-emote:, and CALIEAMOR2 and CALIEAMOR2'
     html = emotesTextToHtml(text, size)
-    console.log(html)
     expect(html).toBe(
       `some: :external-emote:, and <img ${imgAttributes} title="calieamor2" className="calieamor2" src="${emoteSrc['calieamor2']}" width="${size}" height="${size}"> and <img ${imgAttributes} title="calieamor2" className="calieamor2" src="${emoteSrc['calieamor2']}" width="${size}" height="${size}">`,
     )
