@@ -142,6 +142,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const postCreateMutation = usePostCreateMutation()
   const [titlePreviewPopoverOpened, setTitlePreviewPopoverOpened] = useState(false)
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
+  const { burgerOpened, setBurgerOpened } = useUISlice()
 
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
@@ -207,6 +208,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
       },
       onSuccess(error, variables, context) {
         setNewPostModalOpened(false)
+        setBurgerOpened(false)
         showNotification({
           id: 'post-created',
           title: 'Post submitted',
