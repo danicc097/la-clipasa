@@ -14,8 +14,8 @@
     "test": "turbo run test:no-watch",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
-    "db:dev": "turbo local:push db:generate",
-    "db:generate": "turbo db:generate",
+    "db:dev": "turbo local:push dev:generate",
+    "dev:generate": "turbo dev:generate",
     "local:seed": "turbo local:seed",
     "kill": "fuser -k 5143/tcp 3000/tcp",
     "psql": "docker exec -it postgres_db_discord_twitch_app psql"

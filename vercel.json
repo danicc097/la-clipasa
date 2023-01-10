@@ -18,7 +18,10 @@
         },
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "*"
+          "value": [
+            "https://edge-functions-frontend.vercel.app",
+            "https://laclipasa.vercel.app"
+          ]
         },
         {
           "key": "Access-Control-Allow-Methods",

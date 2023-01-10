@@ -14,7 +14,7 @@ interface CorsOptions {
 }
 
 const defaultOptions: CorsOptions = {
-  origin: ['http://localhost:5143', 'https://*.vercel.app'],
+  origin: ['http://localhost:5143', 'https://edge-functions-frontend.vercel.app', 'https://laclipasa.vercel.app'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,

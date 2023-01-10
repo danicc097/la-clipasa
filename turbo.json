@@ -30,12 +30,12 @@
     "local:push": {
       "cache": false
     },
-    "db:generate": {
+    "dev:generate": {
       "cache": false
     },
     "vercel-build": {
       "dependsOn": [
-        "^db:generate",
+        "^dev:generate",
         "^build"
       ],
       "cache": false,
@@ -47,7 +47,7 @@
     },
     "build": {
       "dependsOn": [
-        "^db:generate",
+        "^dev:generate",
         "^build"
       ],
       "cache": false,
