@@ -16,18 +16,6 @@ import {
   createStyles,
   useMantineTheme,
 } from '@mantine/core'
-import { Modal, Button } from '@mantine/core'
-import { Prism } from '@mantine/prism'
-import { useLocation } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
-import { useUISlice } from 'src/slices/ui'
-import {
-  useTwitchBroadcasterLive,
-  useTwitchUser,
-  useTwitchUserFollower,
-  useTwitchUserSubscriber,
-  useTwitchValidateToken,
-} from 'src/queries/twitch'
 import homeBackground from 'src/assets/background-la-clipassa.jpg'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
@@ -39,6 +27,7 @@ import { capitalize } from 'lodash-es'
 import { isURL } from 'src/utils/url'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
 import { emotesTextToHtml } from 'src/services/twitch'
+import { declareComponentKeys } from 'i18nifty'
 
 const useStyles = createStyles((theme) => ({}))
 
@@ -61,17 +50,27 @@ export default function Home() {
       <div
         style={{
           background: `url(${homeBackground}) no-repeat center/cover`,
-          minHeight: '100%',
+          minHeight: '105vh',
           overflow: 'hidden',
           position: 'absolute',
           msFlex: 'none',
           flex: 'none',
-          width: '100vw',
+          width: '100%',
           backgroundPosition: '50% 50%',
         }}
       />
       <Flex style={{ padding: 0 }} direction="row" justify={'space-between'}>
-        <ScrollArea style={{ height: '100vh', alignSelf: 'flex-start', marginTop: '1rem' }} type="never">
+        <ScrollArea
+          css={css`
+            align-self: flex-start;
+            height: 100vh;
+            margin-top: 1rem;
+            & {
+              padding-bottom: 0px; // TODO adapt to footer
+            }
+          `}
+          type="never"
+        >
           <Container
             css={css`
               .post:not(:first-child) {

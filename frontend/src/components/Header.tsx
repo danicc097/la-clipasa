@@ -30,6 +30,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { broadcaster } from 'src/services/twitch'
 import { useUISlice } from 'src/slices/ui'
+import { declareComponentKeys } from 'i18nifty'
 
 const useStyles = createStyles((theme) => ({
   banner: {
@@ -318,3 +319,9 @@ function renderLiveAvatar(streamTitle: string) {
     </Group>
   )
 }
+
+export const { i18n } = declareComponentKeys<null>()({ Header })
+// | { K: 'greeting'; P: { who: string } }
+// | 'how are you'
+// | { K: 'any questions ?'; R: JSX.Element }
+// | { K: 'learn more'; P: { href: string }; R: JSX.Element }

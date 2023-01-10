@@ -7,7 +7,7 @@ const useStyles = createStyles((theme) => ({
   footer: {
     borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
-
+    position: 'sticky',
     // [theme.fn.smallerThan('md')]: {
     //   position: 'absolute',
     //   bottom: 0,

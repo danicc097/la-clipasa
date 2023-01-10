@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Code, Drawer, Flex, Group, Image, ScrollArea, createStyles } from '@mantine/core'
+import { Code, Drawer, Flex, Group, Image, ScrollArea, Space, createStyles } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
@@ -106,7 +106,7 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <Helmet>
         <title>La Clipasa</title>
-        <meta name="description" content="La Clipasa" />
+        <meta name="description" content="El mejor evento de todo Twitch International" title="La Clipasa - Caliebre" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Helmet>

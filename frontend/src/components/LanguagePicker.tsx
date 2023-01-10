@@ -1,4 +1,10 @@
 import { useState } from 'react'
+
+/**
+ *
+ * see https://codesandbox.io/s/50bi9 for client side country detection
+ */
+
 // import { createStyles, UnstyledButton, Menu, Image, Group } from '@mantine/core'
 // import { IconChevronDown } from '@tabler/icons'
 // import images from 'src/assets/countries'

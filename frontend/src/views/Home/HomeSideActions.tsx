@@ -22,7 +22,16 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
-import { IconBookmark, IconCross, IconCrossOff, IconEyeCheck, IconFilterOff, IconHeart, IconSend } from '@tabler/icons'
+import {
+  IconBookmark,
+  IconCross,
+  IconCrossOff,
+  IconEyeCheck,
+  IconFilterOff,
+  IconHeart,
+  IconSearch,
+  IconSend,
+} from '@tabler/icons'
 import type { PostCategory } from 'database'
 import { truncate } from 'lodash-es'
 import { HTMLProps, useEffect, useRef, useState } from 'react'
@@ -99,6 +108,10 @@ const useStyles = createStyles((theme) => ({
     // ':first-child': {
     //   paddingTop: theme.spacing.md,
     // },
+
+    '#post-search-box': {
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
+    },
   },
 
   like: {
@@ -131,9 +144,6 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
 
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
-  /**
-   * contains a cleaner innerHTML than contentEditableRef
-   */
   const emoteTooltipRef = useRef(null)
   const titleInputRef = useRef<HTMLInputElement>(null)
   const [typedEmote, setTypedEmote] = useState('')
@@ -142,7 +152,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const [filterSaved, setFilterSaved] = useState(false)
   const [calloutErrors, setCalloutErrors] = useState([])
 
-  const form = useForm<PostCreateRequest>({
+  const postCreateForm = useForm<PostCreateRequest>({
     initialValues: {
       ...storedNewPostForm,
     },
@@ -183,10 +193,10 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   }, [awaitEmoteCompletion])
 
   useEffect(() => {
-    localStorage.setItem(NEW_POST_FORM_KEY, JSON.stringify(form.values))
-  }, [form.values])
+    localStorage.setItem(NEW_POST_FORM_KEY, JSON.stringify(postCreateForm.values))
+  }, [postCreateForm.values])
 
-  const handleSubmit = form.onSubmit((values) => {
+  const handleSubmit = postCreateForm.onSubmit((values) => {
     values.title = sanitizeContentEditableInputBeforeSubmit(values.title)
     postCreateMutation.mutate(values, {
       onError(error, variables, context) {
@@ -243,7 +253,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
           >
             <Popover.Target>
               <TextInput
-                {...form.getInputProps('title')}
+                {...postCreateForm.getInputProps('title')}
                 ref={titleInputRef}
                 withAsterisk
                 label="Title"
@@ -274,13 +284,13 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
               <div
                 ref={titleInputRef}
                 dangerouslySetInnerHTML={{
-                  __html: emotesTextToHtml(form.values['title'], EMOJI_SIZE),
+                  __html: emotesTextToHtml(postCreateForm.values['title'], EMOJI_SIZE),
                 }}
               ></div>
             </Popover.Dropdown>
           </Popover>
-          <TextInput withAsterisk label="Link" {...form.getInputProps('link')} />
-          <TextInput label="Content" {...form.getInputProps('content')} />
+          <TextInput withAsterisk label="Link" {...postCreateForm.getInputProps('link')} />
+          <TextInput label="Content" {...postCreateForm.getInputProps('content')} />
           <Text size={'xs'} opacity={'60%'}>
             Leave message empty to show link by default.
           </Text>
@@ -320,10 +330,20 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
               {'description'}
             </Text>
           </Card.Section> */}
-
+          <Card.Section className={classes.section}>
+            <TextInput
+              id="post-search-box"
+              placeholder="Search"
+              icon={<IconSearch size={12} stroke={1.5} />}
+              rightSectionWidth={70}
+              styles={{ rightSection: { pointerEvents: 'none' } }}
+              mb="sm"
+              mt="md"
+            />
+          </Card.Section>
           <Menu>
             <Card.Section className={classes.section}>
-              <Text className={classes.label} color="dimmed">
+              <Text mt="md" className={classes.label} color="dimmed">
                 Personal filters
               </Text>
               <Space pb={10} />
