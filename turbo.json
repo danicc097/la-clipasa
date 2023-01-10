@@ -33,6 +33,18 @@
     "db:generate": {
       "cache": false
     },
+    "vercel-build": {
+      "dependsOn": [
+        "^db:generate",
+        "^build"
+      ],
+      "cache": false,
+      "outputs": [
+        "dist/**",
+        "backend/.next/**",
+        "frontend/dist/**"
+      ]
+    },
     "build": {
       "dependsOn": [
         "^db:generate",
