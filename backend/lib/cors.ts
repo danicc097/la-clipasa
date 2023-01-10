@@ -15,11 +15,11 @@ interface CorsOptions {
 
 const defaultOptions: CorsOptions = {
   origin: ['http://localhost:5143', 'https://edge-functions-frontend.vercel.app', 'https://laclipasa.vercel.app'],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: '*',
-  // 'Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-twitch-id',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  preflightContinue: true,
+  optionsSuccessStatus: 200,
+  allowedHeaders:
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-twitch-id',
   credentials: true,
 }
 
