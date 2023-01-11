@@ -5,7 +5,7 @@
     }
   },
   "github": {
-    "silent": true
+    "silent": false
   },
   "headers": [
     {
