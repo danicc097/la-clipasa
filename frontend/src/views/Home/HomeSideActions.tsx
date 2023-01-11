@@ -12,7 +12,9 @@ import {
   MediaQueryProps,
   Menu,
   Modal,
+  MultiSelect,
   Popover,
+  Select,
   Space,
   Text,
   TextInput,
@@ -37,6 +39,7 @@ import { remove, truncate } from 'lodash-es'
 import { HTMLProps, useCallback, useEffect, useRef, useState } from 'react'
 import CategoryBadge, { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadge'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
+import ProtectedComponent from 'src/components/ProtectedComponent'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import useUndo from 'src/hooks/useUndoRedo'
 import { usePostCreateMutation } from 'src/queries/api/posts'
@@ -104,7 +107,7 @@ const useStyles = createStyles((theme) => ({
     borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]}`,
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
-    paddingBottom: theme.spacing.md,
+    paddingBottom: theme.spacing.sm,
     // ':first-child': {
     //   paddingTop: theme.spacing.md,
     // },
@@ -122,6 +125,12 @@ const useStyles = createStyles((theme) => ({
     textTransform: 'uppercase',
     fontSize: theme.fontSizes.xs,
     fontWeight: 700,
+  },
+
+  sideLabel: {
+    textTransform: 'uppercase',
+    fontSize: theme.fontSizes.xs,
+    fontWeight: 400,
   },
 }))
 
@@ -150,6 +159,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const titleInputRef = useRef<HTMLInputElement>(null)
   const [typedEmote, setTypedEmote] = useState('')
   const [awaitEmoteCompletion, setAwaitEmoteCompletion] = useState(false)
+  const [filterModerated, setFilterModerated] = useState(true)
   const [filterLiked, setFilterLiked] = useState(false)
   const [filterSaved, setFilterSaved] = useState(false)
   const [calloutErrors, setCalloutErrors] = useState([])
@@ -384,13 +394,35 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
               mt="md"
             />
           </Card.Section>
+          <ProtectedComponent requiredRole="MODERATOR">
+            <Menu>
+              <Card.Section className={classes.section}>
+                <Text mt="md" className={classes.label} color="dimmed">
+                  Moderation filters
+                </Text>
+                <Flex mih={50} gap="md" justify="space-between" align="center" direction="row" wrap={'wrap'}>
+                  <Text className={classes.sideLabel} color="dimmed">
+                    Status
+                  </Text>
+                  <Select
+                    data={[
+                      { value: undefined, label: 'All' },
+                      { value: 'true', label: 'Moderated' },
+                      { value: 'false', label: 'Not moderated' },
+                    ]}
+                    placeholder="Select posts to show"
+                    defaultValue={'true'}
+                  />
+                </Flex>
+              </Card.Section>
+            </Menu>
+          </ProtectedComponent>
           {isAuthenticated && (
             <Menu>
               <Card.Section className={classes.section}>
                 <Text mt="md" className={classes.label} color="dimmed">
                   Personal filters
                 </Text>
-                <Space pb={10} />
                 <Flex mih={50} gap="md" justify="center" align="center" direction="row" wrap={'wrap'}>
                   <Chip
                     defaultChecked

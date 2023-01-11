@@ -130,7 +130,7 @@ export default function Layout({ children }: LayoutProps) {
           flex-direction: column;
           justify-content: space-between;
           align-items: center;
-          min-height: 100%;
+          min-height: calc(100vh - ${HEADER_HEIGHT}px);
         `}
       >
         {children}

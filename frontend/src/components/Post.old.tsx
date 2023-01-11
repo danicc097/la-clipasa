@@ -20,7 +20,7 @@ function instagramVideoToEmbed(url: string) {
   )
 }
 
-export default function Post() {
+export default function XXXXXXX() {
   const [modalOpen, setModalOpen] = useState(false)
 
   return (

@@ -6,18 +6,22 @@ import { IconX } from '@tabler/icons'
 import { showNotification } from '@mantine/notifications'
 import { useTwitchUser } from 'src/queries/twitch'
 import { ErrorPage } from 'src/components/ErrorPage/ErrorPage'
+import type { Role } from 'database'
+import { isAuthorized } from 'src/services/authorization'
 
 type ProtectedRouteProps = {
   children: JSX.Element
+  requiredRole?: Role
 }
 
 /**
  *  Requires an authenticated user.
  */
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+export default function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
   const { isAuthenticated } = useAuthenticatedUser()
   const twitchUser = useTwitchUser()
   const navigate = useNavigate()
+  const { user } = useAuthenticatedUser()
 
   if (!isAuthenticated && !twitchUser.isLoading && !twitchUser.isRefetching) {
     showNotification({
@@ -31,8 +35,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!isAuthenticated) {
+    if (twitchUser.isLoading || twitchUser.isRefetching) return <></>
     return <ErrorPage status={401} />
   }
 
-  return <>{children}</>
+  if (!isAuthorized(user.data, requiredRole)) return <>{children}</>
 }

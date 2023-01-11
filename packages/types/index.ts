@@ -33,6 +33,7 @@ export type PostQueryParams = {
   authorId: string | undefined
   liked: boolean | undefined
   saved: boolean | undefined
+  moderated: boolean | undefined
   categories: PostCategory[] | undefined
 }
 

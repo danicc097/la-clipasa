@@ -27,6 +27,7 @@ const usePostsSlice = create<PostsState>()(
             saved: undefined,
             categories: undefined,
             cursor: undefined,
+            moderated: true,
           },
           setGetPostsQueryParams: (params: PostQueryParams) =>
             set(setGetPostsQueryParams(params), false, `setGetPostsQueryParams`),

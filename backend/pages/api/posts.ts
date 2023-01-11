@@ -42,6 +42,7 @@ export default async (req: NextRequest) => {
           authorId: searchParams.get('authorId') ?? undefined,
           liked: searchParams.get('liked') !== null ? Boolean(searchParams.get('liked')) : undefined,
           saved: searchParams.get('saved') !== null ? Boolean(searchParams.get('saved')) : undefined,
+          moderated: searchParams.get('moderated') !== null ? Boolean(searchParams.get('moderated')) : undefined,
           categories:
             searchParams.getAll('categories').length > 0
               ? (searchParams.getAll('categories').filter((c) => (PostCategory as any)[c]) as PostCategory[])
@@ -61,7 +62,9 @@ export default async (req: NextRequest) => {
             },
           }),
           where: {
-            isModerated: true,
+            ...(queryParams.moderated !== undefined && {
+              isModerated: queryParams.moderated,
+            }),
             ...(queryParams.titleQuery !== undefined && {
               title: {
                 search: queryParams.titleQuery,

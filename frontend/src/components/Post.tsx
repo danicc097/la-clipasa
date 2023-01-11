@@ -16,8 +16,19 @@ import {
   Flex,
   Skeleton,
   CSSObject,
+  Tooltip,
 } from '@mantine/core'
-import { IconHeart, IconBookmark, IconShare, IconVolumeOff, IconAlertTriangle, IconAlertOctagon } from '@tabler/icons'
+import {
+  IconHeart,
+  IconBookmark,
+  IconShare,
+  IconVolumeOff,
+  IconAlertTriangle,
+  IconAlertOctagon,
+  IconShieldCheck,
+  IconShieldOff,
+  IconShield,
+} from '@tabler/icons'
 import { css } from '@emotion/react'
 import type { ArrayElement, PostCategoryNames, RequiredKeys, Union } from 'types'
 import { truncateIntegerToString } from 'src/utils/string'
@@ -27,6 +38,7 @@ import type { PostCategory, Prisma } from 'database' // cant use PostCategory ex
 import CategoryBadge, { CardBackground, PostCategoryKey, uniqueCategoryBackground } from 'src/components/CategoryBadge'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
+import ProtectedComponent from 'src/components/ProtectedComponent'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -127,6 +139,7 @@ interface PostProps extends HTMLProps<HTMLButtonElement> {
   title: string
   footer: JSX.Element
   likes: number
+  isModerated: boolean
   author: {
     name: string
     description: string
@@ -140,7 +153,7 @@ interface PostProps extends HTMLProps<HTMLButtonElement> {
  *
  */
 export default function Post(props: PostProps) {
-  const { image, categories, title, footer, likes, author, className, ...htmlProps } = props
+  const { image, categories, title, footer, likes, author, className, isModerated, ...htmlProps } = props
   const { classes, theme } = useStyles()
   const cardBackground: CardBackground = uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = image ? image : cardBackground ? cardBackground.image : 'auto'
@@ -159,46 +172,64 @@ export default function Post(props: PostProps) {
             {footer}
           </Text>
           <Group spacing={8}>
-            <Button
-              classNames={{
-                root: hasLiked ? classes.likedAction : classes.action,
-              }}
-              className={hasLiked && likeBeacon ? 'beacon' : ''}
-              onClick={(e) => {
-                setHasLiked(!hasLiked)
-                setLikeBeacon(true)
-              }}
-              onAnimationEnd={() => setLikeBeacon(false)}
-              size="xs"
-              leftIcon={
-                <IconHeart
+            {' '}
+            <Tooltip label="Like" arrowPosition="center" withArrow>
+              <Button
+                classNames={{
+                  root: hasLiked ? classes.likedAction : classes.action,
+                }}
+                className={hasLiked && likeBeacon ? 'beacon' : ''}
+                onClick={(e) => {
+                  setHasLiked(!hasLiked)
+                  setLikeBeacon(true)
+                }}
+                onAnimationEnd={() => setLikeBeacon(false)}
+                size="xs"
+                leftIcon={
+                  <IconHeart
+                    size={18}
+                    color={theme.colors.red[6]}
+                    stroke={1.5}
+                    {...(hasLiked && { fill: theme.colors.red[6] })}
+                  />
+                }
+              >
+                <ActionIcon component="div">{truncateIntegerToString(likes)}</ActionIcon>
+              </Button>
+            </Tooltip>
+            <Tooltip label="Bookmark" arrowPosition="center" withArrow>
+              <ActionIcon
+                className={`${classes.action} ${hasSaved && saveBeacon ? 'beacon' : ''}`}
+                onClick={(e) => {
+                  setHasSaved(!hasSaved)
+                  setSaveBeacon(true)
+                }}
+                onAnimationEnd={() => setSaveBeacon(false)}
+              >
+                <IconBookmark
                   size={18}
-                  color={theme.colors.red[6]}
+                  color={theme.colors.yellow[6]}
                   stroke={1.5}
-                  {...(hasLiked && { fill: theme.colors.red[6] })}
+                  {...(hasSaved && { fill: theme.colors.yellow[6] })}
                 />
-              }
-            >
-              <ActionIcon component="div">{truncateIntegerToString(likes)}</ActionIcon>
-            </Button>
-            <ActionIcon
-              className={`${classes.action} ${hasSaved && saveBeacon ? 'beacon' : ''}`}
-              onClick={(e) => {
-                setHasSaved(!hasSaved)
-                setSaveBeacon(true)
-              }}
-              onAnimationEnd={() => setSaveBeacon(false)}
-            >
-              <IconBookmark
-                size={18}
-                color={theme.colors.yellow[6]}
-                stroke={1.5}
-                {...(hasSaved && { fill: theme.colors.yellow[6] })}
-              />
-            </ActionIcon>
-            <ActionIcon className={classes.action}>
-              <IconShare size={16} color={theme.colors.blue[6]} stroke={1.5} />
-            </ActionIcon>
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="Share" arrowPosition="center" withArrow>
+              <ActionIcon className={classes.action}>
+                <IconShare size={16} color={theme.colors.blue[6]} stroke={1.5} />
+              </ActionIcon>
+            </Tooltip>
+            <ProtectedComponent requiredRole="MODERATOR">
+              <Tooltip label={isModerated ? 'Mark as not moderated' : 'Approve'} arrowPosition="center" withArrow>
+                <ActionIcon className={classes.action}>
+                  {isModerated ? (
+                    <IconShieldOff size={16} color={'red'} stroke={1.5} />
+                  ) : (
+                    <IconShieldCheck size={16} color={'lime'} stroke={1.5} />
+                  )}
+                </ActionIcon>
+              </Tooltip>
+            </ProtectedComponent>
           </Group>
         </Group>
       </Card.Section>

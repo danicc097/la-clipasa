@@ -2,6 +2,7 @@ import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import Cookies from 'js-cookie'
 import { useEffect } from 'react'
 import { persister } from 'src/App'
+import { useUser } from 'src/queries/api/users'
 import {
   useTwitchUser,
   useTwitchUserFollower,
@@ -12,6 +13,7 @@ import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY } from 'src/slices/ui'
 
 export default function useAuthenticatedUser() {
   const queryClient = useQueryClient()
+  const user = useUser()
   const twitchUser = useTwitchUser()
   const twitchUserFollower = useTwitchUserFollower()
   const twitchUserSubscriber = useTwitchUserSubscriber()
@@ -30,6 +32,7 @@ export default function useAuthenticatedUser() {
     isSubscriber,
     isFollower,
     isAuthenticated,
+    user,
   }
 }
 

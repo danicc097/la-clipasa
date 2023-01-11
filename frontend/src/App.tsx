@@ -117,7 +117,7 @@ export default function App() {
                       element={
                         <React.Suspense fallback={<FallbackLoader />}>
                           <ProtectedRoute>
-                            <div> TODO: - Analytics page wiht plotly</div>
+                            <div> TODO: - Analytics page with plotly</div>
                           </ProtectedRoute>
                         </React.Suspense>
                       }
