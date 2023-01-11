@@ -10,7 +10,6 @@
   "headers": [
     {
       "source": "/(.*)",
-      //  IMPORTANT: update defaultOptions
       "headers": [
         {
           "key": "Access-Control-Allow-Credentials",
