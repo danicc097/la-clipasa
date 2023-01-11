@@ -1,43 +1,53 @@
 import { User, PrismaClient, Prisma, Post, PostCategory } from '@prisma/client'
 import { faker } from '@faker-js/faker'
 import _, { uniq } from 'lodash'
+import crypto from 'crypto'
 
 const prisma = new PrismaClient()
 
 export async function main() {
   // 2000 users -> ~1MB
-  const users: User[] = []
-  const posts: Post[] = []
+  const postCreates: Prisma.PostCreateArgs[] = []
 
-  for (let i = 0; i < 10; i++) {
-    const user: Prisma.UserCreateInput = {
+  const createUser = () =>
+    ({
+      id: crypto.randomUUID(),
       displayName: faker.name.fullName(),
       role: 'USER',
       twitchId: faker.finance.amount(),
-    }
-    const createdUser = await prisma.user.create({ data: user })
-    users.push(createdUser)
-  }
-  for (let i = 0; i < 30; i++) {
-    const post: Prisma.PostCreateArgs = {
-      data: {
-        userId: (_.sample(users) as User).id,
-        title:
-          _.sample(['calieamor2', 'calie13', 'caliebongo2', 'calietravieso', 'caliesusto1', 'calierana']) +
-          ' ' +
-          faker.lorem.sentence(),
-        content: faker.internet.url(),
-        link: faker.internet.url(),
-        categories: _.uniq(
-          Array(_.random(0, 5))
-            .fill(null)
-            .map((e) => _.sample(Object.values(PostCategory)) as PostCategory),
-        ),
-      },
-    }
-    const createdPost = await prisma.post.create(post)
-    posts.push(createdPost)
-  }
-}
+    } as Prisma.UserCreateArgs['data'])
 
+  const users = Array(10)
+    .fill(null)
+    .map(() => createUser())
+
+  const createdUsers = await prisma.user.createMany({
+    data: users,
+  })
+
+  const createPost = () =>
+    ({
+      userId: _.sample(users)?.id,
+      title:
+        _.sample(['calieamor2', 'calie13', 'caliebongo2', 'calietravieso', 'caliesusto1', 'calierana']) +
+        ' ' +
+        faker.lorem.sentence(),
+      content: faker.internet.url(),
+      isModerated: _.random(0, 1, true) > 0.5,
+      link: faker.internet.url(),
+      categories: _.uniq(
+        Array(_.random(0, 5))
+          .fill(null)
+          .map((e) => _.sample(Object.values(PostCategory)) as PostCategory),
+      ),
+    } as Prisma.PostCreateArgs['data'])
+
+  const posts = Array(50)
+    .fill(null)
+    .map(() => createPost())
+
+  const createdPosts = await prisma.post.createMany({
+    data: posts as any,
+  })
+}
 main()
