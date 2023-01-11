@@ -22,7 +22,10 @@ export async function main() {
     const post: Prisma.PostCreateArgs = {
       data: {
         userId: (_.sample(users) as User).id,
-        title: faker.lorem.sentence(),
+        title:
+          _.sample(['calieamor2', 'calie13', 'caliebongo2', 'calietravieso', 'caliesusto1', 'calierana']) +
+          ' ' +
+          faker.lorem.sentence(),
         content: faker.internet.url(),
         link: faker.internet.url(),
         categories: _.uniq(
