@@ -303,6 +303,17 @@ export default function Post(props: PostProps) {
               className="disable-select"
               key={i}
               category={category}
+              css={css`
+                :hover {
+                  filter: drop-shadow(0 1mm 1mm #00000030);
+                  transform: scale(1.05);
+                  transition-duration: 0.5s;
+                }
+
+                :active {
+                  filter: opacity(0.6);
+                }
+              `}
             />
           ))}
         </Group>
