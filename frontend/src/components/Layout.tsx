@@ -18,6 +18,7 @@ import {
 import { useUserUpdateOrCreate } from 'src/queries/api/users'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
+import banner from 'src/assets/banner-la-clipassa.png'
 
 const useStyles = createStyles((theme) => ({
   sidebar: {
@@ -121,6 +122,7 @@ export default function Layout({ children }: LayoutProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
+      <Image alt="la clipasa" src={banner} />
       <Header tabs={[]}></Header>
 
       {/* TODO when header becomes sticky, main should have a padding top of height=header height*/}

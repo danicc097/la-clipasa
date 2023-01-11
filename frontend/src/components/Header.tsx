@@ -24,7 +24,6 @@ import { ThemeSwitcher } from './ThemeSwitcher'
 import { useTwitchBroadcasterLive, useTwitchUser } from 'src/queries/twitch'
 import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
-import banner from 'src/assets/banner-la-clipassa.png'
 import broadcasterIcon from 'src/assets/caliebre-logo.png'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
@@ -33,25 +32,6 @@ import { useUISlice } from 'src/slices/ui'
 import { declareComponentKeys } from 'i18nifty'
 
 const useStyles = createStyles((theme) => ({
-  banner: {
-    //   minHeight: '35px',
-    //   backgroundImage: `url(${banner})`,
-    //   backgroundSize: 'cover',
-    //   backgroundRepeat: 'no-repeat',
-    //   backgroundPosition: 'center',
-    //   [theme.fn.smallerThan('xs')]: {
-    //     // display: 'block',
-    //     // minWidth: '1730px',
-    //     // minHeight: '95px',
-    //     // width: 'auto',
-    //     // height: 'auto',
-    //     // overflow: 'hidden',
-    //     // verticalAlign: 'middle',
-    //     // scale: '2.8',
-    //     // paddingTop: '40px',
-    //   },
-  },
-
   header: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     borderBottom: `1px solid ${theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]}`,
@@ -144,9 +124,6 @@ export default function Header({ tabs }: HeaderProps) {
 
   return (
     <>
-      <a href="/">
-        <Image alt="" src={banner} className={classes.banner} />
-      </a>
       <Box
         css={css`
           position: sticky;
