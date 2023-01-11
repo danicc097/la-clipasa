@@ -15,7 +15,7 @@ export const isAuthorized = (user: User, requiredRole: Role) => {
 
   if (!user?.role) return false
 
-  return ROLE_PERMISSIONS[requiredRole].includes(user.role)
+  return ROLE_PERMISSIONS[user.role].includes(requiredRole)
 }
 
 export const getImplicitRoles = (role: Role) => {

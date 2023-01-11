@@ -150,7 +150,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const { ...htmlProps } = props
   const postCreateMutation = usePostCreateMutation()
   const [titlePreviewPopoverOpened, setTitlePreviewPopoverOpened] = useState(false)
-  const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
+  const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams, setGetPostsQueryParams } = usePostsSlice()
   const { burgerOpened, setBurgerOpened } = useUISlice()
 
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
@@ -410,6 +410,10 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                       { value: 'true', label: 'Moderated' },
                       { value: 'false', label: 'Not moderated' },
                     ]}
+                    onChange={(value: string) => {
+                      const moderated = value ? value === 'true' : undefined
+                      setGetPostsQueryParams({ ...getPostsQueryParams, moderated })
+                    }}
                     placeholder="Select posts to show"
                     defaultValue={'true'}
                   />
