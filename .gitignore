@@ -2,7 +2,10 @@
 .env*
 !.env.template
 !.envrc
-
+.venv
+comments.txt
+posts.txt
+submissions.json
 # Dependencies
 node_modules
 .pnp

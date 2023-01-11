@@ -35,6 +35,20 @@ export type PostQueryParams = {
   saved: boolean | undefined
   categories: PostCategory[] | undefined
 }
+
+export interface HTTPValidationError {
+  /** Detail */
+  detail?: ValidationError[]
+}
+
+export interface ValidationError {
+  /** Location */
+  loc: string[]
+  /** Message */
+  msg: string
+  /** Error Type */
+  type: string
+}
 /**
  *
  *
