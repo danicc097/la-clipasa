@@ -15,11 +15,10 @@ interface CorsOptions {
 
 const defaultOptions: CorsOptions = {
   origin: ['https://laclipasa.vercel.app', 'http://localhost:5143', 'https://edge-functions-frontend.vercel.app'],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,
-  allowedHeaders:
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-twitch-id',
+  allowedHeaders: '*',
   credentials: true,
 }
 
