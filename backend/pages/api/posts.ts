@@ -65,11 +65,12 @@ export default async (req: NextRequest) => {
             ...(queryParams.moderated !== undefined && {
               isModerated: queryParams.moderated,
             }),
-            ...(queryParams.titleQuery !== undefined && {
-              title: {
-                search: queryParams.titleQuery,
-              },
-            }),
+            ...(queryParams.titleQuery !== undefined &&
+              queryParams.titleQuery !== '' && {
+                title: {
+                  search: queryParams.titleQuery,
+                },
+              }),
             ...(queryParams.categories !== undefined && {
               categories: {
                 hasEvery: queryParams.categories,
@@ -78,15 +79,11 @@ export default async (req: NextRequest) => {
             userId: {
               equals: queryParams.authorId,
             }, // filter by arbitrary user and "Edit my posts"
-            // TODO should select only if post exists
             ...(queryParams.liked !== undefined &&
               user && {
                 likedPost: {
                   every: {
-                    AND: {
-                      userId: { equals: user.id },
-                      postId: { not: undefined },
-                    },
+                    userId: { equals: user.id },
                   },
                 },
               }),
@@ -94,18 +91,24 @@ export default async (req: NextRequest) => {
               user && {
                 savedPost: {
                   every: {
-                    AND: {
-                      userId: { equals: user.id },
-                      postId: { not: undefined },
-                    },
+                    userId: { equals: user.id },
                   },
                 },
               }),
           },
-          include: {
-            likedPost: true,
-            savedPost: true,
-          },
+          // TODO will query lookup tables likedposts and savedposts and ``include`` in there
+          // include: {
+          //   likedPost: {
+          //     where: {
+          //       userId: { equals: user?.id },
+          //     },
+          //   },
+          //   savedPost: {
+          //     where: {
+          //       userId: { equals: user?.id },
+          //     },
+          //   },
+          // },
         })
 
         console.log(`posts: ${JSON.stringify(posts)}`)

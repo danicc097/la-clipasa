@@ -392,6 +392,10 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
               {'description'}
             </Text>
           </Card.Section> */}
+          {/* TODO debounce queries: for both searchbox and badges :
+
+          https://codesandbox.io/s/ted8o?file=/src/App.js
+          */}
           <Card.Section className={classes.section}>
             <TextInput
               id="post-search-box"
@@ -403,7 +407,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                   gradient={{ from: '#3257b0', to: '#5f7dc3', deg: 45 }}
                   opacity={'80%'}
                   onClick={(e) => {
-                    setGetPostsQueryParams({ ...getPostsQueryParams, titleQuery: titleQuery })
+                    titleQuery !== '' && setGetPostsQueryParams({ ...getPostsQueryParams, titleQuery: titleQuery })
                   }}
                 >
                   <IconSearch size={12} stroke={2} />
@@ -463,6 +467,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                         ...getPostsQueryParams,
                         // no scenario where we want only posts not liked
                         liked: getPostsQueryParams.liked !== true ? true : undefined,
+                        saved: getPostsQueryParams.liked !== true ? undefined : getPostsQueryParams.saved,
                       })
                     }
                   >
@@ -478,6 +483,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                         ...getPostsQueryParams,
                         // no scenario where we want only posts not saved
                         saved: getPostsQueryParams.saved !== true ? true : undefined,
+                        liked: getPostsQueryParams.saved !== true ? undefined : getPostsQueryParams.liked,
                       })
                     }
                   >
