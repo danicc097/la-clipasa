@@ -28,7 +28,8 @@ export function usePosts() {
   return useQuery<Post[], AxiosError>({
     queryKey: [`apiGetPosts-${JSON.stringify(getPostsQueryParams)}`], // any state used inside the queryFn must be part of the queryKey
     retry: false,
-    cacheTime: 1000 * 60 * 60, // 1h
+    // cacheTime: 1000 * 60 * 60, // 1h
+    cacheTime: 0, // 1h
     queryFn: async ({ signal, pageParam }): Promise<Post[]> => {
       const { data } = await axios.get(
         formatURLWithQueryParams(`${import.meta.env.VITE_URL}/api/posts`, getPostsQueryParams),

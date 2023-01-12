@@ -441,9 +441,13 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     defaultChecked
                     variant="filled"
                     color="green"
-                    checked={getPostsQueryParams.liked}
+                    checked={getPostsQueryParams.liked === true}
                     onClick={() =>
-                      setGetPostsQueryParams({ ...getPostsQueryParams, liked: !getPostsQueryParams.liked })
+                      setGetPostsQueryParams({
+                        ...getPostsQueryParams,
+                        // no scenario where we want only posts not liked
+                        liked: getPostsQueryParams.liked !== true ? true : undefined,
+                      })
                     }
                   >
                     Liked posts
@@ -452,9 +456,13 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     defaultChecked
                     variant="filled"
                     color="green"
-                    checked={getPostsQueryParams.saved}
+                    checked={getPostsQueryParams.saved === true}
                     onClick={() =>
-                      setGetPostsQueryParams({ ...getPostsQueryParams, saved: !getPostsQueryParams.saved })
+                      setGetPostsQueryParams({
+                        ...getPostsQueryParams,
+                        // no scenario where we want only posts not saved
+                        saved: getPostsQueryParams.saved !== true ? true : undefined,
+                      })
                     }
                   >
                     Saved posts
