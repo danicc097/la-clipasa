@@ -75,7 +75,9 @@ export default async (req: NextRequest) => {
                 hasEvery: queryParams.categories,
               },
             }),
-            userId: queryParams.authorId, // filter by arbitrary user and "Edit my posts"
+            userId: {
+              equals: queryParams.authorId,
+            }, // filter by arbitrary user and "Edit my posts"
             ...(queryParams.liked !== undefined &&
               user && {
                 likedPost: {
@@ -98,6 +100,8 @@ export default async (req: NextRequest) => {
             savedPost: true,
           },
         })
+
+        console.log(`posts: ${JSON.stringify(posts)}`)
 
         return new Response(JSON.stringify(posts), { status: 200 })
       }

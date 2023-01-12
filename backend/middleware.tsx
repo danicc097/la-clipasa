@@ -18,14 +18,14 @@ export default async function middleware(request: NextRequest) {
 
   const publicRoute = getPost || twitchAuth || discord
 
+  const token = request.headers.get('Authorization')?.split('Bearer ')[1]
+  const twitchId = await validateTwitchToken(token)
   if (!publicRoute) {
-    const token = request.headers.get('Authorization')?.split('Bearer ')[1]
-    const twitchId = await validateTwitchToken(token)
     if (!token || !twitchId) {
       return cors(request, new Response('unauthenticated', { status: 401 }))
     }
-    requestHeaders.set('X-twitch-id', twitchId)
   }
+  requestHeaders.set('X-twitch-id', twitchId ?? '')
 
   return cors(
     request,
