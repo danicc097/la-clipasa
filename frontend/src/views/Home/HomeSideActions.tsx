@@ -174,16 +174,16 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
       title: (value) =>
         !value || value.trim() === '' || value.trim() === '<br>'
           ? 'Title cannot be empty'
-          : value?.length > 200
-          ? 'Title can have at most 200 characters.'
+          : value?.length > 250
+          ? 'Title can have at most 250 characters.'
           : null,
       link: (value) =>
         !isURL(value)
           ? 'Link is not a valid URL'
-          : value?.length > 200
-          ? 'Link can have at most 200 characters.'
+          : value?.length > 250
+          ? 'Link can have at most 250 characters.'
           : null,
-      content: (value) => (value?.length > 300 ? 'Message can have at most 300 characters.' : null),
+      content: (value) => (value?.length > 400 ? 'Message can have at most 400 characters.' : null),
     },
   })
 
@@ -305,7 +305,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
             shadow="md"
           >
             <Popover.Target>
-              <TextInput
+              <Textarea
                 {...postCreateForm.getInputProps('title')}
                 ref={titleInputRef}
                 withAsterisk
@@ -331,6 +331,8 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     </Group>
                   </Tooltip>
                 }
+                autosize
+                minRows={2}
               />
             </Popover.Target>
             <Popover.Dropdown>
