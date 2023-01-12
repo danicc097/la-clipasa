@@ -40,6 +40,12 @@ export default function Home() {
   const usePostsQuery = usePosts()
   const { getPostsQueryParams } = usePostsSlice()
 
+  useEffect(() => {
+    if (!usePostsQuery.isFetching) {
+      usePostsQuery.refetch().then((res) => console.log(res.data))
+    }
+  }, [getPostsQueryParams])
+
   console.log(usePostsQuery.data)
 
   return (
