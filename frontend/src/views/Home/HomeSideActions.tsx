@@ -499,6 +499,9 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                   >
                     Saved posts
                   </Chip>
+                  <Chip defaultChecked variant="filled" color="green" onClick={() => null}>
+                    My posts
+                  </Chip>
                 </Flex>
               </Card.Section>
             </Menu>

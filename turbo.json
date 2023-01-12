@@ -9,6 +9,8 @@
     "TWITCH_CLIENT_SECRET",
     "UI_URL",
     "DATABASE_URL",
+    "TWITCH_DEV_USERNAME",
+    "TWITCH_DEV_ID",
     // frontend
     "VITE_DISCORD_CHANNEL_ID",
     "VITE_DISCORD_BOT_TOKEN",

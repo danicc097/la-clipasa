@@ -21,6 +21,13 @@ export async function main() {
     .fill(null)
     .map(() => createUser())
 
+  users.push({
+    id: crypto.randomUUID(),
+    displayName: process.env.TWITCH_DEV_USERNAME,
+    role: 'ADMIN',
+    twitchId: process.env.TWITCH_DEV_ID,
+  })
+
   const createdUsers = await prisma.user.createMany({
     data: users,
   })
@@ -28,7 +35,7 @@ export async function main() {
   const createPost = () =>
     ({
       id: ++postId,
-      userId: _.sample(users)?.id,
+      userId: _.sample(users.slice(8, -1))?.id,
       title:
         _.sample(['calieamor2', 'calie13', 'caliebongo2', 'calietravieso', 'caliesusto1', 'calierana']) +
         ' ' +
