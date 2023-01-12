@@ -46,6 +46,7 @@ import { usePostCreateMutation, usePosts } from 'src/queries/api/posts'
 import { emotesTextToHtml, htmlToEmotesText, anyKnownEmoteRe } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import { useUISlice } from 'src/slices/ui'
+import { extractErrorMessages } from 'src/utils/errors'
 import { getCaretCoordinates, getCaretIndex, pasteHtmlAtCaret } from 'src/utils/input'
 import { sanitizeContentEditableInput, sanitizeContentEditableInputBeforeSubmit } from 'src/utils/string'
 import { isURL } from 'src/utils/url'
@@ -208,10 +209,11 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
 
   const handleSubmit = postCreateForm.onSubmit((values) => {
     values.title = sanitizeContentEditableInputBeforeSubmit(values.title)
+
     postCreateMutation.mutate(values, {
-      onError(error, variables, context) {
+      onError(error: any, variables, context) {
         // TODO helper extractErrorMessage that fallbacks to internal error
-        setCalloutErrors(['Internal server error'])
+        setCalloutErrors(extractErrorMessages(error))
       },
       onSuccess(error, variables, context) {
         setNewPostModalOpened(false)

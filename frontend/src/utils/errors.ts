@@ -1,3 +1,4 @@
+import type { AxiosError } from 'axios'
 import type { HTTPValidationError, ValidationError } from 'types'
 
 const fieldLabel = {}
@@ -23,7 +24,8 @@ export const parseErrorDetail = (errorDetail: ValidationError): string => {
   return errorMessage
 }
 
-export const extractErrorMessages = (error: HTTPValidationError): unknown[] => {
+export const extractErrorMessages = (err: AxiosError): unknown[] => {
+  const error: HTTPValidationError = err?.response?.data
   const errorList: unknown[] = []
 
   if (typeof error === 'string') {
@@ -41,7 +43,8 @@ export const extractErrorMessages = (error: HTTPValidationError): unknown[] => {
       const errorMessage = parseErrorDetail(errorDetail)
       errorList.push(errorMessage)
     })
+    return
   }
 
-  return errorList
+  return ['Internal Server Error']
 }
