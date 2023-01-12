@@ -27,6 +27,12 @@ export async function main() {
     role: 'ADMIN',
     twitchId: process.env.TWITCH_DEV_ID,
   })
+  users.push({
+    id: crypto.randomUUID(),
+    displayName: 'caliebre',
+    role: 'ADMIN',
+    twitchId: '52341091',
+  })
 
   const createdUsers = await prisma.user.createMany({
     data: users,
