@@ -17,11 +17,11 @@
     "dev:push": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma db push --skip-generate --accept-data-loss --force-reset",
     "dev:reset": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma db push --force-reset",
     "dev:seed": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" ts-node prisma/seed.ts",
-    "prod:rollback": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate resolve --rolled-back ",
-    "prod:applied": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate resolve --applied ",
-    "prod:migrate": "DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma generate --data-proxy && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate deploy",
-    "prod:reset": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate reset",
-    "prod:push": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma db push --skip-generate --accept-data-loss --force-reset",
+    "prod:rollback": ". ./.env && SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate resolve --rolled-back ",
+    "prod:applied": ". ./.env && SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate resolve --applied ",
+    "prod:migrate": "SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma generate --data-proxy && SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate deploy",
+    "prod:reset": ". ./.env && SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate reset",
+    "prod:push": ". ./.env && SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma db push --skip-generate --accept-data-loss --force-reset",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
   },
   "dependencies": {
