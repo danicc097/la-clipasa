@@ -57,7 +57,7 @@ enum UserAward {
 model User {
   id           String      @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
   displayName  String
-  profileImage String?
+  profileImage String? // bad idea to use twitch images directly, could contain offensive content if user changes it right before stream
   twitchId     String      @unique
   isSubscriber Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync
   isFollower   Boolean     @default(false) // will always get from client calls upon rendering so it's always in sync

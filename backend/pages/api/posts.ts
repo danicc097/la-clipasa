@@ -53,9 +53,11 @@ export default async (req: NextRequest) => {
         // all posts with infinite scroll (https://react-query-v3.tanstack.com/guides/infinite-queries)
         const posts = await prisma.post.findMany({
           take: queryParams.limit ?? DEFAULT_LIMIT,
+          skip: 1, // always skip the cursor
           orderBy: {
             createdAt: 'desc',
           },
+          // NOTE: cursor pagination does not use cursors in the underlying database (PostgreSQL).
           ...(queryParams.cursor !== undefined && {
             cursor: {
               id: queryParams.cursor,
@@ -76,13 +78,15 @@ export default async (req: NextRequest) => {
                 hasEvery: queryParams.categories,
               },
             }),
-            userId: {
-              equals: queryParams.authorId,
-            }, // filter by arbitrary user and "Edit my posts"
+            ...(queryParams.authorId !== undefined && {
+              userId: {
+                equals: queryParams.authorId,
+              }, // filter by arbitrary user and "Edit my posts"
+            }),
             ...(queryParams.liked !== undefined &&
               user && {
                 likedPost: {
-                  every: {
+                  some: {
                     userId: { equals: user.id },
                   },
                 },
@@ -90,7 +94,7 @@ export default async (req: NextRequest) => {
             ...(queryParams.saved !== undefined &&
               user && {
                 savedPost: {
-                  every: {
+                  some: {
                     userId: { equals: user.id },
                   },
                 },
