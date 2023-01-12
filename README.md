@@ -12,7 +12,7 @@ See:
 ## TODO
 
 - Prisma X supabase fixing migrations `Error: P3005 The database schema is not empty`:
-  - https://github.com/prisma/prisma/issues/16853#issuecomment-1364180940
+  - https://github.com/prisma/prisma/issues/16853
   - https://supabase.com/docs/guides/integrations/prisma#configuring-the-project-to-use-postgresql
 
 

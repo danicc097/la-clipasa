@@ -23,7 +23,7 @@ import { showRelativeTimestamp } from 'src/utils/date'
 import dayjs from 'dayjs'
 import { useForm } from '@mantine/form'
 import type { PostCreateRequest, PostQueryParams } from 'types'
-import { capitalize } from 'lodash-es'
+import { capitalize, random } from 'lodash-es'
 import { isURL } from 'src/utils/url'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
 import { emotesTextToHtml } from 'src/services/twitch'
@@ -84,6 +84,7 @@ export default function Home() {
             `}
           >
             <Post
+              isModerated={random(0, 1, true) > 0.5}
               author={{
                 name: 'some_user',
                 description: showRelativeTimestamp(dayjs().subtract(15, 'minutes').toJSON()),
@@ -98,6 +99,7 @@ export default function Home() {
               likes={100}
             />
             <Post
+              isModerated={random(0, 1, true) > 0.5}
               author={{
                 name: 'some_user',
                 description: showRelativeTimestamp(dayjs().subtract(360, 'minutes').toJSON()),
@@ -110,6 +112,7 @@ export default function Home() {
               likes={4324}
             />
             <Post
+              isModerated={random(0, 1, true) > 0.5}
               author={{
                 name: 'some_user',
                 description: showRelativeTimestamp(dayjs().subtract(15, 'days').toJSON()),
@@ -125,6 +128,7 @@ export default function Home() {
               .fill(null)
               .map((e, idx) => (
                 <Post
+                  isModerated={random(0, 1, true) > 0.5}
                   key={idx}
                   author={{
                     name: 'some_user',
