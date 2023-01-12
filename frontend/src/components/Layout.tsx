@@ -19,6 +19,7 @@ import { useUserUpdateOrCreate } from 'src/queries/api/users'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
 import banner from 'src/assets/banner-la-clipassa.png'
+import homeBackground from 'src/assets/background-la-clipassa.jpg'
 
 const useStyles = createStyles((theme) => ({
   sidebar: {
@@ -126,13 +127,29 @@ export default function Layout({ children }: LayoutProps) {
       <Header tabs={[]}></Header>
 
       {/* TODO when header becomes sticky, main should have a padding top of height=header height*/}
+
+      {/* <div
+        style={{
+          background: `url(${homeBackground}) no-repeat center/cover`,
+          maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 54px)`,
+          minHeight: `calc(100vh)`,
+          overflow: 'hidden',
+          position: 'absolute',
+          msFlex: 'none',
+          flex: 'none',
+          width: '100%',
+          backgroundPosition: '50% 50%',
+        }}
+      /> */}
       <main
         css={css`
+          /* background-image: url(${homeBackground}) no-repeat center/cover; */
+          background: url(${homeBackground}) no-repeat center/cover;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           align-items: center;
-          min-height: calc(100vh - ${HEADER_HEIGHT}px);
+          min-height: calc(100vh - ${HEADER_HEIGHT}px - 54px);
         `}
       >
         {children}

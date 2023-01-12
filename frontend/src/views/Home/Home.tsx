@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Posts from '../../components/Post.old'
 import Post, { PostSkeleton } from '../../components/Post'
 import Cookies from 'js-cookie'
-import Header from '../../components/Header'
+import Header, { HEADER_HEIGHT } from '../../components/Header'
 import {
   Checkbox,
   Code,
@@ -17,7 +17,6 @@ import {
   createStyles,
   useMantineTheme,
 } from '@mantine/core'
-import homeBackground from 'src/assets/background-la-clipassa.jpg'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { css } from '@emotion/react'
 import { showRelativeTimestamp } from 'src/utils/date'
@@ -52,28 +51,28 @@ export default function Home() {
 
   return (
     <>
-      <div
-        style={{
-          background: `url(${homeBackground}) no-repeat center/cover`,
-          minHeight: '105vh',
-          overflow: 'hidden',
-          position: 'absolute',
-          msFlex: 'none',
-          flex: 'none',
-          width: '100%',
-          backgroundPosition: '50% 50%',
-        }}
-      />
-      <Flex style={{ padding: 0 }} direction="row" justify={'space-between'}>
+      <Flex
+        css={css`
+          padding: 0;
+          .home-scrollarea {
+            /* max-height: calc(100vh - ${HEADER_HEIGHT}px - 54px) !important; */
+          }
+        `}
+        direction="row"
+        justify={'space-between'}
+      >
         <ScrollArea
-          css={css`
-            align-self: flex-start;
-            height: 100vh;
-            margin-top: 1rem;
-            & {
-              padding-bottom: 0px; // TODO adapt to footer
-            }
-          `}
+          styles={{
+            root: {
+              maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 54px - 1rem)`, // TODO footer height const
+              alignSelf: 'flex-start',
+              marginTop: '1rem',
+              overflow: 'auto',
+
+              '&': { paddingBottom: 0 },
+            },
+          }}
+          className="home-scrollarea"
           type="never"
         >
           <Container

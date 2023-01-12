@@ -212,10 +212,9 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
 
     postCreateMutation.mutate(values, {
       onError(error: any, variables, context) {
-        // TODO helper extractErrorMessage that fallbacks to internal error
         setCalloutErrors(extractErrorMessages(error))
       },
-      onSuccess(error, variables, context) {
+      onSuccess(data, variables, context) {
         setNewPostModalOpened(false)
         setBurgerOpened(false)
         showNotification({
@@ -365,7 +364,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
           <Group position="right" mt="md">
             <Button
               variant="gradient"
-              gradient={{ from: '#1864ab', to: '#497baa', deg: 225 }}
+              gradient={{ from: '#1864ab', to: '#326798', deg: 225 }}
               type="submit"
               loading={postCreateMutation.isLoading}
             >

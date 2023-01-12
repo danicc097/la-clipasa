@@ -30,7 +30,7 @@ const queryClient = new QueryClient({
     queries: {
       cacheTime: 1000 * 60 * 5, // 5 min
       // refetchOnWindowFocus: false,
-      // staleTime: 300000,
+      staleTime: 300000,
       keepPreviousData: true,
     },
     mutations: {
