@@ -39,6 +39,7 @@ export default function useAuthenticatedUser() {
 export function logout(queryClient: QueryClient) {
   queryClient.cancelQueries()
   queryClient.invalidateQueries()
+  queryClient.clear()
   Cookies.remove(TWITCH_ACCESS_TOKEN_COOKIE, {
     expires: 365,
     sameSite: 'none',

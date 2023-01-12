@@ -13,23 +13,14 @@ import { usePostsSlice } from 'src/slices/posts'
  */
 export function usePosts() {
   const { twitchToken } = useUISlice()
-  const { data: twitchUser } = useTwitchUser()
   const { getPostsQueryParams } = usePostsSlice()
-  const twitchId = twitchUser?.data[0].id
-  const queryClient = useQueryClient()
-
-  // when quickly clicking filters to enable disable
-  // queryClient
-  //   .invalidateQueries({
-  //     predicate: (query) => (query.queryKey[0] as string).startsWith('apiGetPosts'),
-  //   })
-  //   .then()
 
   return useQuery<Post[], AxiosError>({
-    queryKey: [`apiGetPosts`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [`apiGetPosts`, getPostsQueryParams], // any state used inside the queryFn must be part of the queryKey
     retry: false,
     // cacheTime: 1000 * 60 * 60, // 1h
     cacheTime: 0,
+    enabled: getPostsQueryParams !== null,
     queryFn: async ({ signal, pageParam }): Promise<Post[]> => {
       const { data } = await axios.get(
         formatURLWithQueryParams(`${import.meta.env.VITE_URL}/api/posts`, getPostsQueryParams),

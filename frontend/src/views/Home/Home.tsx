@@ -40,11 +40,13 @@ export default function Home() {
   const usePostsQuery = usePosts()
   const { getPostsQueryParams } = usePostsSlice()
 
-  useEffect(() => {
-    if (!usePostsQuery.isFetching) {
-      usePostsQuery.refetch().then((res) => console.log(res.data))
-    }
-  }, [getPostsQueryParams])
+  // refetch is used to query with old data, thats why it doesnt accept parameters,
+  //  this is not the way to use react-query, add state to query key list
+  // useEffect(() => {
+  //   if (!usePostsQuery.isFetching) {
+  //     usePostsQuery.refetch().then((res) => console.log(res.data))
+  //   }
+  // }, [getPostsQueryParams])
 
   console.log(usePostsQuery.data)
 
