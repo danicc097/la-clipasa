@@ -10,7 +10,9 @@ export const formatURLWithQueryParams = (base: string, params: Params) => {
       if (Array.isArray(value)) {
         return value.map((item) => `${key}=${encodeURIComponent(item)}`).join('&')
       }
-      return `${key}=${encodeURIComponent(value)}`
+      if (value !== undefined) {
+        return `${key}=${encodeURIComponent(value)}`
+      }
     })
     .join('&')
 

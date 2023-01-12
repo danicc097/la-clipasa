@@ -42,7 +42,7 @@ import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import ProtectedComponent from 'src/components/ProtectedComponent'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import useUndo from 'src/hooks/useUndoRedo'
-import { usePostCreateMutation } from 'src/queries/api/posts'
+import { usePostCreateMutation, usePosts } from 'src/queries/api/posts'
 import { emotesTextToHtml, htmlToEmotesText, anyKnownEmoteRe } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import { useUISlice } from 'src/slices/ui'
@@ -152,6 +152,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const [titlePreviewPopoverOpened, setTitlePreviewPopoverOpened] = useState(false)
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams, setGetPostsQueryParams } = usePostsSlice()
   const { burgerOpened, setBurgerOpened } = useUISlice()
+  const usePostsQuery = usePosts()
 
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
@@ -159,9 +160,6 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const titleInputRef = useRef<HTMLInputElement>(null)
   const [typedEmote, setTypedEmote] = useState('')
   const [awaitEmoteCompletion, setAwaitEmoteCompletion] = useState(false)
-  const [filterModerated, setFilterModerated] = useState(true)
-  const [filterLiked, setFilterLiked] = useState(false)
-  const [filterSaved, setFilterSaved] = useState(false)
   const [calloutErrors, setCalloutErrors] = useState([])
   const { isAuthenticated } = useAuthenticatedUser()
 
@@ -186,8 +184,6 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
       content: (value) => (value?.length > 400 ? 'Message can have at most 400 characters.' : null),
     },
   })
-
-  const filterBg = theme.colorScheme === 'light' ? theme.colors.violet[5] : theme.colors.violet[4]
 
   useEffect(() => {
     if (awaitEmoteCompletion) {
@@ -237,7 +233,15 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
         className="disable-select"
         key={i}
         category={category}
-        onClick={(e) => removeCategoryFilter(category)}
+        onClick={(e) => {
+          removeCategoryFilter(category)
+        }}
+        css={css`
+          :hover {
+            transform: scale(1.03);
+            transition-duration: 0.3s;
+          }
+        `}
       />
     ))
   }
@@ -261,6 +265,8 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
 
               :hover {
                 filter: none;
+                transform: scale(1.03);
+                transition-duration: 0.3s;
               }
             `}
             category={category}
@@ -414,6 +420,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     ]}
                     onChange={(value: string) => {
                       const moderated = value ? value === 'true' : undefined
+                      console.log(moderated)
                       setGetPostsQueryParams({ ...getPostsQueryParams, moderated })
                     }}
                     placeholder="Select posts to show"
@@ -434,8 +441,10 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     defaultChecked
                     variant="filled"
                     color="green"
-                    checked={filterLiked}
-                    onClick={() => setFilterLiked(!filterLiked)}
+                    checked={getPostsQueryParams.liked}
+                    onClick={() =>
+                      setGetPostsQueryParams({ ...getPostsQueryParams, liked: !getPostsQueryParams.liked })
+                    }
                   >
                     Liked posts
                   </Chip>
@@ -443,8 +452,10 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     defaultChecked
                     variant="filled"
                     color="green"
-                    checked={filterSaved}
-                    onClick={() => setFilterSaved(!filterSaved)}
+                    checked={getPostsQueryParams.saved}
+                    onClick={() =>
+                      setGetPostsQueryParams({ ...getPostsQueryParams, saved: !getPostsQueryParams.saved })
+                    }
                   >
                     Saved posts
                   </Chip>

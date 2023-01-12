@@ -38,8 +38,10 @@ const useStyles = createStyles((theme) => ({}))
 export default function Home() {
   const { classes } = useStyles()
   const usePostsQuery = usePosts()
+  const { getPostsQueryParams } = usePostsSlice()
 
   console.log(usePostsQuery.data)
+
   return (
     <>
       <div
