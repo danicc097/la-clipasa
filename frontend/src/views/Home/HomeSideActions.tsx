@@ -228,6 +228,10 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
     })
   })
 
+  function changeTitleQueryParam() {
+    titleQuery !== '' && setGetPostsQueryParams({ ...getPostsQueryParams, titleQuery: titleQuery })
+  }
+
   function renderActiveCategoryFilters() {
     return getPostsQueryParams.categories?.map((category, i) => (
       <CategoryBadge
@@ -407,7 +411,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                   gradient={{ from: '#3257b0', to: '#5f7dc3', deg: 45 }}
                   opacity={'80%'}
                   onClick={(e) => {
-                    titleQuery !== '' && setGetPostsQueryParams({ ...getPostsQueryParams, titleQuery: titleQuery })
+                    changeTitleQueryParam()
                   }}
                 >
                   <IconSearch size={12} stroke={2} />
@@ -416,6 +420,11 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
               value={titleQuery}
               onChange={(e) => {
                 setTitleQuery(e.target.value)
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  changeTitleQueryParam()
+                }
               }}
               // styles={{ rightSection: { pointerEvents: 'none' } }}
               mb="sm"

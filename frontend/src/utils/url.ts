@@ -14,6 +14,7 @@ export const formatURLWithQueryParams = (base: string, params: Params) => {
         return `${key}=${encodeURIComponent(value)}`
       }
     })
+    .filter((e) => e !== undefined)
     .join('&')
 
   return `${base}?${query}`
