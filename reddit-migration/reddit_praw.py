@@ -16,8 +16,8 @@ api = PushshiftAPI(praw=reddit, num_workers=4)
 
 # start_epoch=int(dt.datetime(2019, 10, 1).timestamp()) # wait until migrated
 # start_epoch=int(dt.datetime(2020, 10, 1).timestamp()) # wait until migrated
-start_epoch=int(dt.datetime(2021, 12, 1).timestamp()) # wait until migrated
-end_epoch=int(dt.datetime(2022, 10, 21).timestamp()) # wait until migrated
+start_epoch=int(dt.datetime(2022, 12, 1).timestamp()) # wait until migrated
+end_epoch=int(dt.datetime.now().timestamp()) # wait until migrated
 # start_epoch=int(dt.datetime(2022, 11, 4).timestamp())
 # IMPORTANT: Submissions earlier than November 3rd still have not been loaded
 # https://www.reddit.com/r/pushshift/comments/zuclhb/psa_pmaw_has_been_updated_to_handle_the_api/
@@ -36,5 +36,7 @@ out = {
         } for s in submissions
         ],
 }
-with open("submissions.json", "w") as f:
-    f.write(json.dumps(out))
+
+# yq -P '.data = [.data[] | select(.url != "")]' submissions.json -i -o=json
+with open("submissions.json", "w", encoding='utf8') as f:
+    f.write(json.dumps(out, ensure_ascii=False))
