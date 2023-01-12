@@ -154,6 +154,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const { burgerOpened, setBurgerOpened } = useUISlice()
   const usePostsQuery = usePosts()
 
+  const [titleQuery, setTitleQuery] = useState(getPostsQueryParams?.titleQuery)
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
   const emoteTooltipRef = useRef(null)
@@ -395,9 +396,24 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
             <TextInput
               id="post-search-box"
               placeholder="Search"
-              icon={<IconSearch size={12} stroke={1.5} />}
-              rightSectionWidth={70}
-              styles={{ rightSection: { pointerEvents: 'none' } }}
+              // icon={<IconSearch size={12} stroke={1.5} />}
+              rightSection={
+                <ActionIcon
+                  variant="gradient"
+                  gradient={{ from: '#3257b0', to: '#5f7dc3', deg: 45 }}
+                  opacity={'80%'}
+                  onClick={(e) => {
+                    setGetPostsQueryParams({ ...getPostsQueryParams, titleQuery: titleQuery })
+                  }}
+                >
+                  <IconSearch size={12} stroke={2} />
+                </ActionIcon>
+              }
+              value={titleQuery}
+              onChange={(e) => {
+                setTitleQuery(e.target.value)
+              }}
+              // styles={{ rightSection: { pointerEvents: 'none' } }}
               mb="sm"
               mt="md"
             />
@@ -492,6 +508,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
           {isAuthenticated && (
             <Group mt="xs">
               <Button
+                bg={'#3257b0'}
                 leftIcon={<IconSend size={20} stroke={1.5} />}
                 radius="md"
                 style={{ flex: 1 }}
