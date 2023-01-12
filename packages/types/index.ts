@@ -1,5 +1,5 @@
 export * from './utils'
-import type { PostCategory as DatabasePostCategory, Post, PostCategory, User } from 'database'
+import type { PostCategory as DatabasePostCategory, Post, PostCategory, User, UserAward } from 'database'
 import type { Role as DatabaseRole } from 'database'
 
 // due to some obscure typescript shenanigans I don't really care about
@@ -9,7 +9,7 @@ import type { Role as DatabaseRole } from 'database'
 // https://stackoverflow.com/questions/56854964/why-is-const-enum-allowed-with-isolatedmodules
 // https://github.com/prisma/prisma/issues/14692
 export const PostCategoryNames: Record<DatabasePostCategory, string> = {
-  RANA: 'RANA',
+  RANA: 'RANITA TRISTE',
   SIN_SONIDO: 'SIN SONIDO',
   MEME_ARTESANAL: 'MEME ARTESANAL',
   NO_SE_YO: 'NO SÉ YO',
@@ -21,6 +21,10 @@ export const RoleNames: Record<DatabaseRole, string> = {
   ADMIN: 'admin',
   MODERATOR: 'moderator',
   USER: 'user',
+}
+
+export const UserAwardNames: Record<UserAward, string> = {
+  ARTESANO_MEMIFICADOR: 'ARTESANO MEMIFICADOR',
 }
 
 export type UserUpdateOrCreateRequest = Pick<User, 'displayName' | 'isFollower' | 'isSubscriber'>

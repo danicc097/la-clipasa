@@ -9,6 +9,7 @@ generator client {
 datasource db {
   provider   = "postgres"
   url        = env("DATABASE_URL")
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL") // TODO supabase fix
   // see supabase to replicate the schema they're stored in
   extensions = [uuidOSSP(schema: "extensions", map: "uuid-ossp"), pg_trgm(schema: "extensions")]
   schemas    = ["public", "extensions"]
@@ -29,6 +30,12 @@ enum Role {
   USER
   ADMIN
   MODERATOR
+
+  @@schema("public")
+}
+
+enum UserAward {
+  ARTESANO_MEMIFICADOR
 
   @@schema("public")
 }
@@ -57,6 +64,7 @@ model User {
   // Current twitchUser will always be compared to /follows and /subscriptions/user responses when these refetched
   // so when someone starts following an update is triggered on the next rerender.
   role         Role        @default(USER)
+  awards       UserAward[] @default([])
   createdAt    DateTime    @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
   deletedAt    DateTime?   @db.Timestamptz(3)
