@@ -3,6 +3,7 @@ import { Badge, ColorScheme, Group, MantineGradient } from '@mantine/core'
 import postDiamante from 'src/assets/post-diamante.png'
 import postOro from 'src/assets/post-oro.png'
 import postRana from 'src/assets/post-rana.png'
+import emojiMeh from 'src/assets/emoji-meh.png'
 import emojiRana from 'src/assets/emoji-rana.png'
 import emojiOro from 'src/assets/emoji-oro.png'
 import emojiDiamante from 'src/assets/emoji-diamante.png'
@@ -18,6 +19,7 @@ export const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
   DIAMANTE: emojiDiamante,
   RANA: emojiRana,
   ORO: emojiOro,
+  MEH: emojiMeh,
 }
 
 const EMOJI_SIZE = 16
@@ -36,6 +38,7 @@ export const categoryColorGradient: Record<PostCategoryKey, MantineGradient> = {
   ORO: { from: 'yellow', to: 'yellow' },
   SIN_SONIDO: { from: 'gray', to: 'gray' },
   NO_SE_YO: { from: 'red', to: 'red' },
+  MEH: { from: '#c4a051', to: '#c5781a' },
 }
 
 /**

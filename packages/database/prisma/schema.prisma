@@ -22,6 +22,7 @@ enum PostCategory {
   NO_SE_YO
   ORO
   DIAMANTE
+  MEH
 
   @@schema("public")
 }
