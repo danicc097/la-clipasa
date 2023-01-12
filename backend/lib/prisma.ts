@@ -5,10 +5,10 @@ import { PrismaClient } from '@prisma/client/edge'
 let prisma: PrismaClient
 
 if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient({ errorFormat: 'colorless', log: ['error', 'info', 'query', 'warn'] })
+  prisma = new PrismaClient({ log: ['error', 'info', 'query', 'warn'] })
 } else {
   if (!(global as any).prisma) {
-    ;(global as any).prisma = new PrismaClient({ errorFormat: 'colorless', log: ['error', 'info', 'query', 'warn'] })
+    ;(global as any).prisma = new PrismaClient({ log: ['error', 'info', 'query', 'warn'] })
   }
   prisma = (global as any).prisma
 }

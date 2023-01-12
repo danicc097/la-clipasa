@@ -24,9 +24,10 @@ export async function main() {
   const createdUsers = await prisma.user.createMany({
     data: users,
   })
-
+  let postId = 1
   const createPost = () =>
     ({
+      id: ++postId,
       userId: _.sample(users)?.id,
       title:
         _.sample(['calieamor2', 'calie13', 'caliebongo2', 'calietravieso', 'caliesusto1', 'calierana']) +

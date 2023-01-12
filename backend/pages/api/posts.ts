@@ -78,11 +78,15 @@ export default async (req: NextRequest) => {
             userId: {
               equals: queryParams.authorId,
             }, // filter by arbitrary user and "Edit my posts"
+            // TODO should select only if post exists
             ...(queryParams.liked !== undefined &&
               user && {
                 likedPost: {
                   every: {
-                    userId: { equals: user.id },
+                    AND: {
+                      userId: { equals: user.id },
+                      postId: { not: undefined },
+                    },
                   },
                 },
               }),
@@ -90,7 +94,10 @@ export default async (req: NextRequest) => {
               user && {
                 savedPost: {
                   every: {
-                    userId: { equals: user.id },
+                    AND: {
+                      userId: { equals: user.id },
+                      postId: { not: undefined },
+                    },
                   },
                 },
               }),

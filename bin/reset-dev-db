@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd packages/database || exit
+pnpm run dev:reset && pnpm run dev:seed
+cd - || exit
