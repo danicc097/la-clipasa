@@ -293,7 +293,7 @@ export default function Post(props: PostProps) {
       `}
       {...(htmlProps as any)}
     >
-      {categories.length > 0 && (
+      {categories?.length > 0 && (
         <Group position="left">
           {categories.map((category, i) => (
             <CategoryBadge
