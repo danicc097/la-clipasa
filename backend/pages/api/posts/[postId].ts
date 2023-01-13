@@ -17,9 +17,8 @@ const moderatorFields: Array<keyof PostPatchRequest> = ['pinned', 'isModerated',
 export default async (req: NextRequest) => {
   const { searchParams } = new URL(req.url)
   const postId = searchParams.get('postId')
-
-  if (!postId || !Number.isInteger(postId)) {
-    return new Response(JSON.stringify('invalid post id'), { status: 422 })
+  if (!postId || !Number.isInteger(Number(postId))) {
+    return new Response('invalid post id', { status: 422 })
   }
   // individual post visualization when clicking on post or visiting it
   // (visit renders same thing as modal, which should include moderation actions, etc. already)
@@ -50,15 +49,15 @@ export default async (req: NextRequest) => {
           return new Response('unathorized', { status: 403 })
         }
 
-        const { liked, saved, ...postUpdate } = payload
-        const post = await prisma.post.update({
-          data: postUpdate,
-          where: {
-            id: Number(postId),
-          },
-        })
+        let { liked, saved, ...postUpdate } = payload
+        postUpdate = {
+          ...postUpdate,
+          ...(postUpdate.isModerated !== undefined && { isModerated: Boolean(postUpdate.isModerated) }),
+          ...(postUpdate.pinned !== undefined && { pinned: Boolean(postUpdate.pinned) }),
+        }
 
         if (saved !== undefined) {
+          saved = Boolean(saved)
           if (!saved) {
             await prisma.savedPost.delete({
               where: {
@@ -76,9 +75,12 @@ export default async (req: NextRequest) => {
               },
             })
           }
+
+          return new Response(null, { status: 204 })
         }
 
         if (liked !== undefined) {
+          liked = Boolean(liked)
           if (!liked) {
             await prisma.likedPost.delete({
               where: {
@@ -96,9 +98,26 @@ export default async (req: NextRequest) => {
               },
             })
           }
+
+          return new Response(null, { status: 204 })
         }
 
-        return new Response(JSON.stringify(post), { status: 201 })
+        const post = await prisma.post.findUnique({
+          where: {
+            id: Number(postId),
+          },
+        })
+        if (post?.userId !== user.id && !isAuthorized(user, 'MODERATOR')) {
+          return new Response("cannot update another user's post", { status: 403 })
+        }
+        const updatedPost = await prisma.post.update({
+          data: postUpdate,
+          where: {
+            id: Number(postId),
+          },
+        })
+
+        return new Response(JSON.stringify(updatedPost), { status: 201 })
       }
       case 'DELETE': {
         await prisma.post.delete({
@@ -109,5 +128,16 @@ export default async (req: NextRequest) => {
         return new Response(null, { status: 204 })
       }
     }
-  } catch (error) {}
+  } catch (error: any) {
+    if (!error) return new Response('internal server error', { status: 500 })
+
+    try {
+      if (error?.message) {
+        console.log('error.message')
+        console.log(error.message.match(/Argument .*/g))
+      }
+    } catch (error) {}
+    console.log(error)
+    return new Response(JSON.stringify(error), { status: 500 })
+  }
 }
