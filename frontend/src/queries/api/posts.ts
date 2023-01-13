@@ -1,9 +1,9 @@
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 import { useQuery, useQueryClient, QueryClient, useMutation } from '@tanstack/react-query'
 import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY, useUISlice } from 'src/slices/ui'
-import type { Post, User } from 'database'
+import type { Post } from 'database'
 import { useTwitchUser } from 'src/queries/twitch'
-import type { PostCreateRequest } from 'types'
+import type { PostCreateRequest, PostPatchRequest } from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 import { usePostsSlice } from 'src/slices/posts'
 
@@ -66,17 +66,47 @@ export function usePostCreateMutation() {
 
   return useMutation({
     mutationKey: [`apiPostCreate-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
-    retry: (failureCount, error: AxiosError) => {
-      return false
-    },
-    retryDelay: 1000,
-    mutationFn: async (body: PostCreateRequest): Promise<User> => {
+    retry: false,
+    mutationFn: async (body: PostCreateRequest): Promise<Post> => {
       const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/posts`, body, {
         headers: {
           Authorization: `Bearer ${twitchToken}`,
         },
       })
       return data
+    },
+  })
+}
+
+export function usePostPatchMutation() {
+  const { twitchToken } = useUISlice()
+
+  return useMutation({
+    mutationKey: [`apiPostPatch-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
+    retry: false,
+    mutationFn: async ({ body, postId }: { body: PostPatchRequest; postId: string }): Promise<Post> => {
+      const { data } = await axios.patch(`${import.meta.env.VITE_URL}/api/posts/${postId}`, body, {
+        headers: {
+          Authorization: `Bearer ${twitchToken}`,
+        },
+      })
+      return data
+    },
+  })
+}
+
+export function usePostDeleteMutation() {
+  const { twitchToken } = useUISlice()
+
+  return useMutation({
+    mutationKey: [`apiPostDelete-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
+    retry: false,
+    mutationFn: async (postId: string): Promise<AxiosResponse> => {
+      return await axios.delete(`${import.meta.env.VITE_URL}/api/posts/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${twitchToken}`,
+        },
+      })
     },
   })
 }
