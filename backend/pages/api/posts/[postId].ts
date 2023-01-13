@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
-import { Post, Prisma, PrismaClient } from 'database'
+import { Post, Prisma, PrismaClient, Role, User } from 'database'
 import { discordPostUpload } from '../../../src/services/discord'
 import prisma from 'lib/prisma'
+import { ArrayElement, PostPatchRequest, RequiredKeys } from 'types'
+import { isAuthorized } from 'src/services/authorization'
 
 // can't use shared import
 export const config = {
@@ -10,11 +12,13 @@ export const config = {
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 
+const moderatorFields: Array<keyof PostPatchRequest> = ['pinned', 'isModerated', 'categories']
+
 export default async (req: NextRequest) => {
   const { searchParams } = new URL(req.url)
   const postId = searchParams.get('postId')
 
-  if (!Number.isInteger(postId)) {
+  if (!postId || !Number.isInteger(postId)) {
     return new Response(JSON.stringify('invalid post id'), { status: 422 })
   }
   // individual post visualization when clicking on post or visiting it
@@ -24,22 +28,75 @@ export default async (req: NextRequest) => {
   try {
     switch (req.method) {
       case 'PATCH': {
-        let payload: Prisma.PostUncheckedUpdateInput
+        const headerTwitchId = req.headers.get('X-twitch-id') ?? ''
+        let payload: PostPatchRequest
         try {
           payload = await req.json()
           console.log(payload)
         } catch (error) {
           return new Response('missing payload', { status: 400 })
         }
-        // will also use this route to moderate, pin messages.
-        // if payload contains `pinned`, `moderated` -> find user by twitch id and
-        // add to update data else ignore and save up that call
-        // we dont really need user to be follower or subscriber for basic
-        // post upload.
+        const user = await prisma.user.findFirst({ where: { twitchId: headerTwitchId } })
+        if (!user) {
+          return new Response('unauthenticated', { status: 401 })
+        }
 
-        const post = await prisma.post.update({ data: payload, where: { id: Number(postId) } }) // obviously must explicitly set fields later
+        let requiredRole: Role = 'USER'
+        if (Object.keys(payload).some((k: any) => moderatorFields.includes(k))) {
+          requiredRole = 'MODERATOR'
+        }
 
-        // await discordPostUpload(post)
+        if (!isAuthorized(user, requiredRole)) {
+          return new Response('unathorized', { status: 403 })
+        }
+
+        const { liked, saved, ...postUpdate } = payload
+        const post = await prisma.post.update({
+          data: postUpdate,
+          where: {
+            id: Number(postId),
+          },
+        })
+
+        if (saved !== undefined) {
+          if (!saved) {
+            await prisma.savedPost.delete({
+              where: {
+                userId_postId: {
+                  postId: Number(postId),
+                  userId: user.id,
+                },
+              },
+            })
+          } else {
+            await prisma.savedPost.create({
+              data: {
+                postId: Number(postId),
+                userId: user.id,
+              },
+            })
+          }
+        }
+
+        if (liked !== undefined) {
+          if (!liked) {
+            await prisma.likedPost.delete({
+              where: {
+                userId_postId: {
+                  postId: Number(postId),
+                  userId: user.id,
+                },
+              },
+            })
+          } else {
+            await prisma.likedPost.create({
+              data: {
+                postId: Number(postId),
+                userId: user.id,
+              },
+            })
+          }
+        }
 
         return new Response(JSON.stringify(post), { status: 201 })
       }

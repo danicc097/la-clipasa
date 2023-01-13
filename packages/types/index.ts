@@ -29,7 +29,15 @@ export const UserAwardNames: Record<UserAward, string> = {
 }
 
 export type UserUpdateOrCreateRequest = Pick<User, 'displayName' | 'isFollower' | 'isSubscriber'>
+
 export type PostCreateRequest = Pick<Post, 'title' | 'content' | 'link'>
+
+export type PostPatchRequest = Partial<
+  Pick<Post, 'title' | 'content' | 'link' | 'isModerated' | 'categories' | 'pinned'> & {
+    liked: boolean
+    saved: boolean
+  }
+>
 
 export type PostQueryParams = {
   limit: number | undefined
