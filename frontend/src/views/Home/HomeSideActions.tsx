@@ -317,35 +317,40 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
             shadow="md"
           >
             <Popover.Target>
-              <Textarea
-                {...postCreateForm.getInputProps('title')}
-                ref={titleInputRef}
-                withAsterisk
-                label="Title"
-                placeholder="Enter a title"
-                onClick={() => setTitlePreviewPopoverOpened(true)}
-                onFocus={() => setTitlePreviewPopoverOpened(true)}
-                onBlur={() => setTitlePreviewPopoverOpened(false)}
-                rightSection={
-                  <Tooltip label="Preview">
-                    <Group>
-                      <IconEyeCheck
-                        color="#4077aa"
-                        size={20}
-                        css={css`
-                          cursor: pointer;
-                          :hover {
-                            filter: brightness(2);
-                          }
-                        `}
-                        onClick={() => setTitlePreviewPopoverOpened(!titlePreviewPopoverOpened)}
-                      />
-                    </Group>
-                  </Tooltip>
-                }
-                autosize
-                minRows={2}
-              />
+              <div>
+                <Textarea
+                  {...postCreateForm.getInputProps('title')}
+                  ref={titleInputRef}
+                  withAsterisk
+                  label="Title"
+                  placeholder="Enter a title"
+                  onClick={() => setTitlePreviewPopoverOpened(true)}
+                  onFocus={() => setTitlePreviewPopoverOpened(true)}
+                  onBlur={() => setTitlePreviewPopoverOpened(false)}
+                  rightSection={
+                    <Tooltip label="Preview">
+                      <Group>
+                        <IconEyeCheck
+                          color="#4077aa"
+                          size={20}
+                          css={css`
+                            cursor: pointer;
+                            :hover {
+                              filter: brightness(2);
+                            }
+                          `}
+                          onClick={() => setTitlePreviewPopoverOpened(!titlePreviewPopoverOpened)}
+                        />
+                      </Group>
+                    </Tooltip>
+                  }
+                  autosize
+                  minRows={2}
+                />
+                <Text size={'xs'} opacity={'60%'}>
+                  You can use channel emotes here.
+                </Text>
+              </div>
             </Popover.Target>
             <Popover.Dropdown>
               <div

@@ -12,13 +12,14 @@
     "prod:migrate": "cd ../packages/database && pnpm run prod:migrate"
   },
   "dependencies": {
-    "next": "13.1.1",
     "database": "workspace:*",
+    "next": "13.1.1",
     "types": "workspace:*",
     "typescript": "4.9.4"
   },
   "devDependencies": {
-    "eslint-config-custom": "workspace:*",
-    "@types/node": "18.11.18"
+    "@types/node": "18.11.18",
+    "@types/react": "^18.0.26",
+    "eslint-config-custom": "workspace:*"
   }
 }

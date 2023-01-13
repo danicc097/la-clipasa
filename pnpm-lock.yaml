@@ -37,6 +37,7 @@ importers:
   backend:
     specifiers:
       '@types/node': 18.11.18
+      '@types/react': ^18.0.26
       database: workspace:*
       eslint-config-custom: workspace:*
       next: 13.1.1
@@ -49,6 +50,7 @@ importers:
       typescript: 4.9.4
     devDependencies:
       '@types/node': 18.11.18
+      '@types/react': 18.0.26
       eslint-config-custom: link:../packages/eslint-config-custom
 
   frontend:
