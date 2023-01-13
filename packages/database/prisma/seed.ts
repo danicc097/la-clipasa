@@ -21,12 +21,13 @@ export async function main() {
     .fill(null)
     .map(() => createUser())
 
-  users.push({
+  const dev: Prisma.UserCreateArgs['data'] = {
     id: crypto.randomUUID(),
     displayName: process.env.TWITCH_DEV_USERNAME,
     role: 'ADMIN',
     twitchId: process.env.TWITCH_DEV_ID,
-  })
+  }
+  users.push(dev)
   users.push({
     id: crypto.randomUUID(),
     displayName: 'caliebre',
@@ -34,9 +35,10 @@ export async function main() {
     twitchId: '52341091',
   })
 
-  const createdUsers = await prisma.user.createMany({
+  await prisma.user.createMany({
     data: users,
   })
+
   let postId = 1
   const createPost = () =>
     ({
@@ -60,8 +62,23 @@ export async function main() {
     .fill(null)
     .map(() => createPost())
 
-  const createdPosts = await prisma.post.createMany({
+  await prisma.post.createMany({
     data: posts as any,
+  })
+
+  let likedPostId = 1
+  const createLikedPost = () =>
+    ({
+      postId: ++likedPostId,
+      userId: dev.id,
+    } as Prisma.SavedPostCreateArgs['data'])
+
+  const likedPosts = Array(5)
+    .fill(null)
+    .map(() => createLikedPost())
+
+  await prisma.likedPost.createMany({
+    data: likedPosts as any,
   })
 }
 main()

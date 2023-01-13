@@ -22,11 +22,6 @@ Check out the progress over at: https://laclipasa.vercel.app
 
 - Discord as a CDN
 
-- Prisma X supabase fixing migrations `Error: P3005 The database schema is not empty` :
-  - (**not effective**)https://github.com/prisma/prisma/issues/16853
-  - (**not effective**)https://supabase.com/docs/guides/integrations/prisma#configuring-the-project-to-use-postgresql
-
-
 - [prisma data proxy cannot be used in local development
   ](https://github.com/prisma/prisma/issues/14398).
 Checkout [supabase js client for
