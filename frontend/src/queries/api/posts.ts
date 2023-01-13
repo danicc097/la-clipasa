@@ -95,6 +95,7 @@ export function usePostPatchMutation() {
   })
 }
 
+// will show button if post.userId === user.id or has at least mod role
 export function usePostDeleteMutation() {
   const { twitchToken } = useUISlice()
 

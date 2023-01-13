@@ -120,6 +120,19 @@ export default async (req: NextRequest) => {
         return new Response(JSON.stringify(updatedPost), { status: 201 })
       }
       case 'DELETE': {
+        const headerTwitchId = req.headers.get('X-twitch-id') ?? ''
+        const user = await prisma.user.findFirst({ where: { twitchId: headerTwitchId } })
+        if (!user) {
+          return new Response('unauthenticated', { status: 401 })
+        }
+        const post = await prisma.post.findUnique({
+          where: {
+            id: Number(postId),
+          },
+        })
+        if (post?.userId !== user.id && !isAuthorized(user, 'MODERATOR')) {
+          return new Response("cannot delete another user's post", { status: 403 })
+        }
         await prisma.post.delete({
           where: { id: Number(postId) },
           select: null,
