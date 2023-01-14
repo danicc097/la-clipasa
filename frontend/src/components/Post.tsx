@@ -165,6 +165,8 @@ export default function Post(props: PostProps) {
   const [hasLiked, setHasLiked] = useState(false)
   const [hasSaved, setHasSaved] = useState(false)
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
+  const postPatchMutation = usePostPatchMutation()
+  const postDeleteMutation = usePostDeleteMutation()
 
   useEffect(() => {
     setHasLiked(post?.likedPost?.length > 0)
@@ -190,6 +192,7 @@ export default function Post(props: PostProps) {
                   // TODO mutation with debounce of 2 seconds
                   setHasLiked(!hasLiked)
                   setLikeBeacon(true)
+                  postPatchMutation.mutate({ postId: String(post.id), body: { liked: !hasLiked } })
                 }}
                 onAnimationEnd={() => setLikeBeacon(false)}
                 size="xs"
@@ -203,7 +206,7 @@ export default function Post(props: PostProps) {
                 }
               >
                 <ActionIcon component="div">
-                  {truncateIntegerToString(post._count.likedPost + (hasLiked ? 1 : 0))}
+                  {truncateIntegerToString(post._count.likedPost + (hasLiked && postPatchMutation.isSuccess ? 1 : 0))}
                 </ActionIcon>
               </Button>
             </Tooltip>
@@ -214,6 +217,7 @@ export default function Post(props: PostProps) {
                   // TODO mutation with debounce of 2 seconds
                   setHasSaved(!hasSaved)
                   setSaveBeacon(true)
+                  postPatchMutation.mutate({ postId: String(post.id), body: { saved: !hasSaved } })
                 }}
                 onAnimationEnd={() => setSaveBeacon(false)}
               >
