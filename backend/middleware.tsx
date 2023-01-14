@@ -27,7 +27,7 @@ export default async function middleware(request: NextRequest) {
   }
   requestHeaders.set('X-twitch-id', twitchId ?? '')
 
-  return cors(
+  return await cors(
     request,
     NextResponse.next({
       request: {

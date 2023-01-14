@@ -170,7 +170,6 @@ export default function Post(props: PostProps) {
   const [saveBeacon, setSaveBeacon] = useState(false)
   const [likeBeacon, setLikeBeacon] = useState(false)
   const [hasLiked, setHasLiked] = useState(false)
-  const [hasSaved, setHasSaved] = useState(false)
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
   const postPatchMutation = usePostPatchMutation()
   const postDeleteMutation = usePostDeleteMutation()
@@ -180,7 +179,6 @@ export default function Post(props: PostProps) {
 
   useEffect(() => {
     setHasLiked(post?.likedPosts?.length > 0)
-    setHasSaved(post?.savedPosts?.length > 0)
   }, [post])
 
   useEffect(() => {
@@ -283,12 +281,34 @@ export default function Post(props: PostProps) {
             </Tooltip>
             <Tooltip label="Bookmark" arrowPosition="center" withArrow>
               <ActionIcon
-                className={`${classes.action} ${hasSaved && saveBeacon ? 'beacon' : ''}`}
+                className={`${classes.action} ${post.savedPosts?.length > 0 && saveBeacon ? 'beacon' : ''}`}
                 onClick={(e) => {
+                  const onSuccess = (data, variables, context) => {
+                    queryClient.setQueryData<PostGetResponse[]>(
+                      [`apiGetPosts`, getPostsQueryParams],
+                      usePostsQuery.data.map((p) => {
+                        if (p.id === post.id) {
+                          console.log('updating react query data')
+                          if (hasLiked) {
+                            p.savedPosts = []
+                          } else {
+                            p.savedPosts = [{ postId: p.id, userId: p.userId }]
+                          }
+                        }
+
+                        return p
+                      }),
+                    )
+                  }
+
                   // TODO mutation with debounce of 2 seconds
-                  setHasSaved(!hasSaved)
                   setSaveBeacon(true)
-                  postPatchMutation.mutate({ postId: String(post.id), body: { saved: !hasSaved } })
+                  postPatchMutation.mutate(
+                    { postId: String(post.id), body: { saved: !(post.savedPosts?.length > 0) } },
+                    {
+                      onSuccess,
+                    },
+                  )
                 }}
                 onAnimationEnd={() => setSaveBeacon(false)}
               >
@@ -296,7 +316,7 @@ export default function Post(props: PostProps) {
                   size={18}
                   color={theme.colors.yellow[6]}
                   stroke={1.5}
-                  {...(hasSaved && { fill: theme.colors.yellow[6] })}
+                  {...(post.savedPosts?.length > 0 && { fill: theme.colors.yellow[6] })}
                 />
               </ActionIcon>
             </Tooltip>

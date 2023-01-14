@@ -59,14 +59,18 @@ export default async (req: NextRequest) => {
 
         if (saved !== undefined) {
           if (!saved) {
-            await prisma.savedPost.delete({
-              where: {
-                userId_postId: {
-                  postId: Number(postId),
-                  userId: user.id,
+            try {
+              await prisma.savedPost.delete({
+                where: {
+                  userId_postId: {
+                    postId: Number(postId),
+                    userId: user.id,
+                  },
                 },
-              },
-            })
+              })
+            } catch (error) {
+              console.log(error)
+            }
           } else {
             await prisma.savedPost.create({
               data: {
@@ -81,14 +85,18 @@ export default async (req: NextRequest) => {
 
         if (liked !== undefined) {
           if (!liked) {
-            await prisma.likedPost.delete({
-              where: {
-                userId_postId: {
-                  postId: Number(postId),
-                  userId: user.id,
+            try {
+              await prisma.likedPost.delete({
+                where: {
+                  userId_postId: {
+                    postId: Number(postId),
+                    userId: user.id,
+                  },
                 },
-              },
-            })
+              })
+            } catch (error) {
+              console.log(error)
+            }
           } else {
             await prisma.likedPost.create({
               data: {
