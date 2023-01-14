@@ -47,7 +47,11 @@ export default function Home() {
   //   }
   // }, [getPostsQueryParams])
 
-  console.log(usePostsQuery.data)
+  const renderPosts = () => {
+    return usePostsQuery.data?.map((post) => (
+      <Post key={post.id} post={post} className="post" footer={<div>3 comments</div>} />
+    ))
+  }
 
   return (
     <>
@@ -83,65 +87,7 @@ export default function Home() {
               width: 100%;
             `}
           >
-            <Post
-              isModerated={random(0, 1, true) > 0.5}
-              author={{
-                name: 'some_user',
-                description: showRelativeTimestamp(dayjs().subtract(15, 'minutes').toJSON()),
-                image: null, //author.profileImage
-              }}
-              categories={['SIN_SONIDO', 'DIAMANTE', 'NO_SE_YO', 'MEH']}
-              title={
-                'Text with emote calieAMOR2. A very very very very very very very very very very very very very very very very very very very very very very long post'
-              }
-              className="post"
-              footer={<div>Some extra info</div>}
-              likes={100}
-            />
-            <Post
-              isModerated={random(0, 1, true) > 0.5}
-              author={{
-                name: 'some_user',
-                description: showRelativeTimestamp(dayjs().subtract(360, 'minutes').toJSON()),
-                image: null, //author.profileImage
-              }}
-              categories={['SIN_SONIDO', 'RANA']}
-              title={'Some title for this'}
-              className="post"
-              footer={<div>Some extra info</div>}
-              likes={4324}
-            />
-            <Post
-              isModerated={random(0, 1, true) > 0.5}
-              author={{
-                name: 'some_user',
-                description: showRelativeTimestamp(dayjs().subtract(15, 'days').toJSON()),
-                image: null, //author.profileImage
-              }}
-              categories={['ORO']}
-              title={'Some title for this'}
-              className="post"
-              footer={<div>Some extra info</div>}
-              likes={14324}
-            />
-            {Array(2)
-              .fill(null)
-              .map((e, idx) => (
-                <Post
-                  isModerated={random(0, 1, true) > 0.5}
-                  key={idx}
-                  author={{
-                    name: 'some_user',
-                    description: showRelativeTimestamp(dayjs().subtract(15, 'months').toJSON()),
-                    image: null, //author.profileImage
-                  }}
-                  categories={[]}
-                  title={'Some title for this'}
-                  className="post"
-                  footer={<div>Some extra info</div>}
-                  likes={2}
-                />
-              ))}
+            {renderPosts()}
             <PostSkeleton className="post" />
             <PostSkeleton className="post" />
           </Container>

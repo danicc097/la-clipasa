@@ -100,19 +100,24 @@ export default async (req: NextRequest) => {
                 },
               }),
           },
-          // TODO will query lookup tables likedposts and savedposts and ``include`` in there
-          // include: {
-          //   likedPost: {
-          //     where: {
-          //       userId: { equals: user?.id },
-          //     },
-          //   },
-          //   savedPost: {
-          //     where: {
-          //       userId: { equals: user?.id },
-          //     },
-          //   },
-          // },
+          include: {
+            likedPost: {
+              where: {
+                userId: { equals: user?.id },
+              },
+            }, // length > 0 if user liked
+            savedPost: {
+              where: {
+                userId: { equals: user?.id },
+              },
+            }, // length > 0 if user saved
+            User: {
+              select: { id: true, displayName: true, profileImage: true },
+            }, // minimal author info to display
+            _count: {
+              select: { likedPost: true }, // total likes
+            },
+          },
         })
 
         console.log(`posts: ${JSON.stringify(posts)}`)

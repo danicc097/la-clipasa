@@ -1,0 +1,26 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: local
+    hooks:
+      - id: lint
+        name: lint
+        entry: bash -c 'pnpm run lint'
+        language: system
+        types: [text]
+        pass_filenames: false
+        always_run: true
+        verbose: true
+        files: ''
+        exclude: ^(node_modules/|dist/|build/)
+
+      - id: tsc
+        name: tsc
+        entry: bash -c 'pnpm run tsc'
+        language: system
+        types: [text]
+        pass_filenames: false
+        always_run: true
+        verbose: true
+        files: ''
+        exclude: ^(node_modules/|dist/|build/)

@@ -5,6 +5,7 @@
   "types": "./index.ts",
   "private": true,
   "scripts": {
+    "tsc": "tsc",
     "local:reset": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma migrate reset",
     "local:seed": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma db seed",
     "local:generate": ". ./.env && DATABASE_URL=\"postgres://postgres:postgres@localhost:6543/postgres\" prisma generate",

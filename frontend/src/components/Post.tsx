@@ -28,17 +28,21 @@ import {
   IconShieldCheck,
   IconShieldOff,
   IconShield,
+  IconTrash,
+  IconExternalLink,
 } from '@tabler/icons'
 import { css } from '@emotion/react'
-import type { ArrayElement, PostCategoryNames, RequiredKeys, Union } from 'types'
+import type { ArrayElement, PostCategoryNames, PostGetResponse, RequiredKeys, Union } from 'types'
 import { truncateIntegerToString } from 'src/utils/string'
 import { HTMLProps, useState } from 'react'
 import { truncate } from 'lodash-es'
-import type { PostCategory, Prisma } from 'database' // cant use PostCategory exported const
+import type { Post, PostCategory, Prisma, User } from 'database' // cant use PostCategory exported const
 import CategoryBadge, { CardBackground, PostCategoryKey, uniqueCategoryBackground } from 'src/components/CategoryBadge'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import ProtectedComponent from 'src/components/ProtectedComponent'
+import { usePostDeleteMutation, usePostPatchMutation } from 'src/queries/api/posts'
+import { showRelativeTimestamp } from 'src/utils/date'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -110,6 +114,7 @@ const useStyles = createStyles((theme) => {
 
     title: {
       fontSize: '1.5rem',
+      paddingRight: '3rem', // for bg decorations
     },
 
     footer: {
@@ -134,35 +139,34 @@ interface PostProps extends HTMLProps<HTMLButtonElement> {
   /**
    * Overrides a default image for a category
    */
-  image?: string
-  categories: Array<PostCategoryKey>
-  title: string
+  post: PostGetResponse
+  backgroundImage?: string
   footer: JSX.Element
-  likes: number
-  isModerated: boolean
-  author: {
-    name: string
-    description: string
-    image: string
-  }
 }
 
 /**
  * Interesting possiblities:
- *  - broadcast polls for each post (just for admin or moderator)
+ *  - broadcast poll creation per each post if role higher than user
  *
  */
 export default function Post(props: PostProps) {
-  const { image, categories, title, footer, likes, author, className, isModerated, ...htmlProps } = props
+  const { post, backgroundImage, footer, className, ...htmlProps } = props
   const { classes, theme } = useStyles()
-  const cardBackground: CardBackground = uniqueCategoryBackground[categories.find((c) => uniqueCategoryBackground[c])]
-  const cardBackgroundImage = image ? image : cardBackground ? cardBackground.image : 'auto'
-  const cardBackgroundColor = image ? 'auto' : cardBackground ? cardBackground.color(theme.colorScheme) : 'auto'
+  const cardBackground: CardBackground =
+    uniqueCategoryBackground[post.categories.find((c) => uniqueCategoryBackground[c])]
+  const cardBackgroundImage = backgroundImage ? backgroundImage : cardBackground ? cardBackground.image : 'auto'
+  const cardBackgroundColor = backgroundImage
+    ? 'auto'
+    : cardBackground
+    ? cardBackground.color(theme.colorScheme)
+    : 'auto'
   const [saveBeacon, setSaveBeacon] = useState(false)
   const [likeBeacon, setLikeBeacon] = useState(false)
-  const [hasLiked, setHasLiked] = useState(true)
+  const [hasLiked, setHasLiked] = useState(false)
   const [hasSaved, setHasSaved] = useState(false)
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
+  const postPatchMutation = usePostPatchMutation()
+  const postDeleteMutation = usePostDeleteMutation()
 
   function renderFooter() {
     return (
@@ -176,9 +180,9 @@ export default function Post(props: PostProps) {
             <Tooltip label="Like" arrowPosition="center" withArrow>
               <Button
                 classNames={{
-                  root: hasLiked ? classes.likedAction : classes.action,
+                  root: post?.likedPosts?.length > 0 ? classes.likedAction : classes.action,
                 }}
-                className={hasLiked && likeBeacon ? 'beacon' : ''}
+                className={post?.likedPosts?.length > 0 && likeBeacon ? 'beacon' : ''}
                 onClick={(e) => {
                   setHasLiked(!hasLiked)
                   setLikeBeacon(true)
@@ -190,16 +194,16 @@ export default function Post(props: PostProps) {
                     size={18}
                     color={theme.colors.red[6]}
                     stroke={1.5}
-                    {...(hasLiked && { fill: theme.colors.red[6] })}
+                    {...(post?.likedPosts?.length > 0 && { fill: theme.colors.red[6] })}
                   />
                 }
               >
-                <ActionIcon component="div">{truncateIntegerToString(likes)}</ActionIcon>
+                <ActionIcon component="div">{truncateIntegerToString(post._count.likedPost)}</ActionIcon>
               </Button>
             </Tooltip>
             <Tooltip label="Bookmark" arrowPosition="center" withArrow>
               <ActionIcon
-                className={`${classes.action} ${hasSaved && saveBeacon ? 'beacon' : ''}`}
+                className={`${classes.action} ${post.savedPosts?.length > 0 && saveBeacon ? 'beacon' : ''}`}
                 onClick={(e) => {
                   setHasSaved(!hasSaved)
                   setSaveBeacon(true)
@@ -210,7 +214,7 @@ export default function Post(props: PostProps) {
                   size={18}
                   color={theme.colors.yellow[6]}
                   stroke={1.5}
-                  {...(hasSaved && { fill: theme.colors.yellow[6] })}
+                  {...(post.savedPosts?.length > 0 && { fill: theme.colors.yellow[6] })}
                 />
               </ActionIcon>
             </Tooltip>
@@ -220,9 +224,9 @@ export default function Post(props: PostProps) {
               </ActionIcon>
             </Tooltip>
             <ProtectedComponent requiredRole="MODERATOR">
-              <Tooltip label={isModerated ? 'Mark as not moderated' : 'Approve'} arrowPosition="center" withArrow>
+              <Tooltip label={post.isModerated ? 'Mark as not moderated' : 'Approve'} arrowPosition="center" withArrow>
                 <ActionIcon className={classes.action}>
-                  {isModerated ? (
+                  {post.isModerated ? (
                     <IconShieldOff size={16} color={'red'} stroke={1.5} />
                   ) : (
                     <IconShieldCheck size={16} color={'lime'} stroke={1.5} />
@@ -230,6 +234,15 @@ export default function Post(props: PostProps) {
                 </ActionIcon>
               </Tooltip>
             </ProtectedComponent>
+            {/*
+              TODO will show button if post.userId === user.id or has at least mod role
+              and confirmation modal
+              */}
+            <Tooltip label="Delete" arrowPosition="center" withArrow>
+              <ActionIcon className={classes.action}>
+                <IconTrash size={16} color={theme.colors.red[6]} stroke={1.5} />
+              </ActionIcon>
+            </Tooltip>
           </Group>
         </Group>
       </Card.Section>
@@ -239,12 +252,11 @@ export default function Post(props: PostProps) {
   function renderMetadata() {
     return (
       <Group mt="lg">
-        {/* TODO twitch GET /users?<...> and replace with profile image */}
-        <Avatar src={author.image} radius="sm" />
+        <Avatar src={post.User.profileImage} radius="sm" />
         <div>
-          <Text weight={500}>{author.name}</Text>
+          <Text weight={500}>{post.User.displayName}</Text>
           <Text size="xs" color="dimmed">
-            {author.description}
+            {showRelativeTimestamp(post.createdAt as any)}
           </Text>
         </div>
       </Group>
@@ -257,11 +269,18 @@ export default function Post(props: PostProps) {
         weight={700}
         className={classes.title}
         mt="xs"
-        css={css`
-          padding-right: 3rem; // leave space for bg decorations
-        `}
-        dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(title, { length: 100 }), 28) }}
+        dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post.title, { length: 100 }), 28) }}
       ></Text>
+    )
+  }
+
+  function renderContent() {
+    return (
+      <Text weight={700} className={classes.title} mt="xs">
+        <Button component="a" href="#" variant="subtle" leftIcon={<IconExternalLink size={14} />}>
+          {post.content}
+        </Button>
+      </Text>
     )
   }
 
@@ -293,9 +312,9 @@ export default function Post(props: PostProps) {
       `}
       {...(htmlProps as any)}
     >
-      {categories?.length > 0 && (
+      {post.categories?.length > 0 && (
         <Group position="left">
-          {categories.map((category, i) => (
+          {post.categories.map((category, i) => (
             <CategoryBadge
               className="disable-select"
               key={i}
@@ -317,6 +336,7 @@ export default function Post(props: PostProps) {
       )}
 
       {renderTitle()}
+      {renderContent()}
       {renderMetadata()}
       {renderFooter()}
     </Card>
@@ -325,7 +345,7 @@ export default function Post(props: PostProps) {
 
 export function PostSkeleton(props: Partial<PostProps>) {
   const { classes, theme } = useStyles()
-  const { image, categories, title, footer, likes, author, className, ...htmlProps } = props
+  const { post, backgroundImage, footer, className, ...htmlProps } = props
 
   return (
     <Flex

@@ -28,7 +28,8 @@ import FallbackLoader from 'src/components/FallbackLoader'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: 1000 * 60 * 5, // 5 min
+      // cacheTime: 1000 * 60 * 5, // 5 min
+      cacheTime: 0,
       // refetchOnWindowFocus: false,
       staleTime: 300000,
       keepPreviousData: true,

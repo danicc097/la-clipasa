@@ -3,7 +3,7 @@ import { useQuery, useQueryClient, QueryClient, useMutation } from '@tanstack/re
 import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY, useUISlice } from 'src/slices/ui'
 import type { Post } from 'database'
 import { useTwitchUser } from 'src/queries/twitch'
-import type { PostCreateRequest, PostPatchRequest } from 'types'
+import type { PostCreateRequest, PostPatchRequest, PostGetResponse } from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 import { usePostsSlice } from 'src/slices/posts'
 
@@ -15,13 +15,13 @@ export function usePosts() {
   const { twitchToken } = useUISlice()
   const { getPostsQueryParams } = usePostsSlice()
 
-  return useQuery<Post[], AxiosError>({
+  return useQuery<PostGetResponse[], AxiosError>({
     queryKey: [`apiGetPosts`, getPostsQueryParams], // any state used inside the queryFn must be part of the queryKey
     retry: false,
     cacheTime: 1000 * 60 * 60, // 1h
     // cacheTime: 0,
     enabled: getPostsQueryParams !== null,
-    queryFn: async ({ signal, pageParam }): Promise<Post[]> => {
+    queryFn: async ({ signal, pageParam }): Promise<PostGetResponse[]> => {
       if (!getPostsQueryParams) return
 
       const { data } = await axios.get(

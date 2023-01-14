@@ -67,6 +67,9 @@
     "lint": {
       "outputs": []
     },
+    "tsc": {
+      "outputs": []
+    },
     "dev": {
       "dependsOn": [
         "^local:generate"

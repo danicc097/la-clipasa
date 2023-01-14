@@ -230,7 +230,12 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   })
 
   function changeTitleQueryParam() {
-    titleQuery !== '' && setGetPostsQueryParams({ ...getPostsQueryParams, titleQuery: titleQuery })
+    if (titleQuery === '') {
+      setGetPostsQueryParams({ ...getPostsQueryParams, titleQuery: undefined })
+
+      return
+    }
+    setGetPostsQueryParams({ ...getPostsQueryParams, titleQuery: titleQuery })
   }
 
   function renderActiveCategoryFilters() {

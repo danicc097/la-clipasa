@@ -13,6 +13,7 @@
     "start": "turbo run start",
     "test": "turbo run test:no-watch",
     "lint": "turbo run lint",
+    "tsc": "turbo run tsc",
     "clean": "turbo run clean",
     "db:dev": "turbo local:push dev:generate",
     "dev:generate": "turbo dev:generate",
