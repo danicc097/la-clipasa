@@ -1,0 +1,37 @@
+#!/bin/bash
+# shellcheck disable=1091,2155,2068,2086,2031
+
+export PROC=$$
+
+source "${BASH_SOURCE%/*}/.helpers.sh"
+
+cd packages/database || exit
+source ./.env
+env="$1"
+dump_file="$2"
+[[ -z $env ]] && echo "Env dev|prod is necessary" && exit 1
+
+if [[ $env = "prod" ]]; then
+  readonly DB_URL="$MIGRATE_PROD_DATABASE_URL"
+else
+  readonly DB_URL="$MIGRATE_DATABASE_URL"
+fi
+
+running_dumps=$(psql -qtAX -v ON_ERROR_STOP=on -P pager=off "$DB_URL" \
+  -c "SELECT pid FROM pg_stat_activity WHERE application_name = 'pg_dump';")
+if [[ "$running_dumps" != "" ]]; then
+  err "pg_dump is already running, aborting new dump"
+fi
+
+readonly DUMPS_PREFIX="${env}_dump_"
+
+mkdir -p "$DUMPS_FOLDER"
+schema_v=$(psql -qtAX -v ON_ERROR_STOP=on -P pager=off "$DB_URL" \
+  -c "SELECT migration_name FROM _prisma_migrations order by migration_name desc limit 1;")
+dump_file="${DUMPS_PREFIX}$(date +%Y-%m-%dT%H-%M-%S)_${schema_v}.gz"
+
+# NOTE: might need to disable pggraphql https://github.com/supabase/supabase/discussions/3464#discussioncomment-3716960
+echo "Dumping database to $dump_file"
+echo "$DB_URL"
+# // TODO execute via running local postgres 15 docker-compose (supabase version) then pipe to host gzip
+pg_dump "$DB_URL" | gzip >"$DUMPS_FOLDER/$dump_file"

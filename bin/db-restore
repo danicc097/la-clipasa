@@ -1,0 +1,38 @@
+#!/bin/bash
+# shellcheck disable=1091,2155,2068,2086,2031
+
+export PROC=$$
+
+source "${BASH_SOURCE%/*}/.helpers.sh"
+
+cd packages/database || exit
+source ./.env
+env="$1"
+dump_file="$2"
+[[ -z $env ]] && echo "Env dev|prod is necessary" && exit 1
+
+if [[ $env = "prod" ]]; then
+  readonly DB_URL="$MIGRATE_PROD_DATABASE_URL"
+else
+  readonly DB_URL="$MIGRATE_DATABASE_URL"
+fi
+
+readonly DUMPS_PREFIX="${env}_dump_"
+
+# if specific dump supplied
+if [[ -n $dump_file ]]; then
+  [[ ! -f $dump_file ]] && err "$dump_file does not exist"
+else
+  mkdir -p "$DUMPS_FOLDER"
+  latest_dump_file=$(find "$DUMPS_FOLDER"/ -name "${DUMPS_PREFIX}*.gz" | sort -r | head -n 1)
+  if [[ -z "$latest_dump_file" ]]; then
+    err "No dump file with prefix '${DUMPS_PREFIX}' found in $DUMPS_FOLDER"
+  fi
+  dump_file="$latest_dump_file"
+fi
+
+confirm "Do you want to restore ${YELLOW}$dump_file${OFF} in the ${RED}$env${OFF} environment?"
+
+# x.db.drop # might need prisma reset without applying migrations instead
+
+gunzip -c "$dump_file" | psql -qtAX -v ON_ERROR_STOP=on "$DB_URL"
