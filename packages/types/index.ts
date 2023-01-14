@@ -38,8 +38,8 @@ export const UserAwardNames: Record<UserAward, string> = {
 
 export type PostGetResponse = {
   User: Pick<User, 'id' | 'displayName' | 'profileImage'>
-  likedPosts: LikedPost[]
-  savedPosts: SavedPost[]
+  likedPost: LikedPost[]
+  savedPost: SavedPost[]
   _count: {
     likedPost: number
   }

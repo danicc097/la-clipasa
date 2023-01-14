@@ -34,7 +34,7 @@ import {
 import { css } from '@emotion/react'
 import type { ArrayElement, PostCategoryNames, PostGetResponse, RequiredKeys, Union } from 'types'
 import { truncateIntegerToString } from 'src/utils/string'
-import { HTMLProps, useState } from 'react'
+import { HTMLProps, useEffect, useState } from 'react'
 import { truncate } from 'lodash-es'
 import type { Post, PostCategory, Prisma, User } from 'database' // cant use PostCategory exported const
 import CategoryBadge, { CardBackground, PostCategoryKey, uniqueCategoryBackground } from 'src/components/CategoryBadge'
@@ -165,8 +165,11 @@ export default function Post(props: PostProps) {
   const [hasLiked, setHasLiked] = useState(false)
   const [hasSaved, setHasSaved] = useState(false)
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
-  const postPatchMutation = usePostPatchMutation()
-  const postDeleteMutation = usePostDeleteMutation()
+
+  useEffect(() => {
+    setHasLiked(post?.likedPost?.length > 0)
+    setHasSaved(post?.savedPost?.length > 0)
+  }, [post])
 
   function renderFooter() {
     return (
@@ -180,10 +183,11 @@ export default function Post(props: PostProps) {
             <Tooltip label="Like" arrowPosition="center" withArrow>
               <Button
                 classNames={{
-                  root: post?.likedPosts?.length > 0 ? classes.likedAction : classes.action,
+                  root: hasLiked ? classes.likedAction : classes.action,
                 }}
-                className={post?.likedPosts?.length > 0 && likeBeacon ? 'beacon' : ''}
+                className={hasLiked && likeBeacon ? 'beacon' : ''}
                 onClick={(e) => {
+                  // TODO mutation with debounce of 2 seconds
                   setHasLiked(!hasLiked)
                   setLikeBeacon(true)
                 }}
@@ -194,17 +198,20 @@ export default function Post(props: PostProps) {
                     size={18}
                     color={theme.colors.red[6]}
                     stroke={1.5}
-                    {...(post?.likedPosts?.length > 0 && { fill: theme.colors.red[6] })}
+                    {...(hasLiked && { fill: theme.colors.red[6] })}
                   />
                 }
               >
-                <ActionIcon component="div">{truncateIntegerToString(post._count.likedPost)}</ActionIcon>
+                <ActionIcon component="div">
+                  {truncateIntegerToString(post._count.likedPost + (hasLiked ? 1 : 0))}
+                </ActionIcon>
               </Button>
             </Tooltip>
             <Tooltip label="Bookmark" arrowPosition="center" withArrow>
               <ActionIcon
-                className={`${classes.action} ${post.savedPosts?.length > 0 && saveBeacon ? 'beacon' : ''}`}
+                className={`${classes.action} ${hasSaved && saveBeacon ? 'beacon' : ''}`}
                 onClick={(e) => {
+                  // TODO mutation with debounce of 2 seconds
                   setHasSaved(!hasSaved)
                   setSaveBeacon(true)
                 }}
@@ -214,7 +221,7 @@ export default function Post(props: PostProps) {
                   size={18}
                   color={theme.colors.yellow[6]}
                   stroke={1.5}
-                  {...(post.savedPosts?.length > 0 && { fill: theme.colors.yellow[6] })}
+                  {...(hasSaved && { fill: theme.colors.yellow[6] })}
                 />
               </ActionIcon>
             </Tooltip>

@@ -260,8 +260,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   function renderCategoryFilters() {
     return Object.keys(PostCategoryNames)
       .filter((c: PostCategory) => {
-        if (!getPostsQueryParams.categories) return true
-        return !getPostsQueryParams.categories.includes(c)
+        return !getPostsQueryParams.categories?.includes(c)
       })
       .map((category: PostCategory, i) => {
         return (
