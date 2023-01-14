@@ -15,6 +15,8 @@ import { useTwitchUser } from 'src/queries/twitch'
 import { NotificationsProvider } from '@mantine/notifications'
 import { css } from '@emotion/react'
 import FallbackLoader from 'src/components/FallbackLoader'
+import axios from 'axios'
+import { requestInterceptor, responseInterceptor } from 'src/queries/interceptors'
 
 // const queryCache = new QueryCache({
 //   onError: (error) => {
