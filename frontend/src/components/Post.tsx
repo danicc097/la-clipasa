@@ -188,11 +188,40 @@ export default function Post(props: PostProps) {
     }
   }, [postPatchMutation])
 
+  const handleSaveButtonClick = (e) => {
+    const onSuccess = (data, variables, context) => {
+      queryClient.setQueryData<PostGetResponse[]>(
+        [`apiGetPosts`, getPostsQueryParams],
+        usePostsQuery.data?.map((p) => {
+          if (p.id === post.id) {
+            console.log('updating react query data')
+            if (hasLiked) {
+              p.savedPosts = []
+            } else {
+              p.savedPosts = [{ postId: p.id, userId: p.userId }]
+            }
+          }
+
+          return p
+        }),
+      )
+    }
+
+    // TODO mutation with debounce of 2 seconds
+    setSaveBeacon(true)
+    postPatchMutation.mutate(
+      { postId: String(post.id), body: { saved: !(post.savedPosts?.length > 0) } },
+      {
+        onSuccess,
+      },
+    )
+  }
+
   const handleLikeButtonClick = (e) => {
     const onSuccess = (data, variables, context) => {
       queryClient.setQueryData<PostGetResponse[]>(
         [`apiGetPosts`, getPostsQueryParams],
-        usePostsQuery.data.map((p) => {
+        usePostsQuery.data?.map((p) => {
           if (p.id === post.id) {
             console.log('updating react query data')
             if (hasLiked) {
@@ -227,7 +256,7 @@ export default function Post(props: PostProps) {
     const onSuccess = (data, variables, context) => {
       queryClient.setQueryData<PostGetResponse[]>(
         [`apiGetPosts`, getPostsQueryParams],
-        usePostsQuery.data.map((p) => {
+        usePostsQuery.data?.map((p) => {
           if (p.id === post.id) {
             console.log('updating react query data')
             p.isModerated = !p.isModerated
@@ -282,34 +311,7 @@ export default function Post(props: PostProps) {
             <Tooltip label="Bookmark" arrowPosition="center" withArrow>
               <ActionIcon
                 className={`${classes.action} ${post.savedPosts?.length > 0 && saveBeacon ? 'beacon' : ''}`}
-                onClick={(e) => {
-                  const onSuccess = (data, variables, context) => {
-                    queryClient.setQueryData<PostGetResponse[]>(
-                      [`apiGetPosts`, getPostsQueryParams],
-                      usePostsQuery.data.map((p) => {
-                        if (p.id === post.id) {
-                          console.log('updating react query data')
-                          if (hasLiked) {
-                            p.savedPosts = []
-                          } else {
-                            p.savedPosts = [{ postId: p.id, userId: p.userId }]
-                          }
-                        }
-
-                        return p
-                      }),
-                    )
-                  }
-
-                  // TODO mutation with debounce of 2 seconds
-                  setSaveBeacon(true)
-                  postPatchMutation.mutate(
-                    { postId: String(post.id), body: { saved: !(post.savedPosts?.length > 0) } },
-                    {
-                      onSuccess,
-                    },
-                  )
-                }}
+                onClick={handleSaveButtonClick}
                 onAnimationEnd={() => setSaveBeacon(false)}
               >
                 <IconBookmark

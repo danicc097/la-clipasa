@@ -69,7 +69,7 @@ export default async (req: NextRequest) => {
                 },
               })
             } catch (error) {
-              console.log(error)
+              console.log('ignoring failed delete')
             }
           } else {
             await prisma.savedPost.create({
@@ -95,7 +95,7 @@ export default async (req: NextRequest) => {
                 },
               })
             } catch (error) {
-              console.log(error)
+              console.log('ignoring failed delete')
             }
           } else {
             await prisma.likedPost.create({
