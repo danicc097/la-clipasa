@@ -34,5 +34,5 @@ fi
 confirm "Do you want to restore ${YELLOW}$dump_file${OFF} in the ${RED}$env${OFF} environment?"
 
 # x.db.drop # might need prisma reset without applying migrations instead
-
+psql -qtAX -v ON_ERROR_STOP=on "$DB_URL" -c "drop schema public cascade"
 gunzip -c "$dump_file" | psql -qtAX -v ON_ERROR_STOP=on "$DB_URL"

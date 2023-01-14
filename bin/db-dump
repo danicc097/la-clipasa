@@ -34,4 +34,4 @@ dump_file="${DUMPS_PREFIX}$(date +%Y-%m-%dT%H-%M-%S)_${schema_v}.gz"
 echo "Dumping database to $dump_file"
 echo "$DB_URL"
 # // TODO execute via running local postgres 15 docker-compose (supabase version) then pipe to host gzip
-pg_dump "$DB_URL" | gzip >"$DUMPS_FOLDER/$dump_file"
+pg_dump "$DB_URL" --schema=public | gzip >"$DUMPS_FOLDER/$dump_file"

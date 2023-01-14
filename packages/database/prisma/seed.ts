@@ -39,7 +39,7 @@ export async function main() {
     data: users,
   })
 
-  let postId = 1
+  let postId = 0
   const createPost = () =>
     ({
       id: ++postId,
@@ -66,16 +66,40 @@ export async function main() {
     data: posts as any,
   })
 
-  let likedPostId = 1
-  const createLikedPost = () =>
+  let likedPostId = 0
+  const createLikedPost = (userId: string) =>
     ({
       postId: ++likedPostId,
-      userId: dev.id,
+      userId: userId,
+    } as Prisma.LikedPostCreateArgs['data'])
+
+  let savedPostId = 0
+  const createSavedPost = (userId: string) =>
+    ({
+      postId: ++savedPostId,
+      userId: userId,
     } as Prisma.SavedPostCreateArgs['data'])
 
+  const devLikedPosts = Array(5)
+    .fill(null)
+    .map(() => createLikedPost(dev.id))
+
+  await prisma.likedPost.createMany({
+    data: devLikedPosts as any,
+  })
+
+  const devSavedPosts = Array(5)
+    .fill(null)
+    .map(() => createSavedPost(dev.id))
+
+  await prisma.savedPost.createMany({
+    data: devSavedPosts as any,
+  })
+
+  likedPostId = 0
   const likedPosts = Array(5)
     .fill(null)
-    .map(() => createLikedPost())
+    .map(() => createLikedPost(_.sample(users.slice(0, -3)).id))
 
   await prisma.likedPost.createMany({
     data: likedPosts as any,
