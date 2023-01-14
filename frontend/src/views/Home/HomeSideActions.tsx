@@ -459,11 +459,12 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     ]}
                     onChange={(value: string) => {
                       const moderated = value ? value === 'true' : undefined
-                      console.log(moderated)
                       setGetPostsQueryParams({ ...getPostsQueryParams, moderated })
                     }}
                     placeholder="Select posts to show"
-                    defaultValue={'true'}
+                    defaultValue={
+                      getPostsQueryParams?.moderated === undefined ? undefined : String(getPostsQueryParams.moderated)
+                    }
                   />
                 </Flex>
               </Card.Section>

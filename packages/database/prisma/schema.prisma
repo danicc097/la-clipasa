@@ -88,8 +88,8 @@ model Post {
   createdAt   DateTime       @default(now()) @db.Timestamptz(3)
   updatedAt   DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
   categories  PostCategory[]
-  likedPost   LikedPost[]
-  savedPost   SavedPost[]
+  likedPosts  LikedPost[]
+  savedPosts  SavedPost[]
   User        User           @relation(fields: [userId], references: [id])
 
   textsearchable_index_col Unsupported("tsvector")? @default(dbgenerated("''::tsvector"))

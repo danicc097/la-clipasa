@@ -41,8 +41,11 @@ import CategoryBadge, { CardBackground, PostCategoryKey, uniqueCategoryBackgroun
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import ProtectedComponent from 'src/components/ProtectedComponent'
-import { usePostDeleteMutation, usePostPatchMutation } from 'src/queries/api/posts'
+import { usePostDeleteMutation, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
 import { showRelativeTimestamp } from 'src/utils/date'
+import { useQueryClient } from '@tanstack/react-query'
+import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
+import { isAuthorized } from 'src/services/authorization'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -150,6 +153,8 @@ interface PostProps extends HTMLProps<HTMLButtonElement> {
  *
  */
 export default function Post(props: PostProps) {
+  const queryClient = useQueryClient()
+  const { user } = useAuthenticatedUser()
   const { post, backgroundImage, footer, className, ...htmlProps } = props
   const { classes, theme } = useStyles()
   const cardBackground: CardBackground =
@@ -160,6 +165,8 @@ export default function Post(props: PostProps) {
     : cardBackground
     ? cardBackground.color(theme.colorScheme)
     : 'auto'
+  const [deleteButtonLoading, setDeleteButtonLoading] = useState(false)
+  const [moderateButtonLoading, setModerateButtonLoading] = useState(false)
   const [saveBeacon, setSaveBeacon] = useState(false)
   const [likeBeacon, setLikeBeacon] = useState(false)
   const [hasLiked, setHasLiked] = useState(false)
@@ -167,11 +174,82 @@ export default function Post(props: PostProps) {
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
   const postPatchMutation = usePostPatchMutation()
   const postDeleteMutation = usePostDeleteMutation()
+  const usePostsQuery = usePosts()
+
+  const canDeletePost = post.userId === user.data?.id || isAuthorized(user.data, 'MODERATOR')
 
   useEffect(() => {
-    setHasLiked(post?.likedPost?.length > 0)
-    setHasSaved(post?.savedPost?.length > 0)
+    setHasLiked(post?.likedPosts?.length > 0)
+    setHasSaved(post?.savedPosts?.length > 0)
   }, [post])
+
+  useEffect(() => {
+    if (!postPatchMutation.isLoading) {
+      setModerateButtonLoading(false)
+      setDeleteButtonLoading(false)
+    }
+  }, [postPatchMutation])
+
+  const handleLikeButtonClick = (e) => {
+    const onSuccess = (data, variables, context) => {
+      queryClient.setQueryData<PostGetResponse[]>(
+        [`apiGetPosts`, getPostsQueryParams],
+        usePostsQuery.data.map((p) => {
+          if (p.id === post.id) {
+            console.log('updating react query data')
+            if (hasLiked) {
+              p.likedPosts = []
+            } else {
+              p.likedPosts = [{ postId: p.id, userId: p.userId }]
+            }
+          }
+
+          return p
+        }),
+      )
+    }
+    // TODO mutation with debounce of 2 seconds
+    setHasLiked(!hasLiked)
+    setLikeBeacon(true)
+    postPatchMutation.mutate(
+      {
+        postId: String(post.id),
+        body: { liked: !hasLiked },
+      },
+      {
+        onSuccess,
+      },
+    )
+  }
+  const handleDeleteButtonClick = (e) => {
+    setDeleteButtonLoading(true)
+  }
+
+  const handleModerateButtonClick = (e) => {
+    const onSuccess = (data, variables, context) => {
+      queryClient.setQueryData<PostGetResponse[]>(
+        [`apiGetPosts`, getPostsQueryParams],
+        usePostsQuery.data.map((p) => {
+          if (p.id === post.id) {
+            console.log('updating react query data')
+            p.isModerated = !p.isModerated
+          }
+
+          return p
+        }),
+      )
+    }
+    setModerateButtonLoading(true)
+    postPatchMutation.mutate(
+      {
+        postId: String(post.id),
+        body: { isModerated: !post.isModerated },
+      },
+      {
+        onSuccess,
+      },
+    )
+  }
 
   function renderFooter() {
     return (
@@ -188,12 +266,7 @@ export default function Post(props: PostProps) {
                   root: hasLiked ? classes.likedAction : classes.action,
                 }}
                 className={hasLiked && likeBeacon ? 'beacon' : ''}
-                onClick={(e) => {
-                  // TODO mutation with debounce of 2 seconds
-                  setHasLiked(!hasLiked)
-                  setLikeBeacon(true)
-                  postPatchMutation.mutate({ postId: String(post.id), body: { liked: !hasLiked } })
-                }}
+                onClick={handleLikeButtonClick}
                 onAnimationEnd={() => setLikeBeacon(false)}
                 size="xs"
                 leftIcon={
@@ -205,9 +278,7 @@ export default function Post(props: PostProps) {
                   />
                 }
               >
-                <ActionIcon component="div">
-                  {truncateIntegerToString(post._count.likedPost + (hasLiked && postPatchMutation.isSuccess ? 1 : 0))}
-                </ActionIcon>
+                <ActionIcon component="div">{truncateIntegerToString(post._count.likedPost)}</ActionIcon>
               </Button>
             </Tooltip>
             <Tooltip label="Bookmark" arrowPosition="center" withArrow>
@@ -236,7 +307,12 @@ export default function Post(props: PostProps) {
             </Tooltip>
             <ProtectedComponent requiredRole="MODERATOR">
               <Tooltip label={post.isModerated ? 'Mark as not moderated' : 'Approve'} arrowPosition="center" withArrow>
-                <ActionIcon className={classes.action}>
+                <ActionIcon
+                  className={classes.action}
+                  onClick={handleModerateButtonClick}
+                  disabled={moderateButtonLoading}
+                  loading={moderateButtonLoading}
+                >
                   {post.isModerated ? (
                     <IconShieldOff size={16} color={'red'} stroke={1.5} />
                   ) : (
@@ -246,14 +322,20 @@ export default function Post(props: PostProps) {
               </Tooltip>
             </ProtectedComponent>
             {/*
-              TODO will show button if post.userId === user.id or has at least mod role
-              and confirmation modal
+              TODO confirmation modal
               */}
-            <Tooltip label="Delete" arrowPosition="center" withArrow>
-              <ActionIcon className={classes.action}>
-                <IconTrash size={16} color={theme.colors.red[6]} stroke={1.5} />
-              </ActionIcon>
-            </Tooltip>
+            {canDeletePost && (
+              <Tooltip label="Delete" arrowPosition="center" withArrow>
+                <ActionIcon
+                  disabled={deleteButtonLoading}
+                  loading={deleteButtonLoading}
+                  onClick={handleDeleteButtonClick}
+                  className={classes.action}
+                >
+                  <IconTrash size={16} color={theme.colors.red[6]} stroke={1.5} />
+                </ActionIcon>
+              </Tooltip>
+            )}
           </Group>
         </Group>
       </Card.Section>
@@ -267,7 +349,7 @@ export default function Post(props: PostProps) {
         <div>
           <Text weight={500}>{post.User.displayName}</Text>
           <Text size="xs" color="dimmed">
-            {showRelativeTimestamp(post.createdAt as any)}
+            {showRelativeTimestamp(post.createdAt as any)} {/* TODO axios interceptor */}
           </Text>
         </div>
       </Group>

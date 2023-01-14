@@ -49,15 +49,15 @@ export default async (req: NextRequest) => {
           return new Response('unathorized', { status: 403 })
         }
 
+        // eslint-disable-next-line prefer-const
         let { liked, saved, ...postUpdate } = payload
         postUpdate = {
           ...postUpdate,
-          ...(postUpdate.isModerated !== undefined && { isModerated: Boolean(postUpdate.isModerated) }),
-          ...(postUpdate.pinned !== undefined && { pinned: Boolean(postUpdate.pinned) }),
+          ...(postUpdate.isModerated !== undefined && { isModerated: postUpdate.isModerated }),
+          ...(postUpdate.pinned !== undefined && { pinned: postUpdate.pinned }),
         }
 
         if (saved !== undefined) {
-          saved = Boolean(saved)
           if (!saved) {
             await prisma.savedPost.delete({
               where: {
@@ -80,7 +80,6 @@ export default async (req: NextRequest) => {
         }
 
         if (liked !== undefined) {
-          liked = Boolean(liked)
           if (!liked) {
             await prisma.likedPost.delete({
               where: {
@@ -117,7 +116,7 @@ export default async (req: NextRequest) => {
           },
         })
 
-        return new Response(JSON.stringify(updatedPost), { status: 201 })
+        return new Response(JSON.stringify(updatedPost), { status: 200 })
       }
       case 'DELETE': {
         const headerTwitchId = req.headers.get('X-twitch-id') ?? ''

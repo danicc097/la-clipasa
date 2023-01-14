@@ -65,7 +65,7 @@ export default async (req: NextRequest) => {
           }),
           where: {
             ...(queryParams.moderated !== undefined && {
-              isModerated: queryParams.moderated,
+              isModerated: String(queryParams.moderated) === 'true',
             }),
             ...(queryParams.titleQuery !== undefined &&
               queryParams.titleQuery !== '' && {
@@ -101,12 +101,12 @@ export default async (req: NextRequest) => {
               }),
           },
           include: {
-            likedPost: {
+            likedPosts: {
               where: {
                 userId: { equals: user?.id },
               },
             }, // length > 0 if user liked
-            savedPost: {
+            savedPosts: {
               where: {
                 userId: { equals: user?.id },
               },
@@ -115,12 +115,10 @@ export default async (req: NextRequest) => {
               select: { id: true, displayName: true, profileImage: true },
             }, // minimal author info to display
             _count: {
-              select: { likedPost: true }, // total likes
+              select: { likedPosts: true }, // total likes
             },
           },
         })
-
-        console.log(`posts: ${JSON.stringify(posts)}`)
 
         return new Response(JSON.stringify(posts), { status: 200 })
       }

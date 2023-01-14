@@ -28,12 +28,8 @@
     "local:push": {
       "cache": false
     },
-    "dev:generate": {
-      "cache": false
-    },
     "vercel-build": {
       "dependsOn": [
-        "^dev:generate",
         "^build"
       ],
       "cache": false,
@@ -45,7 +41,6 @@
     },
     "build": {
       "dependsOn": [
-        "^dev:generate",
         "^build"
       ],
       "cache": false,
@@ -68,7 +63,8 @@
       "outputs": []
     },
     "tsc": {
-      "outputs": []
+      "outputs": [],
+      "cache": false
     },
     "dev": {
       "dependsOn": [
