@@ -31,6 +31,8 @@ import {
   IconShield,
   IconTrash,
   IconExternalLink,
+  IconEye,
+  IconEyeOff,
 } from '@tabler/icons'
 import { css } from '@emotion/react'
 import type { ArrayElement, PostCategoryNames, PostGetResponse, RequiredKeys, Union } from 'types'
@@ -48,6 +50,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { isAuthorized } from 'src/services/authorization'
 import { closeAllModals, openConfirmModal, openContextModal, openModal } from '@mantine/modals'
+import { useUISlice } from 'src/slices/ui'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -174,12 +177,18 @@ export default function Post(props: PostProps) {
     : 'auto'
   const [deleteButtonLoading, setDeleteButtonLoading] = useState(false)
   const [moderateButtonLoading, setModerateButtonLoading] = useState(false)
+  const [lastSeenBeacon, setLastSeenBeacon] = useState(false)
   const [saveBeacon, setSaveBeacon] = useState(false)
   const [likeBeacon, setLikeBeacon] = useState(false)
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
   const postPatchMutation = usePostPatchMutation()
   const postDeleteMutation = usePostDeleteMutation()
   const usePostsQuery = usePosts()
+
+  /**
+   * TODO background image if lastSeenPostId !== post.id overriding existing one
+   */
+  const { lastSeenPostId, setLastSeenPostId } = useUISlice()
 
   const canDeletePost = post.userId === user.data?.id || isAuthorized(user.data, 'MODERATOR')
 
@@ -223,7 +232,11 @@ export default function Post(props: PostProps) {
       },
     )
   }
+  const handleLastSeenButtonClick = (e) => {
+    e.stopPropagation()
 
+    setLastSeenPostId(post.id)
+  }
   const handleLikeButtonClick = (e) => {
     e.stopPropagation()
 
@@ -351,6 +364,17 @@ export default function Post(props: PostProps) {
                 </ActionIcon>
               </Tooltip>
             )}
+            {lastSeenPostId !== post.id ? (
+              <Tooltip label={lastSeenPostId === post.id ? '' : 'Mark as last seen'} arrowPosition="center" withArrow>
+                <ActionIcon
+                  className={`${classes.action} ${lastSeenBeacon ? 'beacon' : ''}`}
+                  onClick={handleLastSeenButtonClick}
+                  onAnimationEnd={() => setLastSeenBeacon(false)}
+                >
+                  <IconEye size={16} stroke={1.5} />
+                </ActionIcon>
+              </Tooltip>
+            ) : null}
             <Tooltip label="Share" arrowPosition="center" withArrow>
               <ActionIcon
                 className={classes.action}
