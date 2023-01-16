@@ -87,7 +87,6 @@ const useStyles = createStyles((theme) => ({
 
   sideActions: {
     alignSelf: 'flex-start',
-    marginTop: '1rem',
   },
 
   card: {

@@ -169,7 +169,6 @@ export default function Post(props: PostProps) {
   const [moderateButtonLoading, setModerateButtonLoading] = useState(false)
   const [saveBeacon, setSaveBeacon] = useState(false)
   const [likeBeacon, setLikeBeacon] = useState(false)
-  const [hasLiked, setHasLiked] = useState(false)
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
   const postPatchMutation = usePostPatchMutation()
   const postDeleteMutation = usePostDeleteMutation()
@@ -177,9 +176,8 @@ export default function Post(props: PostProps) {
 
   const canDeletePost = post.userId === user.data?.id || isAuthorized(user.data, 'MODERATOR')
 
-  useEffect(() => {
-    setHasLiked(post?.likedPosts?.length > 0)
-  }, [post])
+  const hasLiked = post?.likedPosts?.length > 0
+  const hasSaved = post?.savedPosts?.length > 0
 
   useEffect(() => {
     if (!postPatchMutation.isLoading) {
@@ -195,7 +193,7 @@ export default function Post(props: PostProps) {
         usePostsQuery.data?.map((p) => {
           if (p.id === post.id) {
             console.log('updating react query data')
-            if (hasLiked) {
+            if (p.savedPosts?.length > 0) {
               p.savedPosts = []
             } else {
               p.savedPosts = [{ postId: p.id, userId: p.userId }]
@@ -210,7 +208,7 @@ export default function Post(props: PostProps) {
     // TODO mutation with debounce of 2 seconds
     setSaveBeacon(true)
     postPatchMutation.mutate(
-      { postId: String(post.id), body: { saved: !(post.savedPosts?.length > 0) } },
+      { postId: String(post.id), body: { saved: !hasSaved } },
       {
         onSuccess,
       },
@@ -226,8 +224,10 @@ export default function Post(props: PostProps) {
             console.log('updating react query data')
             if (hasLiked) {
               p.likedPosts = []
+              --post._count.likedPosts
             } else {
               p.likedPosts = [{ postId: p.id, userId: p.userId }]
+              ++post._count.likedPosts
             }
           }
 
@@ -236,7 +236,6 @@ export default function Post(props: PostProps) {
       )
     }
     // TODO mutation with debounce of 2 seconds
-    setHasLiked(!hasLiked)
     setLikeBeacon(true)
     postPatchMutation.mutate(
       {
@@ -292,7 +291,7 @@ export default function Post(props: PostProps) {
                 classNames={{
                   root: hasLiked ? classes.likedAction : classes.action,
                 }}
-                className={hasLiked && likeBeacon ? 'beacon' : ''}
+                className={likeBeacon ? 'beacon' : ''}
                 onClick={handleLikeButtonClick}
                 onAnimationEnd={() => setLikeBeacon(false)}
                 size="xs"
@@ -310,7 +309,7 @@ export default function Post(props: PostProps) {
             </Tooltip>
             <Tooltip label="Bookmark" arrowPosition="center" withArrow>
               <ActionIcon
-                className={`${classes.action} ${post.savedPosts?.length > 0 && saveBeacon ? 'beacon' : ''}`}
+                className={`${classes.action} ${saveBeacon ? 'beacon' : ''}`}
                 onClick={handleSaveButtonClick}
                 onAnimationEnd={() => setSaveBeacon(false)}
               >
@@ -318,7 +317,7 @@ export default function Post(props: PostProps) {
                   size={18}
                   color={theme.colors.yellow[6]}
                   stroke={1.5}
-                  {...(post.savedPosts?.length > 0 && { fill: theme.colors.yellow[6] })}
+                  {...(hasSaved && { fill: theme.colors.yellow[6] })}
                 />
               </ActionIcon>
             </Tooltip>

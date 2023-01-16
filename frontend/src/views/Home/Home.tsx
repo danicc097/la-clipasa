@@ -31,6 +31,7 @@ import { declareComponentKeys } from 'i18nifty'
 import { usePostsSlice } from 'src/slices/posts'
 import { usePosts } from 'src/queries/api/posts'
 
+const PADDING_TOP = '2rem'
 const useStyles = createStyles((theme) => ({}))
 
 // TODO padding before footer including image (right now empty background)
@@ -68,9 +69,9 @@ export default function Home() {
         <ScrollArea
           styles={{
             root: {
-              maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 54px - 1rem)`, // TODO footer height const
+              maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 54px - ${PADDING_TOP})`, // TODO footer height const
               alignSelf: 'flex-start',
-              marginTop: '1rem',
+              paddingTop: PADDING_TOP,
               overflow: 'auto',
 
               '&': { paddingBottom: 0 },
@@ -82,7 +83,7 @@ export default function Home() {
           <Container
             css={css`
               .post:not(:first-child) {
-                margin-top: 1rem;
+                margin-top: ${PADDING_TOP};
               }
               width: 100%;
             `}
@@ -95,6 +96,7 @@ export default function Home() {
         <Space p={5} />
         <HomeSideActions
           css={css`
+            padding-top: ${PADDING_TOP};
             @media only screen and (max-width: 1200px) {
               display: none;
             }

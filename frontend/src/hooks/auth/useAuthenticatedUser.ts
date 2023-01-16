@@ -9,6 +9,7 @@ import {
   useTwitchUserSubscriber,
   useTwitchValidateToken,
 } from 'src/queries/twitch'
+import { POSTS_SLICE_PERSIST_KEY } from 'src/slices/posts'
 import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY } from 'src/slices/ui'
 
 export default function useAuthenticatedUser() {
@@ -36,16 +37,18 @@ export default function useAuthenticatedUser() {
   }
 }
 
+// TODO doesnt seem to clear react query
 export function logout(queryClient: QueryClient) {
   queryClient.cancelQueries()
   queryClient.invalidateQueries()
   queryClient.clear()
+  persister.removeClient()
   Cookies.remove(TWITCH_ACCESS_TOKEN_COOKIE, {
     expires: 365,
     sameSite: 'none',
     secure: true,
   })
   localStorage.removeItem(UI_SLICE_PERSIST_KEY)
-  persister.removeClient()
+  localStorage.removeItem(POSTS_SLICE_PERSIST_KEY)
   window.location.reload()
 }
