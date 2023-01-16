@@ -17,6 +17,8 @@ import { css } from '@emotion/react'
 import FallbackLoader from 'src/components/FallbackLoader'
 import axios from 'axios'
 import { requestInterceptor, responseInterceptor, updateTimestamps } from 'src/queries/interceptors'
+import { get, set, del } from 'idb-keyval'
+import type { PersistedClient, Persister } from '@tanstack/react-query-persist-client'
 
 // const queryCache = new QueryCache({
 //   onError: (error) => {
@@ -28,10 +30,10 @@ import { requestInterceptor, responseInterceptor, updateTimestamps } from 'src/q
 // })
 const queryCache = new QueryCache({
   onSuccess(data, query) {
-    console.log('onsuccess querycache')
     query.setData(updateTimestamps(data))
   },
 })
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -48,16 +50,32 @@ const queryClient = new QueryClient({
   queryCache,
 })
 
-axios.interceptors.request.use(requestInterceptor, function (error) {
-  return Promise.reject(error)
-})
+// axios.interceptors.request.use(requestInterceptor, function (error) {
+//   return Promise.reject(error)
+// })
 axios.interceptors.response.use(responseInterceptor, function (error) {
   return Promise.reject(error)
 })
 
-export const persister = createSyncStoragePersister({
-  storage: window.localStorage,
-})
+/**
+ * Creates an Indexed DB persister
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
+ */
+function createIDBPersister(idbValidKey: IDBValidKey = 'reactQuery') {
+  return {
+    persistClient: async (client: PersistedClient) => {
+      set(idbValidKey, client)
+    },
+    restoreClient: async () => {
+      return await get<PersistedClient>(idbValidKey)
+    },
+    removeClient: async () => {
+      await del(idbValidKey)
+    },
+  } as Persister
+}
+
+export const persister = createIDBPersister()
 
 const Home = React.lazy(() => import('./views/Home/Home'))
 const Login = React.lazy(() => import('./views/Login/Login'))

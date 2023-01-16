@@ -371,8 +371,7 @@ export default function Post(props: PostProps) {
         <div>
           <Text weight={500}>{post.User.displayName}</Text>
           <Text size="xs" color="dimmed">
-            {typeof post.createdAt.toISOString === 'function' && showRelativeTimestamp(post.createdAt.toISOString())}{' '}
-            {/* TODO axios interceptor should allow toISOString */}
+            {showRelativeTimestamp(post.createdAt.toISOString())}
           </Text>
         </div>
       </Group>
@@ -428,7 +427,6 @@ export default function Post(props: PostProps) {
       `}
       {...(htmlProps as any)}
     >
-      {typeof post.createdAt}
       {post.categories?.length > 0 && (
         <Group position="left">
           {post.categories.map((category, i) => (
