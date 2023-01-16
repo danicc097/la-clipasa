@@ -38,7 +38,7 @@ export default async (req: NextRequest) => {
         const queryParams: PostQueryParams = {
           titleQuery: searchParams.get('titleQuery') ?? undefined,
           limit: searchParams.get('limit') !== null ? Number(searchParams.get('limit')) : undefined,
-          cursor: searchParams.get('cursor') !== null ? Number(searchParams.get('cursor')) : undefined,
+          cursor: searchParams.get('cursor') !== null ? searchParams.get('cursor') ?? undefined : undefined,
           authorId: searchParams.get('authorId') ?? undefined,
           liked: searchParams.get('liked') !== null ? String(searchParams.get('liked')) === 'true' : undefined,
           saved: searchParams.get('saved') !== null ? String(searchParams.get('saved')) === 'true' : undefined,

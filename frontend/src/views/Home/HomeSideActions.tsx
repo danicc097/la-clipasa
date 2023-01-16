@@ -326,6 +326,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                 <Textarea
                   {...postCreateForm.getInputProps('title')}
                   ref={titleInputRef}
+                  data-autofocus
                   withAsterisk
                   label="Title"
                   placeholder="Enter a title"

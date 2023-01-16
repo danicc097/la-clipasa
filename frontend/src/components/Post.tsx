@@ -17,6 +17,7 @@ import {
   Skeleton,
   CSSObject,
   Tooltip,
+  AspectRatio,
 } from '@mantine/core'
 import {
   IconHeart,
@@ -46,7 +47,7 @@ import { showRelativeTimestamp } from 'src/utils/date'
 import { useQueryClient } from '@tanstack/react-query'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { isAuthorized } from 'src/services/authorization'
-import { openConfirmModal } from '@mantine/modals'
+import { closeAllModals, openConfirmModal, openContextModal, openModal } from '@mantine/modals'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -193,6 +194,8 @@ export default function Post(props: PostProps) {
   }, [postPatchMutation])
 
   const handleSaveButtonClick = (e) => {
+    e.stopPropagation()
+
     const onSuccess = (data, variables, context) => {
       queryClient.setQueryData<PostGetResponse[]>(
         [`apiGetPosts`, getPostsQueryParams],
@@ -222,6 +225,8 @@ export default function Post(props: PostProps) {
   }
 
   const handleLikeButtonClick = (e) => {
+    e.stopPropagation()
+
     const onSuccess = (data, variables, context) => {
       queryClient.setQueryData<PostGetResponse[]>(
         [`apiGetPosts`, getPostsQueryParams],
@@ -265,11 +270,15 @@ export default function Post(props: PostProps) {
     })
 
   const handleDeleteButtonClick = (e) => {
+    e.stopPropagation()
+
     setDeleteButtonLoading(true)
     openDeleteConfirmModal()
   }
 
   const handleModerateButtonClick = (e) => {
+    e.stopPropagation()
+
     const onSuccess = (data, variables, context) => {
       queryClient.setQueryData<PostGetResponse[]>(
         [`apiGetPosts`, getPostsQueryParams],
@@ -343,7 +352,12 @@ export default function Post(props: PostProps) {
               </Tooltip>
             )}
             <Tooltip label="Share" arrowPosition="center" withArrow>
-              <ActionIcon className={classes.action}>
+              <ActionIcon
+                className={classes.action}
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
                 <IconShare size={16} color={theme.colors.blue[6]} stroke={1.5} />
               </ActionIcon>
             </Tooltip>
@@ -409,9 +423,21 @@ export default function Post(props: PostProps) {
   function renderContent() {
     return (
       <Text weight={700} className={classes.title} mt="xs">
-        <Button component="a" href="#" variant="subtle" leftIcon={<IconExternalLink size={14} />}>
-          {post.content ?? post.link}
-        </Button>
+        {post.content && post.content !== '' ? (
+          <Text>{post.content}</Text>
+        ) : (
+          <Button
+            onClick={(e) => {
+              e.stopPropagation()
+            }}
+            component="a"
+            href="#"
+            variant="subtle"
+            leftIcon={<IconExternalLink size={14} />}
+          >
+            {post.link}
+          </Button>
+        )}
       </Text>
     )
   }
@@ -448,6 +474,20 @@ export default function Post(props: PostProps) {
       p="lg"
       radius={12}
       className={`${classes.card} ${className ?? ''}`}
+      onClick={(e) => {
+        openModal({
+          children: (
+            <AspectRatio ratio={16 / 9}>
+              <iframe
+                src="https://www.youtube.com/embed/KY2eBrm5pT4"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </AspectRatio>
+          ),
+        })
+      }}
       /* move to classes */
       css={css`
         background-repeat: no-repeat;

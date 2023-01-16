@@ -40,15 +40,14 @@ export async function main() {
   })
 
   let postId = 0
-  const createPost = () =>
-    ({
+  const createPost = () => {
+    return {
       id: ++postId,
       userId: _.sample(users.slice(8, -1))?.id,
       title:
         _.sample(['calieamor2', 'calie13', 'caliebongo2', 'calietravieso', 'caliesusto1', 'calierana']) +
         ' ' +
         faker.lorem.sentence(),
-      content: faker.internet.url(),
       isModerated: _.random(0, 1, true) > 0.5,
       link: faker.internet.url(),
       categories: _.uniq(
@@ -56,7 +55,9 @@ export async function main() {
           .fill(null)
           .map((e) => _.sample(Object.values(PostCategory)) as PostCategory),
       ),
-    } as Prisma.PostCreateArgs['data'])
+      createdAt: new Date(new Date().getTime() + postId * 60), // unique constraint
+    } as Prisma.PostCreateArgs['data']
+  }
 
   const posts = Array(50)
     .fill(null)
