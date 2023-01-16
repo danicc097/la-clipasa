@@ -4,6 +4,7 @@ import Post, { PostSkeleton } from '../../components/Post'
 import Cookies from 'js-cookie'
 import Header, { HEADER_HEIGHT } from '../../components/Header'
 import {
+  Alert,
   Checkbox,
   Code,
   Container,
@@ -30,6 +31,7 @@ import { emotesTextToHtml } from 'src/services/twitch'
 import { declareComponentKeys } from 'i18nifty'
 import { usePostsSlice } from 'src/slices/posts'
 import { usePosts } from 'src/queries/api/posts'
+import { IconAlertCircle } from '@tabler/icons'
 
 const PADDING_TOP = '2rem'
 const useStyles = createStyles((theme) => ({}))
@@ -49,6 +51,19 @@ export default function Home() {
   // }, [getPostsQueryParams])
 
   const renderPosts = () => {
+    if (usePostsQuery.data?.length === 0)
+      return (
+        <Alert
+          css={css`
+            min-width: 40vw;
+          `}
+          icon={<IconAlertCircle size={16} />}
+          color="red"
+        >
+          No posts found
+        </Alert>
+      )
+
     return usePostsQuery.data?.map((post) => (
       <Post key={post.id} post={post} className="post" footer={<div>0 comments</div>} />
     ))
@@ -66,6 +81,8 @@ export default function Home() {
         direction="row"
         justify={'space-between'}
       >
+        {/* TODO scroll into view when refreshing: https://mantine.dev/hooks/use-scroll-into-view/ and affix
+        https://mantine.dev/core/affix/ */}
         <ScrollArea
           styles={{
             root: {
@@ -89,8 +106,14 @@ export default function Home() {
             `}
           >
             {renderPosts()}
-            <PostSkeleton className="post" />
-            <PostSkeleton className="post" />
+            {/* {usePostsQuery.isFetching ? ( infinite refetching for some reason
+              <>
+                <PostSkeleton className="post" />
+                <PostSkeleton className="post" />
+              </>
+            ) : (
+              renderPosts()
+            )} */}
           </Container>
         </ScrollArea>
         <Space p={5} />

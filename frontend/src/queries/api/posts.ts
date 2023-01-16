@@ -19,7 +19,7 @@ export function usePosts() {
     queryKey: [`apiGetPosts`, getPostsQueryParams], // any state used inside the queryFn must be part of the queryKey
     retry: false,
     // cacheTime: 1000 * 60 * 60, // 1h
-    cacheTime: 0,
+    cacheTime: 1000 * 60 * 5, // 5 min
     enabled: getPostsQueryParams !== null,
     queryFn: async ({ signal, pageParam }): Promise<PostGetResponse[]> => {
       if (!getPostsQueryParams) return

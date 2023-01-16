@@ -105,7 +105,6 @@ const useStyles = createStyles((theme) => {
       ':hover': {},
       boxShadow: 'none',
       animation: 'fade-in-color 1.8s infinite',
-
       '@keyframes fade-in-color': {
         '0%': {
           opacity: theme.colorScheme === 'light' ? 0.3 : 1,

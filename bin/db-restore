@@ -5,7 +5,7 @@ export PROC=$$
 
 source "${BASH_SOURCE%/*}/.helpers.sh"
 
-cd packages/database || exit
+[[ ! "$PWD" = */packages/database ]] && err "Make sure you are in the packages/database folder"
 source ./.env
 env="$1"
 dump_file="$2"
