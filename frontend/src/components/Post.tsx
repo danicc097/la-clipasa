@@ -46,6 +46,7 @@ import { showRelativeTimestamp } from 'src/utils/date'
 import { useQueryClient } from '@tanstack/react-query'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { isAuthorized } from 'src/services/authorization'
+import { openConfirmModal } from '@mantine/modals'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -252,8 +253,20 @@ export default function Post(props: PostProps) {
       },
     )
   }
+
+  const openDeleteConfirmModal = () =>
+    openConfirmModal({
+      title: 'Delete post',
+      children: <Text size="sm">This action cannot be reversed.</Text>,
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: () => console.log('Confirmed'),
+    })
+
   const handleDeleteButtonClick = (e) => {
     setDeleteButtonLoading(true)
+    openDeleteConfirmModal()
   }
 
   const handleModerateButtonClick = (e) => {
@@ -350,9 +363,6 @@ export default function Post(props: PostProps) {
                 </ActionIcon>
               </Tooltip>
             </ProtectedComponent>
-            {/*
-              TODO confirmation modal
-              */}
             {canDeletePost && (
               <Tooltip label="Delete" arrowPosition="center" withArrow>
                 <ActionIcon

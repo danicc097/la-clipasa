@@ -19,6 +19,7 @@ import axios from 'axios'
 import { requestInterceptor, responseInterceptor, updateTimestamps } from 'src/queries/interceptors'
 import { get, set, del } from 'idb-keyval'
 import type { PersistedClient, Persister } from '@tanstack/react-query-persist-client'
+import { ModalsProvider } from '@mantine/modals'
 
 // const queryCache = new QueryCache({
 //   onError: (error) => {
@@ -107,67 +108,72 @@ export default function App() {
             fontFamily: 'Catamaran, Arial, sans-serif',
           }}
         >
-          <NotificationsProvider>
-            <BrowserRouter basename="">
-              <React.Suspense
-                fallback={<div style={{ backgroundColor: 'rgb(20, 21, 25)', height: '100vh', width: '100vw' }} />}
-              >
-                <Layout>
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <React.Suspense fallback={<FallbackLoader />}>
-                          <Home />
-                        </React.Suspense>
-                      }
-                    />
-                    <Route
-                      path="/login"
-                      element={
-                        <React.Suspense fallback={<FallbackLoader />}>
-                          <Login />
-                        </React.Suspense>
-                      }
-                    />
-                    <Route
-                      path="/posts/upload"
-                      element={
-                        <React.Suspense fallback={<FallbackLoader />}>
-                          <ProtectedRoute>
-                            {/* TODO
+          <ModalsProvider
+            labels={{ confirm: 'Submit', cancel: 'Cancel' }}
+            modalProps={{ styles: { root: { marginTop: '100px', zIndex: 20000 } } }}
+          >
+            <NotificationsProvider>
+              <BrowserRouter basename="">
+                <React.Suspense
+                  fallback={<div style={{ backgroundColor: 'rgb(20, 21, 25)', height: '100vh', width: '100vw' }} />}
+                >
+                  <Layout>
+                    <Routes>
+                      <Route
+                        path="/"
+                        element={
+                          <React.Suspense fallback={<FallbackLoader />}>
+                            <Home />
+                          </React.Suspense>
+                        }
+                      />
+                      <Route
+                        path="/login"
+                        element={
+                          <React.Suspense fallback={<FallbackLoader />}>
+                            <Login />
+                          </React.Suspense>
+                        }
+                      />
+                      <Route
+                        path="/posts/upload"
+                        element={
+                          <React.Suspense fallback={<FallbackLoader />}>
+                            <ProtectedRoute>
+                              {/* TODO
                             - reject url is not isURL
                             - show free services to upload if its not a link
                             - this should really be a modal on Home, not a dedicated route
                             */}
-                            <div>Upload post</div>
-                          </ProtectedRoute>
-                        </React.Suspense>
-                      }
-                    />
-                    <Route
-                      path="/analytics"
-                      element={
-                        <React.Suspense fallback={<FallbackLoader />}>
-                          <ProtectedRoute>
-                            <div> TODO: - Analytics page with plotly</div>
-                          </ProtectedRoute>
-                        </React.Suspense>
-                      }
-                    />
-                    <Route
-                      path="*"
-                      element={
-                        <React.Suspense fallback={<FallbackLoader />}>
-                          <ErrorPage status={404} />
-                        </React.Suspense>
-                      }
-                    />
-                  </Routes>
-                </Layout>
-              </React.Suspense>
-            </BrowserRouter>
-          </NotificationsProvider>
+                              <div>Upload post</div>
+                            </ProtectedRoute>
+                          </React.Suspense>
+                        }
+                      />
+                      <Route
+                        path="/analytics"
+                        element={
+                          <React.Suspense fallback={<FallbackLoader />}>
+                            <ProtectedRoute>
+                              <div> TODO: - Analytics page with plotly</div>
+                            </ProtectedRoute>
+                          </React.Suspense>
+                        }
+                      />
+                      <Route
+                        path="*"
+                        element={
+                          <React.Suspense fallback={<FallbackLoader />}>
+                            <ErrorPage status={404} />
+                          </React.Suspense>
+                        }
+                      />
+                    </Routes>
+                  </Layout>
+                </React.Suspense>
+              </BrowserRouter>
+            </NotificationsProvider>
+          </ModalsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
       {!import.meta.env.PROD && <ReactQueryDevtools initialIsOpen />}

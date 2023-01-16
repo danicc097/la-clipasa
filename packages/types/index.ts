@@ -61,7 +61,7 @@ export type PostQueryParams = {
   /**
    * createdAt cursor
    */
-  cursor: string | undefined
+  cursor: string | Date | undefined
   titleQuery: string | undefined
   authorId: string | undefined
   liked: boolean | undefined
