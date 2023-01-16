@@ -66,7 +66,7 @@ export default async (req: NextRequest) => {
           }),
           where: {
             ...(queryParams.moderated !== undefined && {
-              isModerated: String(queryParams.moderated) === 'true',
+              isModerated: queryParams.moderated,
             }),
             ...(queryParams.titleQuery !== undefined &&
               queryParams.titleQuery !== '' && {
