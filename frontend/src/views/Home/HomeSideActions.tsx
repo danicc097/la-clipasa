@@ -315,7 +315,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                 },
               },
             }}
-            position="right-start"
+            position={'right-center' as any}
             withArrow
             shadow="md"
           >

@@ -40,9 +40,10 @@ export default async (req: NextRequest) => {
           limit: searchParams.get('limit') !== null ? Number(searchParams.get('limit')) : undefined,
           cursor: searchParams.get('cursor') !== null ? Number(searchParams.get('cursor')) : undefined,
           authorId: searchParams.get('authorId') ?? undefined,
-          liked: searchParams.get('liked') !== null ? Boolean(searchParams.get('liked')) : undefined,
-          saved: searchParams.get('saved') !== null ? Boolean(searchParams.get('saved')) : undefined,
-          moderated: searchParams.get('moderated') !== null ? Boolean(searchParams.get('moderated')) : undefined,
+          liked: searchParams.get('liked') !== null ? String(searchParams.get('liked')) === 'true' : undefined,
+          saved: searchParams.get('saved') !== null ? String(searchParams.get('saved')) === 'true' : undefined,
+          moderated:
+            searchParams.get('moderated') !== null ? String(searchParams.get('moderated')) === 'true' : undefined,
           categories:
             searchParams.getAll('categories')?.length > 0
               ? (searchParams.getAll('categories').filter((c) => (PostCategory as any)[c]) as PostCategory[])
