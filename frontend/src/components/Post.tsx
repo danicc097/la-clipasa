@@ -400,9 +400,36 @@ export default function Post(props: PostProps) {
     return (
       <Text weight={700} className={classes.title} mt="xs">
         <Button component="a" href="#" variant="subtle" leftIcon={<IconExternalLink size={14} />}>
-          {post.content}
+          {post.content ?? post.link}
         </Button>
       </Text>
+    )
+  }
+
+  function renderCategories() {
+    return (
+      post.categories?.length > 0 && (
+        <Group position="left">
+          {post.categories.map((category, i) => (
+            <CategoryBadge
+              className="disable-select"
+              key={i}
+              category={category}
+              css={css`
+                pointer-events: none;
+                /* :hover {
+                  filter: drop-shadow(0 1mm 1mm #00000030);
+                  transform: scale(1.05);
+                  transition-duration: 0.5s;
+                } */
+                /* :active {
+                  filter: opacity(0.6);
+                } */
+              `}
+            />
+          ))}
+        </Group>
+      )
     )
   }
 
@@ -434,29 +461,7 @@ export default function Post(props: PostProps) {
       `}
       {...(htmlProps as any)}
     >
-      {post.categories?.length > 0 && (
-        <Group position="left">
-          {post.categories.map((category, i) => (
-            <CategoryBadge
-              className="disable-select"
-              key={i}
-              category={category}
-              css={css`
-                pointer-events: none;
-                /* :hover {
-                  filter: drop-shadow(0 1mm 1mm #00000030);
-                  transform: scale(1.05);
-                  transition-duration: 0.5s;
-                } */
-                /* :active {
-                  filter: opacity(0.6);
-                } */
-              `}
-            />
-          ))}
-        </Group>
-      )}
-
+      {renderCategories()}
       {renderTitle()}
       {renderContent()}
       {renderMetadata()}
