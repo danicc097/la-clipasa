@@ -66,6 +66,10 @@ export async function main() {
     data: posts as any,
   })
 
+  // if prepared statement error - restart supabase db. cant disable
+  // prep stmts in prisma
+  await prisma.$executeRaw`SELECT setval('"Post_id_seq"', ${posts.length + 10}, true);`
+
   let likedPostId = 0
   const createLikedPost = (userId: string) =>
     ({

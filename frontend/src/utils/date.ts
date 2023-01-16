@@ -7,7 +7,7 @@ export function showRelativeTimestamp(timestamp: string) {
   if (diff < 1) {
     return 'Just now'
   } else if (diff < 60) {
-    return `${diff} minute${diff > 1 && 's'} ago`
+    return `${diff} minute${diff > 1 ? 's' : ''} ago`
   } else if (diff < 1440) {
     const hours = Math.floor(diff / 60)
     return `${hours} hour${hours > 1 ? 's' : ''} ago`
