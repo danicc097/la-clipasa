@@ -175,7 +175,6 @@ export default function Post(props: PostProps) {
     : cardBackground
     ? cardBackground.color(theme.colorScheme)
     : 'auto'
-  const [deleteButtonLoading, setDeleteButtonLoading] = useState(false)
   const [moderateButtonLoading, setModerateButtonLoading] = useState(false)
   const [lastSeenBeacon, setLastSeenBeacon] = useState(false)
   const [saveBeacon, setSaveBeacon] = useState(false)
@@ -198,7 +197,6 @@ export default function Post(props: PostProps) {
   useEffect(() => {
     if (!postPatchMutation.isLoading) {
       setModerateButtonLoading(false)
-      setDeleteButtonLoading(false)
     }
   }, [postPatchMutation])
 
@@ -285,7 +283,6 @@ export default function Post(props: PostProps) {
   const handleDeleteButtonClick = (e) => {
     e.stopPropagation()
 
-    setDeleteButtonLoading(true)
     openDeleteConfirmModal()
   }
 
@@ -403,12 +400,7 @@ export default function Post(props: PostProps) {
             </ProtectedComponent>
             {canDeletePost && (
               <Tooltip label="Delete" arrowPosition="center" withArrow>
-                <ActionIcon
-                  disabled={deleteButtonLoading}
-                  loading={deleteButtonLoading}
-                  onClick={handleDeleteButtonClick}
-                  className={classes.action}
-                >
+                <ActionIcon onClick={handleDeleteButtonClick} className={classes.action}>
                   <IconTrash size={16} color={theme.colors.red[6]} stroke={1.5} />
                 </ActionIcon>
               </Tooltip>
@@ -444,24 +436,29 @@ export default function Post(props: PostProps) {
     )
   }
 
-  function renderContent() {
+  function renderBody() {
     return (
-      <Text weight={700} className={classes.title} mt="xs">
-        {post.content && post.content !== '' ? (
-          <Text>{post.content}</Text>
-        ) : (
-          <Button
-            onClick={(e) => {
-              e.stopPropagation()
-            }}
-            component="a"
-            href="#"
-            variant="subtle"
-            leftIcon={<IconExternalLink size={14} />}
-          >
-            {post.link}
-          </Button>
-        )}
+      <Text weight={700} className={classes.title} m={0}>
+        <Button
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+          component="a"
+          href={post.link}
+          target="_blank"
+          variant="subtle"
+          m={0}
+          size="xs"
+          leftIcon={<IconExternalLink size={14} />}
+        >
+          {post.link}
+        </Button>
+        <Text
+          size={'sm'}
+          dangerouslySetInnerHTML={{
+            __html: emotesTextToHtml(truncate(post.content, { length: 500 }), 20),
+          }}
+        ></Text>
       </Text>
     )
   }
@@ -537,7 +534,7 @@ export default function Post(props: PostProps) {
     >
       {renderCategories()}
       {renderTitle()}
-      {renderContent()}
+      {renderBody()}
       {renderMetadata()}
       {renderFooter()}
     </Card>

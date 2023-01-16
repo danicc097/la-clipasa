@@ -160,7 +160,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
   const { classes, theme } = useStyles()
   const emoteTooltipRef = useRef(null)
-  const titleInputRef = useRef<HTMLInputElement>(null)
+  const titleInputRef = useRef<HTMLTextAreaElement>(null)
   const [typedEmote, setTypedEmote] = useState('')
   const [awaitEmoteCompletion, setAwaitEmoteCompletion] = useState(false)
   const [calloutErrors, setCalloutErrors] = useState([])
@@ -175,8 +175,8 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
       title: (value) =>
         !value || value.trim() === '' || value.trim() === '<br>'
           ? 'Title cannot be empty'
-          : value?.length > 250
-          ? 'Title can have at most 250 characters.'
+          : value?.length > 150
+          ? 'Title can have at most 150 characters.'
           : null,
       link: (value) =>
         !isURL(value)
@@ -360,7 +360,6 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
             </Popover.Target>
             <Popover.Dropdown>
               <div
-                ref={titleInputRef}
                 dangerouslySetInnerHTML={{
                   __html: emotesTextToHtml(postCreateForm.values['title'], EMOJI_SIZE),
                 }}
