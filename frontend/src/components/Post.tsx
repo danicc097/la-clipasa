@@ -49,8 +49,10 @@ import { isAuthorized } from 'src/services/authorization'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
+  const footerBackground = `${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`
 
   const actionStyle: CSSObject = {
+    border: 0,
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
     //   button: {
@@ -60,6 +62,10 @@ const useStyles = createStyles((theme) => {
     ...theme.fn.hover({
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
     }),
+
+    ':disabled': {
+      background: footerBackground,
+    },
   }
 
   const cardStyle: CSSObject = {
@@ -123,7 +129,7 @@ const useStyles = createStyles((theme) => {
     footer: {
       padding: `${theme.spacing.xs}px ${theme.spacing.lg}px`,
       marginTop: theme.spacing.md,
-      background: `${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
+      background: footerBackground,
     },
 
     action: actionStyle,
@@ -154,7 +160,7 @@ interface PostProps extends HTMLProps<HTMLButtonElement> {
  */
 export default function Post(props: PostProps) {
   const queryClient = useQueryClient()
-  const { user } = useAuthenticatedUser()
+  const { user, isAuthenticated } = useAuthenticatedUser()
   const { post, backgroundImage, footer, className, ...htmlProps } = props
   const { classes, theme } = useStyles()
   const cardBackground: CardBackground =
@@ -285,12 +291,12 @@ export default function Post(props: PostProps) {
             {footer}
           </Text>
           <Group spacing={8}>
-            {' '}
             <Tooltip label="Like" arrowPosition="center" withArrow>
               <Button
                 classNames={{
                   root: hasLiked ? classes.likedAction : classes.action,
                 }}
+                disabled={!isAuthenticated}
                 className={likeBeacon ? 'beacon' : ''}
                 onClick={handleLikeButtonClick}
                 onAnimationEnd={() => setLikeBeacon(false)}
@@ -307,20 +313,23 @@ export default function Post(props: PostProps) {
                 <ActionIcon component="div">{truncateIntegerToString(post._count.likedPosts)}</ActionIcon>
               </Button>
             </Tooltip>
-            <Tooltip label="Bookmark" arrowPosition="center" withArrow>
-              <ActionIcon
-                className={`${classes.action} ${saveBeacon ? 'beacon' : ''}`}
-                onClick={handleSaveButtonClick}
-                onAnimationEnd={() => setSaveBeacon(false)}
-              >
-                <IconBookmark
-                  size={18}
-                  color={theme.colors.yellow[6]}
-                  stroke={1.5}
-                  {...(hasSaved && { fill: theme.colors.yellow[6] })}
-                />
-              </ActionIcon>
-            </Tooltip>
+
+            {isAuthenticated && (
+              <Tooltip label="Bookmark" arrowPosition="center" withArrow>
+                <ActionIcon
+                  className={`${classes.action} ${saveBeacon ? 'beacon' : ''}`}
+                  onClick={handleSaveButtonClick}
+                  onAnimationEnd={() => setSaveBeacon(false)}
+                >
+                  <IconBookmark
+                    size={18}
+                    color={theme.colors.yellow[6]}
+                    stroke={1.5}
+                    {...(hasSaved && { fill: theme.colors.yellow[6] })}
+                  />
+                </ActionIcon>
+              </Tooltip>
+            )}
             <Tooltip label="Share" arrowPosition="center" withArrow>
               <ActionIcon className={classes.action}>
                 <IconShare size={16} color={theme.colors.blue[6]} stroke={1.5} />

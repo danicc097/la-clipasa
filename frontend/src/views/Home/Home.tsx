@@ -50,7 +50,7 @@ export default function Home() {
 
   const renderPosts = () => {
     return usePostsQuery.data?.map((post) => (
-      <Post key={post.id} post={post} className="post" footer={<div>3 comments</div>} />
+      <Post key={post.id} post={post} className="post" footer={<div>0 comments</div>} />
     ))
   }
 
