@@ -16,7 +16,7 @@ import { NotificationsProvider } from '@mantine/notifications'
 import { css } from '@emotion/react'
 import FallbackLoader from 'src/components/FallbackLoader'
 import axios from 'axios'
-import { requestInterceptor, responseInterceptor } from 'src/queries/interceptors'
+import { requestInterceptor, responseInterceptor, updateTimestamps } from 'src/queries/interceptors'
 
 // const queryCache = new QueryCache({
 //   onError: (error) => {
@@ -26,7 +26,12 @@ import { requestInterceptor, responseInterceptor } from 'src/queries/interceptor
 //     console.log(data)
 //   },
 // })
-
+const queryCache = new QueryCache({
+  onSuccess(data, query) {
+    console.log('onsuccess querycache')
+    query.setData(updateTimestamps(data))
+  },
+})
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -40,7 +45,14 @@ const queryClient = new QueryClient({
       cacheTime: 1000 * 60 * 5, // 5 minutes
     },
   },
-  // queryCache,
+  queryCache,
+})
+
+axios.interceptors.request.use(requestInterceptor, function (error) {
+  return Promise.reject(error)
+})
+axios.interceptors.response.use(responseInterceptor, function (error) {
+  return Promise.reject(error)
 })
 
 export const persister = createSyncStoragePersister({

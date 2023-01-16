@@ -18,8 +18,8 @@ export function usePosts() {
   return useQuery<PostGetResponse[], AxiosError>({
     queryKey: [`apiGetPosts`, getPostsQueryParams], // any state used inside the queryFn must be part of the queryKey
     retry: false,
-    cacheTime: 1000 * 60 * 60, // 1h
-    // cacheTime: 0,
+    // cacheTime: 1000 * 60 * 60, // 1h
+    cacheTime: 0,
     enabled: getPostsQueryParams !== null,
     queryFn: async ({ signal, pageParam }): Promise<PostGetResponse[]> => {
       if (!getPostsQueryParams) return
@@ -46,7 +46,7 @@ export function usePostById() {
   return useQuery<Post, AxiosError>({
     queryKey: [`apiUser-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
-      if (![401, 404].includes(error.response.status) && failureCount < 2) return true
+      if (![401, 404].includes(error.response?.status) && failureCount < 2) return true
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<Post> => {

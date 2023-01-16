@@ -305,7 +305,7 @@ export default function Post(props: PostProps) {
                   />
                 }
               >
-                <ActionIcon component="div">{truncateIntegerToString(post._count.likedPost)}</ActionIcon>
+                <ActionIcon component="div">{truncateIntegerToString(post._count.likedPosts)}</ActionIcon>
               </Button>
             </Tooltip>
             <Tooltip label="Bookmark" arrowPosition="center" withArrow>
@@ -371,7 +371,8 @@ export default function Post(props: PostProps) {
         <div>
           <Text weight={500}>{post.User.displayName}</Text>
           <Text size="xs" color="dimmed">
-            {showRelativeTimestamp(post.createdAt as any)} {/* TODO axios interceptor */}
+            {typeof post.createdAt.toISOString === 'function' && showRelativeTimestamp(post.createdAt.toISOString())}{' '}
+            {/* TODO axios interceptor should allow toISOString */}
           </Text>
         </div>
       </Group>
@@ -427,6 +428,7 @@ export default function Post(props: PostProps) {
       `}
       {...(htmlProps as any)}
     >
+      {typeof post.createdAt}
       {post.categories?.length > 0 && (
         <Group position="left">
           {post.categories.map((category, i) => (

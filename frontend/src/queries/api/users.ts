@@ -13,7 +13,7 @@ export function useUser() {
   return useQuery<User, AxiosError>({
     queryKey: [`apiUser-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
-      if (![401, 404].includes(error.response.status) && failureCount < 2) return true
+      if (![401, 404].includes(error.response?.status) && failureCount < 2) return true
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<User> => {

@@ -21,7 +21,7 @@ export function useTwitchUser() {
   return useQuery<TwitchUserResponse, AxiosError>({
     queryKey: [`twitchUser-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
-      if (![401, 404].includes(error.response.status) && failureCount < 3) return true
+      if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
     retryDelay: 500,
     queryFn: async ({ signal }): Promise<TwitchUserResponse> => {
@@ -45,7 +45,7 @@ export function useTwitchUserSubscriber() {
   return useQuery<TwitchUserSubscriptionResponse, AxiosError>({
     queryKey: [`twitchUserSubscriber-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
-      if (![401, 404].includes(error.response.status) && failureCount < 3) return true
+      if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchUserSubscriptionResponse> => {
@@ -77,7 +77,7 @@ export function useTwitchUserFollower() {
   return useQuery<TwitchUserFollowResponse, AxiosError>({
     queryKey: [`twitchUserFollower-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
-      if (![401, 404].includes(error.response.status) && failureCount < 3) return true
+      if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<TwitchUserFollowResponse> => {
@@ -110,7 +110,7 @@ export function useTwitchValidateToken() {
   return useQuery<TwitchTokenValidateResponse, AxiosError>({
     queryKey: [`twitchValidateToken-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
-      if (![401, 404].includes(error.response.status) && failureCount < 3) return true
+      if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
     staleTime: 1000 * 3600, // 1h recommended
     retryDelay: 1000,
@@ -126,7 +126,7 @@ export function useTwitchValidateToken() {
       return data
     },
     onError(err) {
-      if (err.response.status === 401) {
+      if (err.response?.status === 401) {
         logout(queryClient) // invalid token, clear everything
       }
     },
@@ -141,7 +141,7 @@ export function useTwitchBroadcasterLive() {
   return useQuery<TwitchStreamResponse, AxiosError>({
     queryKey: [`twitchBroadcasterLive-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
-      if (![401, 404].includes(error.response.status) && failureCount < 3) return true
+      if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
     staleTime: 1000 * 3600, // 1h recommended
     retryDelay: 1000,
@@ -173,7 +173,7 @@ export function useTwitchBroadcasterLive() {
 //     enabled: false,
 //     queryKey: [`twitchFollow-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
 //     retry: (failureCount, error) => {
-//       if ([401,404].includes(error.response.status)  && failureCount < 3) return true
+//       if ([401,404].includes(error.response?.status)  && failureCount < 3) return true
 //     },
 //     retryDelay: 1000,
 //     queryFn: async ({ signal }): Promise<any> => {

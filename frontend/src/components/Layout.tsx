@@ -42,10 +42,6 @@ type LayoutProps = {
   children: React.ReactElement
 }
 
-// TODO apply only once, here infinite
-// axios.interceptors.request.use(requestInterceptor)
-// axios.interceptors.response.use(responseInterceptor)
-
 export default function Layout({ children }: LayoutProps) {
   // doing query cache invalidation, etc. here since client is not yet initialized
   // in App and layout is used once. Maybe there's better options

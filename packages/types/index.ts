@@ -41,7 +41,7 @@ export type PostGetResponse = {
   likedPosts: LikedPost[]
   savedPosts: SavedPost[]
   _count: {
-    likedPost: number
+    likedPosts: number
   }
 } & Post
 

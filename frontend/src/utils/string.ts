@@ -1,4 +1,6 @@
 export function truncateIntegerToString(num: number): string {
+  if (!num) return '0'
+
   if (num >= 1000) {
     const suffixes = ['k', 'm', 'b', 't']
     const suffixNum = Math.floor((num.toFixed(0).length - 1) / 3)
@@ -15,6 +17,7 @@ export function truncateIntegerToString(num: number): string {
     }
     return shortValue + suffixes[suffixNum - 1]
   }
+
   return num.toString()
 }
 

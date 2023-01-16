@@ -3,24 +3,34 @@ import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
 
 export const requestInterceptor = (config: AxiosRequestConfig) => {
-  config.data = addTimestamps(config.data)
+  config.data = updateTimestamps(config.data)
   return config
 }
 
 export const responseInterceptor = (response: AxiosResponse) => {
-  response.data = addTimestamps(response.data)
+  response.data = updateTimestamps(response.data)
   return response
 }
 
-const addTimestamps = (data: any) => {
-  console.log('running addTimestamps interceptor')
-  if (data && typeof data === 'object') {
-    data.createdAt = dayjs(data.createdAt).toDate()
-    data.updatedAt = dayjs(data.updatedAt).toDate()
-
-    for (const key in data) {
-      addTimestamps(data[key])
+// TODO genereic solution: https://weblog.west-wind.com/posts/2014/jan/06/javascript-json-date-parsing-and-real-dates
+export const updateTimestamps = (obj: any, depth = 0) => {
+  if (depth > 3) return
+  if (Array.isArray(obj)) {
+    obj.forEach((element) => {
+      if (typeof element === 'object') {
+        updateTimestamps(element, depth + 1)
+      }
+    })
+  } else {
+    for (const key in obj) {
+      if (key === 'createdAt' || key === 'updatedAt') {
+        obj[key] = dayjs(obj[key]).toDate()
+      }
+      if (typeof obj[key] === 'object') {
+        updateTimestamps(obj[key], depth + 1)
+      }
     }
   }
-  return data
+
+  return obj
 }
