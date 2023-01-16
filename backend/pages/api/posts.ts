@@ -50,10 +50,11 @@ export default async (req: NextRequest) => {
         }
 
         const DEFAULT_LIMIT = 10
+        console.log(queryParams.categories)
         // all posts with infinite scroll (https://react-query-v3.tanstack.com/guides/infinite-queries)
         const posts = await prisma.post.findMany({
           take: queryParams.limit ?? DEFAULT_LIMIT,
-          skip: 1, // always skip the cursor
+          ...(queryParams.cursor !== undefined && { skip: 1 }), // skip the cursor
           orderBy: {
             createdAt: 'desc',
           },
