@@ -193,7 +193,7 @@ export default function Post(props: PostProps) {
         usePostsQuery.data?.map((p) => {
           if (p.id === post.id) {
             console.log('updating react query data')
-            if (p.savedPosts?.length > 0) {
+            if (hasSaved) {
               p.savedPosts = []
             } else {
               p.savedPosts = [{ postId: p.id, userId: p.userId }]
