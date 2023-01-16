@@ -8,6 +8,7 @@ import {
   Flex,
   Group,
   Input,
+  Loader,
   MediaQuery,
   MediaQueryProps,
   Menu,
@@ -41,6 +42,7 @@ import CategoryBadge, { categoryEmojis, uniqueCategories } from 'src/components/
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import ProtectedComponent from 'src/components/ProtectedComponent'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
+import useDebounce from 'src/hooks/useDebounce'
 import useUndo from 'src/hooks/useUndoRedo'
 import { usePostCreateMutation, usePosts } from 'src/queries/api/posts'
 import { emotesTextToHtml, htmlToEmotesText, anyKnownEmoteRe } from 'src/services/twitch'
@@ -415,16 +417,20 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
               placeholder="Search"
               // icon={<IconSearch size={12} stroke={1.5} />}
               rightSection={
-                <ActionIcon
-                  variant="gradient"
-                  gradient={{ from: '#3257b0', to: '#5f7dc3', deg: 45 }}
-                  opacity={'80%'}
-                  onClick={(e) => {
-                    changeTitleQueryParam()
-                  }}
-                >
-                  <IconSearch size={12} stroke={2} />
-                </ActionIcon>
+                usePostsQuery.isLoading ? (
+                  <Loader size={18} />
+                ) : (
+                  <ActionIcon
+                    variant="gradient"
+                    gradient={{ from: '#3257b0', to: '#5f7dc3', deg: 45 }}
+                    opacity={'80%'}
+                    onClick={(e) => {
+                      changeTitleQueryParam()
+                    }}
+                  >
+                    <IconSearch size={12} stroke={2} />
+                  </ActionIcon>
+                )
               }
               value={titleQuery}
               onChange={(e) => {

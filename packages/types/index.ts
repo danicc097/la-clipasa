@@ -58,7 +58,10 @@ export type PostPatchRequest = Partial<
 
 export type PostQueryParams = {
   limit: number | undefined
-  cursor: number | undefined
+  /**
+   * createdAt cursor
+   */
+  cursor: string | undefined
   titleQuery: string | undefined
   authorId: string | undefined
   liked: boolean | undefined

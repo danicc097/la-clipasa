@@ -62,7 +62,7 @@ export default async (req: NextRequest) => {
           // NOTE: cursor pagination does not use cursors in the underlying database (PostgreSQL).
           ...(queryParams.cursor !== undefined && {
             cursor: {
-              id: queryParams.cursor,
+              createdAt: queryParams.cursor,
             },
           }),
           where: {
@@ -121,6 +121,12 @@ export default async (req: NextRequest) => {
             },
           },
         })
+
+        /**
+          TODO:
+          format response as per https://codesandbox.io/s/github/tanstack/query/tree/main/examples/react/load-more-infinite-scroll?from-embed=&file=/pages/index.js:789-806
+          and update to useInfiniteQuery and new response type
+        */
 
         return new Response(JSON.stringify(posts), { status: 200 })
       }

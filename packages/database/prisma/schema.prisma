@@ -94,6 +94,7 @@ model Post {
 
   textsearchable_index_col Unsupported("tsvector")? @default(dbgenerated("''::tsvector"))
 
+  @@unique([createdAt])
   @@index([textsearchable_index_col], type: Gin)
   // TODO when prisma allows manual indexes or specific postgres extension indexes switch to GIN btree
   @@index([userId, isModerated, categories, createdAt(sort: Desc)], type: BTree) // filter "My posts"

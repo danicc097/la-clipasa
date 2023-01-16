@@ -105,15 +105,15 @@ export default function Home() {
               width: 100%;
             `}
           >
-            {renderPosts()}
-            {/* {usePostsQuery.isFetching ? ( infinite refetching for some reason
+            {/* {renderPosts()} */}
+            {usePostsQuery.status === 'loading' ? ( // infinite refetching for some reason
               <>
                 <PostSkeleton className="post" />
                 <PostSkeleton className="post" />
               </>
             ) : (
               renderPosts()
-            )} */}
+            )}
           </Container>
         </ScrollArea>
         <Space p={5} />
