@@ -27,9 +27,10 @@ describe('infer URL metadata', () => {
   })
 
   test('discord URL', () => {
-    const url = 'https://www.discord.com/Cyyh9G5E6II/'
+    const url =
+      'https://cdn.discordapp.com/attachments/1058424616726565007/1058546769199366204/file_example_MP4_480_1_5MG.mp4'
     const result = getServiceAndId(url)
-    expect(result).toEqual({ service: 'discord', id: null })
+    expect(result).toEqual({ service: 'discord_video', id: null })
   })
 
   test('invalid URL', () => {
