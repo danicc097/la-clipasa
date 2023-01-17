@@ -36,7 +36,7 @@ export const UserAwardNames: Record<UserAward, string> = {
   ARTESANO_MEMIFICADOR: 'ARTESANO MEMIFICADOR',
 }
 
-export type PostGetResponse = {
+export type PostResponse = {
   User: Pick<User, 'id' | 'displayName' | 'profileImage'>
   likedPosts: LikedPost[]
   savedPosts: SavedPost[]
@@ -44,6 +44,14 @@ export type PostGetResponse = {
     likedPosts: number
   }
 } & Post
+
+export type PostsGetResponse = {
+  data: PostResponse[]
+  /**
+   * createdAt cursor
+   */
+  nextCursor?: string
+}
 
 export type UserUpdateOrCreateRequest = Pick<User, 'displayName' | 'isFollower' | 'isSubscriber'>
 

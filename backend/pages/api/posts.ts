@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
 import { PostCategory, Prisma, PrismaClient, User } from 'database'
-import { PostCategoryNames, PostQueryParams } from 'types'
+import { PostCategoryNames, PostQueryParams, PostsGetResponse } from 'types'
 import { cursorTo } from 'readline'
 import prisma from 'lib/prisma'
 
@@ -20,6 +20,8 @@ export const config = {
   runtime: 'experimental-edge',
   regions: ['cdg1', 'gru1', 'iad1'],
 }
+
+const DEFAULT_LIMIT = 10
 
 export default async (req: NextRequest) => {
   try {
@@ -50,11 +52,11 @@ export default async (req: NextRequest) => {
               : undefined,
         }
 
-        const DEFAULT_LIMIT = 10
-        console.log(queryParams.categories)
+        const limit = queryParams.limit ?? DEFAULT_LIMIT
+
         // all posts with infinite scroll (https://react-query-v3.tanstack.com/guides/infinite-queries)
         const posts = await prisma.post.findMany({
-          take: queryParams.limit ?? DEFAULT_LIMIT,
+          take: limit,
           ...(queryParams.cursor !== undefined && { skip: 1 }), // skip the cursor
           orderBy: {
             createdAt: 'desc',
@@ -122,13 +124,19 @@ export default async (req: NextRequest) => {
           },
         })
 
+        const resBody: PostsGetResponse = {
+          data: posts,
+          ...(posts.length === limit && { nextCursor: posts[posts.length - 1].createdAt.toISOString() }),
+        }
         /**
           TODO:
           format response as per https://codesandbox.io/s/github/tanstack/query/tree/main/examples/react/load-more-infinite-scroll?from-embed=&file=/pages/index.js:789-806
           and update to useInfiniteQuery and new response type
         */
 
-        return new Response(JSON.stringify(posts), { status: 200 })
+        return new Response(JSON.stringify(resBody), {
+          status: 200,
+        })
       }
       case 'POST': {
         const headerTwitchId = req.headers.get('X-twitch-id')

@@ -35,7 +35,7 @@ import {
   IconEyeOff,
 } from '@tabler/icons'
 import { css } from '@emotion/react'
-import type { ArrayElement, PostCategoryNames, PostGetResponse, RequiredKeys, Union } from 'types'
+import type { ArrayElement, PostCategoryNames, PostResponse, RequiredKeys, Union } from 'types'
 import { truncateIntegerToString } from 'src/utils/string'
 import { HTMLProps, useEffect, useState } from 'react'
 import { truncate } from 'lodash-es'
@@ -152,7 +152,7 @@ interface PostProps extends HTMLProps<HTMLButtonElement> {
   /**
    * Overrides a default image for a category
    */
-  post: PostGetResponse
+  post: PostResponse
   backgroundImage?: string
   footer: JSX.Element
 }
@@ -204,7 +204,7 @@ export default function Post(props: PostProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<PostGetResponse[]>(
+      queryClient.setQueryData<PostResponse[]>(
         [`apiGetPosts`, getPostsQueryParams],
         usePostsQuery.data?.map((p) => {
           if (p.id === post.id) {
@@ -239,7 +239,7 @@ export default function Post(props: PostProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<PostGetResponse[]>(
+      queryClient.setQueryData<PostResponse[]>(
         [`apiGetPosts`, getPostsQueryParams],
         usePostsQuery.data?.map((p) => {
           if (p.id === post.id) {
@@ -290,7 +290,7 @@ export default function Post(props: PostProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<PostGetResponse[]>(
+      queryClient.setQueryData<PostResponse[]>(
         [`apiGetPosts`, getPostsQueryParams],
         usePostsQuery.data?.map((p) => {
           if (p.id === post.id) {
