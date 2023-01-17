@@ -52,7 +52,10 @@ export default async (req: NextRequest) => {
               : undefined,
         }
 
-        const limit = queryParams.limit ?? DEFAULT_LIMIT
+        let limit = queryParams.limit ?? DEFAULT_LIMIT
+        if (limit > 50) {
+          limit = 50
+        }
 
         // all posts with infinite scroll (https://react-query-v3.tanstack.com/guides/infinite-queries)
         const posts = await prisma.post.findMany({

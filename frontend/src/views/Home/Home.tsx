@@ -42,6 +42,8 @@ export default function Home() {
   const { getPostsQueryParams } = usePostsSlice()
   const ref = useRef(null)
 
+  const lastScrollHeight = useRef(null)
+
   // refetch is used to query with old data, thats why it doesnt accept parameters,
   //  this is not the way to use react-query, add state to query key list
   // useEffect(() => {
@@ -57,6 +59,9 @@ export default function Home() {
   const handleScroll = () => {
     const { scrollTop, scrollHeight } = ref.current
     const reachedEnd = scrollTop + ref.current.clientHeight === scrollHeight
+    lastScrollHeight.current = scrollTop
+    console.log(scrollTop)
+    console.log(ref.current.clientHeight)
     if (reachedEnd) {
       // Fire an event or call a function here
       console.log('Reached end of scroll area')
@@ -95,6 +100,7 @@ export default function Home() {
         {/* TODO scroll into view when refreshing: https://mantine.dev/hooks/use-scroll-into-view/ and affix
         https://mantine.dev/core/affix/ */}
         <ScrollArea
+          ref={ref}
           onScroll={handleScroll}
           styles={{
             root: {
