@@ -20,8 +20,6 @@ import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
 import banner from 'src/assets/banner-la-clipassa.png'
 import homeBackground from 'src/assets/background-la-clipassa.jpg'
-import { usePosts } from 'src/queries/api/posts'
-import type { PostResponse } from 'types'
 
 const useStyles = createStyles((theme) => ({
   sidebar: {
@@ -59,8 +57,6 @@ export default function Layout({ children }: LayoutProps) {
   const { classes } = useStyles()
   const { burgerOpened, setBurgerOpened } = useUISlice()
   const [updateUserAfterLogin, setUpdateUserAfterLogin] = useState(false)
-
-  const usePostsQuery = usePosts()
 
   useEffect(() => {
     // the URL hash is processed by the browser only. not available in edge function/backend
@@ -106,15 +102,11 @@ export default function Layout({ children }: LayoutProps) {
     twitchUser?.data?.data,
   ])
 
-  const posts = usePostsQuery.data?.pages?.reduce((acc, page) => acc.concat(page.data), [] as PostResponse[])
-
   useEffect(() => {
     queryClient.invalidateQueries({
       predicate: (query) => (query.queryKey[0] as string).startsWith('twitch'),
     })
-
-    if (!posts) usePostsQuery.refetch()
-  }, [posts])
+  }, [])
 
   useEffect(() => {
     const s = document.createElement('script')
