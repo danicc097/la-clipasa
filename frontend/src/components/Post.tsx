@@ -519,7 +519,7 @@ export default function Post(props: PostProps) {
       /* move to classes */
       css={css`
         background-repeat: no-repeat;
-        background-size: 300px;
+        background-size: auto 100%;
         background-position: right top;
         background-clip: padding-box;
         background-image: url(${cardBackgroundImage});

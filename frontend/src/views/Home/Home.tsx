@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Posts from '../../components/Post.old'
 import Post, { PostSkeleton } from '../../components/Post'
 import Cookies from 'js-cookie'
@@ -36,11 +36,11 @@ import { IconAlertCircle } from '@tabler/icons'
 const PADDING_TOP = '2rem'
 const useStyles = createStyles((theme) => ({}))
 
-// TODO padding before footer including image (right now empty background)
 export default function Home() {
   const { classes } = useStyles()
   const usePostsQuery = usePosts()
   const { getPostsQueryParams } = usePostsSlice()
+  const ref = useRef(null)
 
   // refetch is used to query with old data, thats why it doesnt accept parameters,
   //  this is not the way to use react-query, add state to query key list
@@ -51,8 +51,17 @@ export default function Home() {
   // }, [getPostsQueryParams])
 
   const posts = usePostsQuery.data?.pages?.reduce((acc, page) => acc.concat(page.data), [] as PostResponse[])
-
+  console.log(posts)
   const lastCursor = usePostsQuery.data?.pages?.[usePostsQuery.data?.pages?.length - 1].nextCursor
+
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight } = ref.current
+    const reachedEnd = scrollTop + ref.current.clientHeight === scrollHeight
+    if (reachedEnd) {
+      // Fire an event or call a function here
+      console.log('Reached end of scroll area')
+    }
+  }
 
   const renderPosts = () => {
     if (posts?.length === 0)
@@ -86,6 +95,7 @@ export default function Home() {
         {/* TODO scroll into view when refreshing: https://mantine.dev/hooks/use-scroll-into-view/ and affix
         https://mantine.dev/core/affix/ */}
         <ScrollArea
+          onScroll={handleScroll}
           styles={{
             root: {
               maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 54px - ${PADDING_TOP})`, // TODO footer height const

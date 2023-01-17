@@ -21,20 +21,6 @@ import { get, set, del } from 'idb-keyval'
 import type { PersistedClient, Persister } from '@tanstack/react-query-persist-client'
 import { ModalsProvider } from '@mantine/modals'
 
-// const queryCache = new QueryCache({
-//   onError: (error) => {
-//     console.log(error)
-//   },
-//   onSuccess: (data) => {
-//     console.log(data)
-//   },
-// })
-const queryCache = new QueryCache({
-  onSuccess(data, query) {
-    query.setData(updateTimestamps(data))
-  },
-})
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -49,7 +35,7 @@ const queryClient = new QueryClient({
       cacheTime: 1000 * 60 * 5, // 5 minutes
     },
   },
-  queryCache,
+  // queryCache,
 })
 
 // axios.interceptors.request.use(requestInterceptor, function (error) {
