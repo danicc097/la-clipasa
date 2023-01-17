@@ -41,6 +41,7 @@ const queryClient = new QueryClient({
       cacheTime: 1000 * 60 * 5, // 5 min
       // cacheTime: 0,
       refetchOnWindowFocus: false,
+      refetchOnMount: false,
       staleTime: 0,
       keepPreviousData: true,
     },

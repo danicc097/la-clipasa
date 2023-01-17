@@ -1,9 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
-import { useQuery, useQueryClient, QueryClient, useMutation } from '@tanstack/react-query'
+import { useQuery, useQueryClient, QueryClient, useMutation, useInfiniteQuery } from '@tanstack/react-query'
 import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY, useUISlice } from 'src/slices/ui'
 import type { Post } from 'database'
 import { useTwitchUser } from 'src/queries/twitch'
-import type { PostCreateRequest, PostPatchRequest, PostResponse } from 'types'
+import type { PostCreateRequest, PostPatchRequest, PostResponse, PostsGetResponse } from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 import { usePostsSlice } from 'src/slices/posts'
 
@@ -15,13 +15,29 @@ export function usePosts() {
   const { twitchToken } = useUISlice()
   const { getPostsQueryParams } = usePostsSlice()
 
-  return useQuery<PostResponse[], AxiosError>({
+  /**
+  {
+    "pages": [
+      {
+        "data": [{...}, ...],
+        "nextCursor": "2023-01-16T20:34:43.605Z"
+      },
+      {
+        ...
+      }
+    ],
+    "pageParams": [
+      null
+    ]
+  }
+  */
+  return useInfiniteQuery<PostsGetResponse, AxiosError>({
     queryKey: [`apiGetPosts`, getPostsQueryParams], // any state used inside the queryFn must be part of the queryKey
     retry: false,
     // cacheTime: 1000 * 60 * 60, // 1h
     cacheTime: 1000 * 60 * 5, // 5 min
     enabled: getPostsQueryParams !== null,
-    queryFn: async ({ signal, pageParam }): Promise<PostResponse[]> => {
+    queryFn: async ({ signal, pageParam }): Promise<PostsGetResponse> => {
       if (!getPostsQueryParams) return
 
       const { data } = await axios.get(

@@ -35,7 +35,7 @@ import {
   IconEyeOff,
 } from '@tabler/icons'
 import { css } from '@emotion/react'
-import type { ArrayElement, PostCategoryNames, PostResponse, RequiredKeys, Union } from 'types'
+import type { ArrayElement, PostCategoryNames, PostResponse, PostsGetResponse, RequiredKeys, Union } from 'types'
 import { truncateIntegerToString } from 'src/utils/string'
 import { HTMLProps, useEffect, useState } from 'react'
 import { truncate } from 'lodash-es'
@@ -46,7 +46,7 @@ import { usePostsSlice } from 'src/slices/posts'
 import ProtectedComponent from 'src/components/ProtectedComponent'
 import { usePostDeleteMutation, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
 import { showRelativeTimestamp } from 'src/utils/date'
-import { useQueryClient } from '@tanstack/react-query'
+import { InfiniteData, useQueryClient } from '@tanstack/react-query'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { isAuthorized } from 'src/services/authorization'
 import { closeAllModals, openConfirmModal, openContextModal, openModal } from '@mantine/modals'
@@ -204,21 +204,23 @@ export default function Post(props: PostProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<PostResponse[]>(
-        [`apiGetPosts`, getPostsQueryParams],
-        usePostsQuery.data?.map((p) => {
-          if (p.id === post.id) {
-            console.log('updating react query data')
-            if (hasSaved) {
-              p.savedPosts = []
-            } else {
-              p.savedPosts = [{ postId: p.id, userId: p.userId }]
+      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([`apiGetPosts`, getPostsQueryParams], (data) => ({
+        ...data,
+        pages: data.pages.map((page) => ({
+          ...page,
+          data: page.data.map((p) => {
+            if (p.id === post.id) {
+              console.log('updating react query data')
+              if (hasSaved) {
+                p.savedPosts = []
+              } else {
+                p.savedPosts = [{ postId: p.id, userId: p.userId }]
+              }
             }
-          }
-
-          return p
-        }),
-      )
+            return p
+          }),
+        })),
+      }))
     }
 
     // TODO mutation with debounce of 2 seconds
@@ -239,24 +241,27 @@ export default function Post(props: PostProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<PostResponse[]>(
-        [`apiGetPosts`, getPostsQueryParams],
-        usePostsQuery.data?.map((p) => {
-          if (p.id === post.id) {
-            console.log('updating react query data')
-            if (hasLiked) {
-              p.likedPosts = []
-              --post._count.likedPosts
-            } else {
-              p.likedPosts = [{ postId: p.id, userId: p.userId }]
-              ++post._count.likedPosts
+      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([`apiGetPosts`, getPostsQueryParams], (data) => ({
+        ...data,
+        pages: data.pages.map((page) => ({
+          ...page,
+          data: page.data.map((p) => {
+            if (p.id === post.id) {
+              console.log('updating react query data')
+              if (hasLiked) {
+                p.likedPosts = []
+                --post._count.likedPosts
+              } else {
+                p.likedPosts = [{ postId: p.id, userId: p.userId }]
+                ++post._count.likedPosts
+              }
             }
-          }
-
-          return p
-        }),
-      )
+            return p
+          }),
+        })),
+      }))
     }
+
     // TODO mutation with debounce of 2 seconds
     setLikeBeacon(true)
     postPatchMutation.mutate(
@@ -290,17 +295,19 @@ export default function Post(props: PostProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<PostResponse[]>(
-        [`apiGetPosts`, getPostsQueryParams],
-        usePostsQuery.data?.map((p) => {
-          if (p.id === post.id) {
-            console.log('updating react query data')
-            p.isModerated = !p.isModerated
-          }
-
-          return p
-        }),
-      )
+      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([`apiGetPosts`, getPostsQueryParams], (data) => ({
+        ...data,
+        pages: data.pages.map((page) => ({
+          ...page,
+          data: page.data.map((p) => {
+            if (p.id === post.id) {
+              console.log('updating react query data')
+              p.isModerated = !p.isModerated
+            }
+            return p
+          }),
+        })),
+      }))
     }
     setModerateButtonLoading(true)
     postPatchMutation.mutate(

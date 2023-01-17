@@ -23,7 +23,7 @@ import { css } from '@emotion/react'
 import { showRelativeTimestamp } from 'src/utils/date'
 import dayjs from 'dayjs'
 import { useForm } from '@mantine/form'
-import type { PostCreateRequest, PostQueryParams } from 'types'
+import type { PostCreateRequest, PostQueryParams, PostResponse } from 'types'
 import { capitalize, random } from 'lodash-es'
 import { isURL } from 'src/utils/url'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
@@ -50,8 +50,12 @@ export default function Home() {
   //   }
   // }, [getPostsQueryParams])
 
+  const posts = usePostsQuery.data?.pages?.reduce((acc, page) => acc.concat(page.data), [] as PostResponse[])
+
+  const lastCursor = usePostsQuery.data?.pages?.[usePostsQuery.data?.pages?.length - 1].nextCursor
+
   const renderPosts = () => {
-    if (usePostsQuery.data?.length === 0)
+    if (posts?.length === 0)
       return (
         <Alert
           css={css`
@@ -64,9 +68,7 @@ export default function Home() {
         </Alert>
       )
 
-    return usePostsQuery.data?.map((post) => (
-      <Post key={post.id} post={post} className="post" footer={<div>0 comments</div>} />
-    ))
+    return posts?.map((post) => <Post key={post.id} post={post} className="post" footer={<div>0 comments</div>} />)
   }
 
   return (
