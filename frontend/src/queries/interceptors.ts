@@ -17,7 +17,6 @@ const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,}|)Z$/
 
 // TODO generic solution: https://weblog.west-wind.com/posts/2014/jan/06/javascript-json-date-parsing-and-real-dates
 export const updateTimestamps = (obj: any, depth = 0) => {
-  if (depth > 3) return
   if (Array.isArray(obj)) {
     obj.forEach((element) => {
       if (typeof element === 'object') {
