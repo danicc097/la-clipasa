@@ -18,6 +18,7 @@ import {
   CSSObject,
   Tooltip,
   AspectRatio,
+  Popover,
 } from '@mantine/core'
 import {
   IconHeart,
@@ -239,11 +240,19 @@ function Post(props: PostProps) {
       },
     )
   }
+
+  const handleCategoriesEditButtonClick = (e) => {
+    e.stopPropagation()
+
+    setCategoriesEditPopoverOpened(!categoriesEditPopoverOpened)
+  }
+
   const handleLastSeenButtonClick = (e) => {
     e.stopPropagation()
 
     setLastSeenPostId(post.id)
   }
+
   const handleLikeButtonClick = (e) => {
     e.stopPropagation()
 
@@ -488,6 +497,8 @@ function Post(props: PostProps) {
     )
   }
 
+  const [categoriesEditPopoverOpened, setCategoriesEditPopoverOpened] = useState(false)
+
   function renderCategories() {
     return (
       post.categories?.length > 0 && (
@@ -510,10 +521,21 @@ function Post(props: PostProps) {
               `}
             />
           ))}
-          {/* TODO multiselect with all CategoryBadge's */}
           <ProtectedComponent requiredRole="MODERATOR">
-            <Tooltip label={'Edit categories'} arrowPosition="center" withArrow>
-              <ActionIcon radius={999999} size={22} className={classes.categoryAction} onClick={handleEditButtonClick}>
+            <Tooltip
+              closeDelay={99999999}
+              hidden={!categoriesEditPopoverOpened} // work around popover positioning shenanigans by using tooltip instead
+              label={<div onClick={(e) => e.stopPropagation()}>Edit categories multiselect</div>}
+              arrowPosition="center"
+              withArrow
+            >
+              <ActionIcon
+                onBlurCapture={() => setCategoriesEditPopoverOpened(false)}
+                radius={999999}
+                size={22}
+                className={`${classes.categoryAction} post-categories-${post.id}`}
+                onClick={handleCategoriesEditButtonClick}
+              >
                 <IconPlus
                   color={theme.colorScheme === 'light' ? theme.colors.dark[5] : theme.colors.gray[1]}
                   size={12}
