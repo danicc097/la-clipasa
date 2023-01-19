@@ -70,14 +70,6 @@ export default function Home() {
   }, [isLastPostOnScreen, nextCursor])
 
   const renderPosts = () => {
-    if (!posts)
-      return (
-        <>
-          <PostSkeleton className="post" />
-          <PostSkeleton className="post" />
-        </>
-      )
-
     if (posts?.length === 0)
       return (
         <Alert
@@ -139,6 +131,12 @@ export default function Home() {
             `}
           >
             {renderPosts()}
+            {usePostsQuery.status === 'loading' && (
+              <>
+                <PostSkeleton className="post" />
+                <PostSkeleton className="post" />
+              </>
+            )}
           </Container>
         </ScrollArea>
         <Space p={5} />
