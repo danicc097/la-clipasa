@@ -67,6 +67,8 @@ const useMountedRef = () => {
     setTimeout(() => {
       mountedRef.current = true
     })
+
+    return () => (mountedRef.current = null)
   }, [])
 
   return mountedRef

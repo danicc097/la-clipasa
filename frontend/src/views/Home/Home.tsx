@@ -61,11 +61,12 @@ export default function Home() {
   const isLastPostOnScreen = useOnScreen(lastPostRef)
 
   useEffect(() => {
-    console.log({ isLastPostOnScreen, lastPostRef: lastPostRef.current })
+    console.log({ isLastPostOnScreen, lastPostRef: lastPostRef.current, nextCursor })
     console.log(nextCursor)
     // TODO fetch next page
-    if (isLastPostOnScreen && !usePostsQuery.isFetchingNextPage && nextCursor) {
-      usePostsQuery.fetchNextPage()
+    if (isLastPostOnScreen && usePostsQuery.status !== 'loading' && nextCursor) {
+      console.log('fetching next posts page')
+      usePostsQuery.fetchNextPage({ pageParam: nextCursor })
     }
   }, [isLastPostOnScreen, nextCursor])
 
