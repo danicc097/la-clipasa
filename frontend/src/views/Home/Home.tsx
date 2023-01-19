@@ -54,49 +54,29 @@ export default function Home() {
   // }, [getPostsQueryParams])
 
   const posts = usePostsQuery.data?.pages?.reduce((acc, page) => acc.concat(page.data), [] as PostResponse[])
-  console.log(posts)
-  const lastCursor = usePostsQuery.data?.pages?.[usePostsQuery.data?.pages?.length - 1].nextCursor
+  const nextCursor = usePostsQuery.data?.pages?.[usePostsQuery.data?.pages?.length - 1].nextCursor
 
-  const handleScroll = () => {
-    const { scrollTop, scrollHeight } = ref.current
-    const reachedEnd = scrollTop + ref.current.clientHeight === scrollHeight
-    lastScrollHeight.current = scrollTop
-    console.log(scrollTop)
-    console.log(ref.current.clientHeight)
-    if (reachedEnd) {
-      // Fire an event or call a function here
-      console.log('Reached end of scroll area')
-    }
-  }
-
-  const [intersectingPost, setIntersectingPost] = useState(null)
-
-  const observer = new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting) {
-      // `trigger-post-${idx}` so thats its sorted by default
-      console.log(entry.target.className)
-      if (
-        entry.target.className.localeCompare(intersectingPost, undefined, { numeric: true, sensitivity: 'base' }) === 1
-      ) {
-        console.log(`${entry.target.className} larger than ${intersectingPost}`)
-        setIntersectingPost(entry.target.className)
-      }
-    }
-  })
+  const lastPostRef = useRef<HTMLDivElement>(null)
+  const isLastPostOnScreen = useOnScreen(lastPostRef)
 
   useEffect(() => {
-    observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
-
-  const postsRef = useRef(posts?.map(() => createRef<HTMLDivElement>()))
-  const postsOnScreen = posts?.map((p, idx) => useOnScreen(postsRef.current[idx]))
-
-  useEffect(() => {
-    console.log(postsOnScreen)
-  }, [JSON.stringify(postsOnScreen)])
+    console.log({ isLastPostOnScreen, lastPostRef: lastPostRef.current })
+    console.log(nextCursor)
+    // TODO fetch next page
+    if (isLastPostOnScreen && !usePostsQuery.isFetchingNextPage && nextCursor) {
+      usePostsQuery.fetchNextPage()
+    }
+  }, [isLastPostOnScreen, nextCursor])
 
   const renderPosts = () => {
+    if (!posts)
+      return (
+        <>
+          <PostSkeleton className="post" />
+          <PostSkeleton className="post" />
+        </>
+      )
+
     if (posts?.length === 0)
       return (
         <Alert
@@ -112,8 +92,9 @@ export default function Home() {
 
     return posts?.map((post, idx) => (
       <>
-        <div className={`trigger-post-${idx}`} ref={postsRef.current[idx]} />
-        <Post key={post.id} post={post} className="post" footer={<div>0 comments</div>} />
+        <Post key={post.id} post={post} className="post" footer={<div>0 comments</div>}>
+          {idx === posts.length - 1 && <div className={`trigger-post-${idx}`} ref={lastPostRef} />}
+        </Post>
       </>
     ))
   }
@@ -134,7 +115,7 @@ export default function Home() {
         https://mantine.dev/core/affix/ */}
         <ScrollArea
           ref={ref}
-          onScroll={handleScroll}
+          // onScroll={handleScroll}
           styles={{
             root: {
               maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 54px - ${PADDING_TOP})`, // TODO footer height const
@@ -156,15 +137,7 @@ export default function Home() {
               width: 100%;
             `}
           >
-            {/* {renderPosts()} */}
-            {usePostsQuery.status === 'loading' ? ( // infinite refetching for some reason
-              <>
-                <PostSkeleton className="post" />
-                <PostSkeleton className="post" />
-              </>
-            ) : (
-              renderPosts()
-            )}
+            {renderPosts()}
           </Container>
         </ScrollArea>
         <Space p={5} />

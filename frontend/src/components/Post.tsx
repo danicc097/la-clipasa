@@ -539,6 +539,7 @@ export default function Post(props: PostProps) {
       `}
       {...(htmlProps as any)}
     >
+      {props.children}
       {renderCategories()}
       {renderTitle()}
       {renderBody()}
