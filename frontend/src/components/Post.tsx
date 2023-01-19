@@ -37,7 +37,7 @@ import {
 import { css } from '@emotion/react'
 import type { ArrayElement, PostCategoryNames, PostResponse, PostsGetResponse, RequiredKeys, Union } from 'types'
 import { truncateIntegerToString } from 'src/utils/string'
-import { HTMLProps, useEffect, useState } from 'react'
+import React, { HTMLProps, useEffect, useState } from 'react'
 import { truncate } from 'lodash-es'
 import type { Post, PostCategory, Prisma, User } from 'database' // cant use PostCategory exported const
 import CategoryBadge, { CardBackground, PostCategoryKey, uniqueCategoryBackground } from 'src/components/CategoryBadge'
@@ -162,7 +162,7 @@ interface PostProps extends HTMLProps<HTMLButtonElement> {
  *  - broadcast poll creation per each post if role higher than user
  *
  */
-export default function Post(props: PostProps) {
+function Post(props: PostProps) {
   const queryClient = useQueryClient()
   const { user, isAuthenticated } = useAuthenticatedUser()
   const { post, backgroundImage, footer, className, ...htmlProps } = props
@@ -575,3 +575,5 @@ export function PostSkeleton(props: Partial<PostProps>) {
     </Flex>
   )
 }
+
+export default React.memo(Post)
