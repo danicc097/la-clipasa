@@ -1,0 +1,18 @@
+#!/bin/bash
+# shellcheck disable=1091,2155,2068,2086,2031
+
+export PROC=$$
+
+source "${BASH_SOURCE%/*}/.helpers.sh"
+
+source ./packages/database/.env
+env="$1"
+[[ -z $env ]] && echo "Env dev|prod is necessary" && exit 1
+
+if [[ $env = "prod" ]]; then
+  readonly DB_URL="$MIGRATE_PROD_DATABASE_URL"
+else
+  readonly DB_URL="$MIGRATE_DATABASE_URL"
+fi
+
+psql "$DB_URL"
