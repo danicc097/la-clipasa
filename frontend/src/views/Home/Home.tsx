@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { createRef, useEffect, useRef, useState } from 'react'
 import Posts from '../../components/Post.old'
 import Post, { PostSkeleton } from '../../components/Post'
 import Cookies from 'js-cookie'
@@ -32,6 +32,7 @@ import { declareComponentKeys } from 'i18nifty'
 import { usePostsSlice } from 'src/slices/posts'
 import { usePosts } from 'src/queries/api/posts'
 import { IconAlertCircle } from '@tabler/icons'
+import useOnScreen from 'src/hooks/useOnScreen'
 
 const PADDING_TOP = '2rem'
 const useStyles = createStyles((theme) => ({}))
@@ -68,6 +69,33 @@ export default function Home() {
     }
   }
 
+  const [intersectingPost, setIntersectingPost] = useState(null)
+
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) {
+      // `trigger-post-${idx}` so thats its sorted by default
+      console.log(entry.target.className)
+      if (
+        entry.target.className.localeCompare(intersectingPost, undefined, { numeric: true, sensitivity: 'base' }) === 1
+      ) {
+        console.log(`${entry.target.className} larger than ${intersectingPost}`)
+        setIntersectingPost(entry.target.className)
+      }
+    }
+  })
+
+  useEffect(() => {
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  const postsRef = useRef(posts?.map(() => createRef<HTMLDivElement>()))
+  const postsOnScreen = posts?.map((p, idx) => useOnScreen(postsRef.current[idx]))
+
+  useEffect(() => {
+    console.log(postsOnScreen)
+  }, [JSON.stringify(postsOnScreen)])
+
   const renderPosts = () => {
     if (posts?.length === 0)
       return (
@@ -82,7 +110,12 @@ export default function Home() {
         </Alert>
       )
 
-    return posts?.map((post) => <Post key={post.id} post={post} className="post" footer={<div>0 comments</div>} />)
+    return posts?.map((post, idx) => (
+      <>
+        <div className={`trigger-post-${idx}`} ref={postsRef.current[idx]} />
+        <Post key={post.id} post={post} className="post" footer={<div>0 comments</div>} />
+      </>
+    ))
   }
 
   return (
