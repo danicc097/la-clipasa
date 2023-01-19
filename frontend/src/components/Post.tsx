@@ -33,6 +33,8 @@ import {
   IconExternalLink,
   IconEye,
   IconEyeOff,
+  IconEdit,
+  IconPlus,
 } from '@tabler/icons'
 import { css } from '@emotion/react'
 import type { ArrayElement, PostCategoryNames, PostResponse, PostsGetResponse, RequiredKeys, Union } from 'types'
@@ -137,6 +139,11 @@ const useStyles = createStyles((theme) => {
     },
 
     action: actionStyle,
+
+    categoryAction: {
+      ...actionStyle,
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3],
+    },
 
     likedAction: {
       ...actionStyle,
@@ -291,6 +298,10 @@ function Post(props: PostProps) {
     openDeleteConfirmModal()
   }
 
+  const handleEditButtonClick = (e) => {
+    e.stopPropagation()
+  }
+
   const handleModerateButtonClick = (e) => {
     e.stopPropagation()
 
@@ -405,6 +416,13 @@ function Post(props: PostProps) {
                 </ActionIcon>
               </Tooltip>
             </ProtectedComponent>
+            <ProtectedComponent requiredRole="MODERATOR">
+              <Tooltip label={'Edit'} arrowPosition="center" withArrow>
+                <ActionIcon className={classes.action} onClick={handleEditButtonClick}>
+                  <IconEdit size={16} color={theme.colors.blue[4]} stroke={1.5} />
+                </ActionIcon>
+              </Tooltip>
+            </ProtectedComponent>
             {canDeletePost && (
               <Tooltip label="Delete" arrowPosition="center" withArrow>
                 <ActionIcon onClick={handleDeleteButtonClick} className={classes.action}>
@@ -492,6 +510,18 @@ function Post(props: PostProps) {
               `}
             />
           ))}
+          {/* TODO multiselect with all CategoryBadge's */}
+          <ProtectedComponent requiredRole="MODERATOR">
+            <Tooltip label={'Edit categories'} arrowPosition="center" withArrow>
+              <ActionIcon radius={999999} size={22} className={classes.categoryAction} onClick={handleEditButtonClick}>
+                <IconPlus
+                  color={theme.colorScheme === 'light' ? theme.colors.dark[5] : theme.colors.gray[1]}
+                  size={12}
+                  stroke={1.5}
+                />
+              </ActionIcon>
+            </Tooltip>
+          </ProtectedComponent>
         </Group>
       )
     )
