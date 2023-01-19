@@ -8,7 +8,7 @@ import Header, { HEADER_HEIGHT } from 'src/components/Header'
 import { css } from '@emotion/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUISlice } from 'src/slices/ui'
-import Footer from 'src/components/Footer'
+import Footer, { FOOTER_HEIGHT } from 'src/components/Footer'
 import {
   useTwitchBroadcasterLive,
   useTwitchUser,
@@ -125,22 +125,6 @@ export default function Layout({ children }: LayoutProps) {
       </Helmet>
       <Image alt="la clipasa" src={banner} />
       <Header tabs={[]}></Header>
-
-      {/* TODO when header becomes sticky, main should have a padding top of height=header height*/}
-
-      {/* <div
-        style={{
-          background: `url(${homeBackground}) no-repeat center/cover`,
-          maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 54px)`,
-          minHeight: `calc(100vh)`,
-          overflow: 'hidden',
-          position: 'absolute',
-          msFlex: 'none',
-          flex: 'none',
-          width: '100%',
-          backgroundPosition: '50% 50%',
-        }}
-      /> */}
       <main
         css={css`
           /* background-image: url(${homeBackground}) no-repeat center/cover; */
@@ -149,7 +133,6 @@ export default function Layout({ children }: LayoutProps) {
           flex-direction: column;
           justify-content: space-between;
           align-items: center;
-          min-height: calc(100vh - ${HEADER_HEIGHT}px - 54px);
         `}
       >
         {children}

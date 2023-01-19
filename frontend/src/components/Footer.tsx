@@ -3,6 +3,8 @@ import { createStyles, Container, Group, ActionIcon, Image, Text, Tooltip } from
 import { IconBrandTwitter, IconBrandYoutube, IconBrandInstagram, IconBrandTwitch } from '@tabler/icons'
 import { broadcaster } from 'src/services/twitch'
 
+export const FOOTER_HEIGHT = 55
+
 const useStyles = createStyles((theme) => ({
   footer: {
     borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
@@ -21,6 +23,7 @@ const useStyles = createStyles((theme) => ({
     paddingTop: theme.spacing.xs,
     paddingBottom: theme.spacing.xs,
     minWidth: '95vw',
+    minHeight: FOOTER_HEIGHT,
 
     [theme.fn.smallerThan('xs')]: {
       flexDirection: 'column',

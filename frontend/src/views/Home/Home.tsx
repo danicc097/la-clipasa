@@ -33,6 +33,7 @@ import { usePostsSlice } from 'src/slices/posts'
 import { usePosts } from 'src/queries/api/posts'
 import { IconAlertCircle } from '@tabler/icons'
 import useOnScreen from 'src/hooks/useOnScreen'
+import { FOOTER_HEIGHT } from 'src/components/Footer'
 
 const PADDING_TOP = '2rem'
 const useStyles = createStyles((theme) => ({}))
@@ -104,9 +105,6 @@ export default function Home() {
       <Flex
         css={css`
           padding: 0;
-          .home-scrollarea {
-            /* max-height: calc(100vh - ${HEADER_HEIGHT}px - 54px) !important; */
-          }
         `}
         direction="row"
         justify={'space-between'}
@@ -118,7 +116,7 @@ export default function Home() {
           // onScroll={handleScroll}
           styles={{
             root: {
-              maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 54px - ${PADDING_TOP})`, // TODO footer height const
+              maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px - ${PADDING_TOP})`,
               alignSelf: 'flex-start',
               paddingTop: PADDING_TOP,
               overflow: 'auto',
@@ -133,6 +131,9 @@ export default function Home() {
             css={css`
               .post:not(:first-child) {
                 margin-top: ${PADDING_TOP};
+              }
+              .post:last-child {
+                margin-bottom: 20px;
               }
               width: 100%;
             `}
