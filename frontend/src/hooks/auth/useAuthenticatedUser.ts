@@ -43,10 +43,10 @@ export default function useAuthenticatedUser() {
 
 // TODO doesnt seem to clear react query
 export async function logout(queryClient: QueryClient) {
+  await persister.removeClient() // delete indexed db
   await queryClient.cancelQueries()
   await queryClient.invalidateQueries()
   queryClient.clear()
-  await persister.removeClient()
   Cookies.remove(TWITCH_ACCESS_TOKEN_COOKIE, {
     expires: 365,
     sameSite: 'none',

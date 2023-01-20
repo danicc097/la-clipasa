@@ -1,5 +1,7 @@
 import { createStyles, Title, Text, Button, Container, Group } from '@mantine/core'
 import { Navigate, useNavigate } from 'react-router-dom'
+import { FOOTER_HEIGHT } from 'src/components/Footer'
+import { HEADER_HEIGHT } from 'src/components/Header'
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -42,7 +44,7 @@ interface ErrorPageProps {
 }
 
 export function ErrorPage({ status }: ErrorPageProps) {
-  const { classes } = useStyles()
+  const { classes, theme } = useStyles()
 
   const navigate = useNavigate()
 
@@ -61,7 +63,12 @@ export function ErrorPage({ status }: ErrorPageProps) {
   }
 
   return (
-    <Container className={classes.root}>
+    <Container
+      className={classes.root}
+      miw={'100vw'}
+      mih={`calc(100vh - ${HEADER_HEIGHT}px - ${FOOTER_HEIGHT}px)`}
+      bg={theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white}
+    >
       <div className={classes.label}>{status}</div>
       <Title className={classes.title}>You have found a secret place.</Title>
       <Text color="dimmed" size="lg" align="center" className={classes.description}>
