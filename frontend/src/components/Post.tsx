@@ -584,6 +584,7 @@ function Post(props: PostProps) {
               category={category}
               css={css`
                 pointer-events: none;
+                box-shadow: 1px 2px 4px ${theme.colorScheme === 'dark' ? '#8786881d' : '#5a5a5a36'};
                 /* :hover {
                   filter: drop-shadow(0 1mm 1mm #00000030);
                   transform: scale(1.05);
