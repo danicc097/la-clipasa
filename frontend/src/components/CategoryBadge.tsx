@@ -10,6 +10,9 @@ import emojiDiamante from 'src/assets/emoji-diamante.png'
 import emojiWoki from 'src/assets/emoji-woki.png'
 import emojiBongos from 'src/assets/emoji-bongo.png'
 import emojiDormido from 'src/assets/emoji-dormido.png'
+import emojiSusto1 from 'src/assets/emoji-susto1.png'
+import emojiSusto2 from 'src/assets/emoji-susto2.png'
+import emojiTravieso from 'src/assets/emoji-travieso.png'
 import { PostCategoryNames } from 'types'
 import { IconAlertOctagon, IconVolumeOff } from '@tabler/icons'
 import type { PostCategory } from 'database'
@@ -26,17 +29,20 @@ export const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
   NO_SE_YO: emojiWoki,
   MEME_ARTESANAL: emojiBongos,
   SIN_SONIDO: emojiDormido,
+  GRR: emojiTravieso,
 }
 
 const EMOJI_SIZE = 16
 
 export const categoryPreEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {
-  NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
+  ALERTA_GLONETILLO: <img src={emojiSusto1} height={EMOJI_SIZE} width={EMOJI_SIZE} />,
+  // NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
 }
 
 export const categoryPostEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {
   // SIN_SONIDO: <IconVolumeOff size={EMOJI_SIZE} />,
-  NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
+  ALERTA_GLONETILLO: <img src={emojiSusto2} height={EMOJI_SIZE} width={EMOJI_SIZE} />,
+  // NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
 }
 
 export const categoryColorGradient: Record<PostCategoryKey, MantineGradient> = {
@@ -47,6 +53,8 @@ export const categoryColorGradient: Record<PostCategoryKey, MantineGradient> = {
   SIN_SONIDO: { from: 'gray', to: 'gray' },
   NO_SE_YO: { from: 'red', to: 'red' },
   MEH: { from: '#c4a051', to: '#c5781a' },
+  ALERTA_GLONETILLO: { from: '#a051c4', to: '#a051c4' },
+  GRR: { from: '#51c4ab', to: '#51c4ab' },
 }
 
 /**

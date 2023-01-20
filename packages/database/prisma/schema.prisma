@@ -23,6 +23,8 @@ enum PostCategory {
   ORO
   DIAMANTE
   MEH
+  ALERTA_GLONETILLO
+  GRR
 
   @@schema("public")
 }

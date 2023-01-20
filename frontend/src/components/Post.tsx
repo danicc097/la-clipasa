@@ -567,11 +567,26 @@ function Post(props: PostProps) {
   const [categoriesEditPopoverOpened, setCategoriesEditPopoverOpened] = useState(false)
   const categoryEditRef = useRef(null)
 
-  const handleClickOutside = () => {
-    console.log('clicked outside')
+  const handleClickOutside = (e: MouseEvent) => {
+    const dropdown = document.getElementsByClassName('mantine-MultiSelect-dropdown')[0]
+    const multiselect = document.getElementsByClassName('mantine-MultiSelect-root')[0]
+    if (dropdown && (e.target === dropdown || dropdown.contains(e.target as Node))) {
+      console.log('clicked el is part of dropdown')
+    }
+    if (multiselect && (e.target === multiselect || multiselect.contains(e.target as Node))) {
+      console.log('clicked el is part of multiselect')
+    }
     setCategoriesEditPopoverOpened(false)
   }
-  useOnClickOutside(categoryEditRef, handleClickOutside)
+  // useOnClickOutside(categoryEditRef, handleClickOutside)
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
 
   function renderCategories() {
     return (
@@ -609,35 +624,36 @@ function Post(props: PostProps) {
               }}
               // label={<div onClick={(e) => e.stopPropagation()}>Edit categories multiselect</div>}
               label={
-                <Flex
-                  ref={categoryEditRef}
-                  direction="column"
-                  gap={10}
-                  p={5}
-                  justify="flex-start"
-                  onClickCapture={(e) => e.stopPropagation()}
-                  onClick={(e) => e.stopPropagation()}
-                  css={css`
-                    pointer-events: all;
-                  `}
-                >
-                  <MultiSelect
+                <div ref={categoryEditRef}>
+                  <Flex
+                    direction="column"
+                    gap={10}
+                    p={5}
+                    justify="flex-start"
                     onClickCapture={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
-                    data={categoriesData}
-                    limit={20}
-                    valueComponent={Value}
-                    itemComponent={Item}
-                    searchable
-                    defaultValue={post.categories}
-                    placeholder="Pick countries"
-                    label="Select post categories"
-                  />
+                    css={css`
+                      pointer-events: all;
+                    `}
+                  >
+                    <MultiSelect
+                      onClickCapture={(e) => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
+                      data={categoriesData}
+                      limit={20}
+                      valueComponent={Value}
+                      itemComponent={Item}
+                      searchable
+                      defaultValue={post.categories}
+                      placeholder="Pick countries"
+                      label="Select post categories"
+                    />
 
-                  <Button size="xs" leftIcon={<IconCheck size={16} stroke={1.5} />}>
-                    Save
-                  </Button>
-                </Flex>
+                    <Button size="xs" leftIcon={<IconCheck size={16} stroke={1.5} />}>
+                      Save
+                    </Button>
+                  </Flex>
+                </div>
               }
               arrowPosition="side"
               position="right-start"
