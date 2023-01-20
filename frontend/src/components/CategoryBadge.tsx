@@ -7,6 +7,8 @@ import emojiMeh from 'src/assets/emoji-meh.png'
 import emojiRana from 'src/assets/emoji-rana.png'
 import emojiOro from 'src/assets/emoji-oro.png'
 import emojiDiamante from 'src/assets/emoji-diamante.png'
+import emojiWoki from 'src/assets/emoji-woki.png'
+import emojiBongos from 'src/assets/emoji-bongo.png'
 import { PostCategoryNames } from 'types'
 import { IconAlertOctagon, IconVolumeOff } from '@tabler/icons'
 import type { PostCategory } from 'database'
@@ -20,11 +22,15 @@ export const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
   RANA: emojiRana,
   ORO: emojiOro,
   MEH: emojiMeh,
+  NO_SE_YO: emojiWoki,
+  MEME_ARTESANAL: emojiBongos,
 }
 
 const EMOJI_SIZE = 16
 
-export const categoryPreEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {}
+export const categoryPreEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {
+  NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
+}
 
 export const categoryPostEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {
   SIN_SONIDO: <IconVolumeOff size={EMOJI_SIZE} />,
@@ -109,6 +115,7 @@ export default function CategoryBadge(props: CategoryBadgeProps) {
         `}
       >
         {categoryEmojis[category] && <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />}
+        {categoryPreEmojis[category]}
         <div>{PostCategoryNames[category] ?? category}</div>
         {categoryPostEmojis[category]}
         {categoryEmojis[category] && <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />}

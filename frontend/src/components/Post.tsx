@@ -19,6 +19,11 @@ import {
   Tooltip,
   AspectRatio,
   Popover,
+  CloseButton,
+  Box,
+  SelectItemProps,
+  MultiSelectValueProps,
+  MultiSelect,
 } from '@mantine/core'
 import {
   IconHeart,
@@ -36,14 +41,20 @@ import {
   IconEyeOff,
   IconEdit,
   IconPlus,
+  IconCheck,
 } from '@tabler/icons'
 import { css } from '@emotion/react'
-import type { ArrayElement, PostCategoryNames, PostResponse, PostsGetResponse, RequiredKeys, Union } from 'types'
+import { ArrayElement, PostCategoryNames, PostResponse, PostsGetResponse, RequiredKeys, Union } from 'types'
 import { truncateIntegerToString } from 'src/utils/string'
-import React, { HTMLProps, useEffect, useState } from 'react'
+import React, { HTMLProps, forwardRef, useEffect, useState } from 'react'
 import { truncate } from 'lodash-es'
 import type { Post, PostCategory, Prisma, User } from 'database' // cant use PostCategory exported const
-import CategoryBadge, { CardBackground, PostCategoryKey, uniqueCategoryBackground } from 'src/components/CategoryBadge'
+import CategoryBadge, {
+  CardBackground,
+  PostCategoryKey,
+  categoryEmojis,
+  uniqueCategoryBackground,
+} from 'src/components/CategoryBadge'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import ProtectedComponent from 'src/components/ProtectedComponent'
@@ -54,6 +65,7 @@ import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { isAuthorized } from 'src/services/authorization'
 import { closeAllModals, openConfirmModal, openContextModal, openModal } from '@mantine/modals'
 import { useUISlice } from 'src/slices/ui'
+import { useOnClickOutside } from 'usehooks-ts'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -154,6 +166,59 @@ const useStyles = createStyles((theme) => {
       },
     },
   }
+})
+
+const categoriesData = Object.entries(PostCategoryNames).map(([k, v]) => ({ label: v, value: k }))
+
+const EMOJI_SIZE = 16
+
+function Value({ value, label, onRemove, classNames, ...others }: MultiSelectValueProps & { value: string }) {
+  const emoji = categoryEmojis[value] ? (
+    <Box mr={10}>
+      <img src={categoryEmojis[value]} height={EMOJI_SIZE} width={EMOJI_SIZE} />{' '}
+    </Box>
+  ) : null
+
+  return (
+    <div {...others} onClickCapture={(e) => e.stopPropagation()}>
+      <Box
+        sx={(theme) => ({
+          display: 'flex',
+          cursor: 'default',
+          alignItems: 'center',
+          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+          border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[4]}`,
+          paddingLeft: 10,
+          borderRadius: 4,
+        })}
+      >
+        {emoji}
+        <Box sx={{ lineHeight: 1, fontSize: 12 }}>{label}</Box>
+        <CloseButton onMouseDown={onRemove} variant="transparent" size={22} iconSize={14} tabIndex={-1} />
+      </Box>
+    </div>
+  )
+}
+
+const Item = forwardRef<HTMLDivElement, SelectItemProps>(({ label, value, ...others }, ref) => {
+  const emoji = (
+    <Box mr={10}>
+      {categoryEmojis[value] ? (
+        <img src={categoryEmojis[value]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
+      ) : (
+        <Space w={EMOJI_SIZE} />
+      )}
+    </Box>
+  )
+
+  return (
+    <div ref={ref} {...others}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {emoji}
+        <div>{label}</div>
+      </Box>
+    </div>
+  )
 })
 
 interface PostProps extends HTMLProps<HTMLButtonElement> {
@@ -523,14 +588,53 @@ function Post(props: PostProps) {
           ))}
           <ProtectedComponent requiredRole="MODERATOR">
             <Tooltip
+              opened={categoriesEditPopoverOpened} // work around popover positioning shenanigans by using tooltip instead
               closeDelay={99999999}
-              hidden={!categoriesEditPopoverOpened} // work around popover positioning shenanigans by using tooltip instead
-              label={<div onClick={(e) => e.stopPropagation()}>Edit categories multiselect</div>}
-              arrowPosition="center"
+              width={400}
+              withinPortal
+              styles={{
+                tooltip: {
+                  backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
+                },
+              }}
+              // label={<div onClick={(e) => e.stopPropagation()}>Edit categories multiselect</div>}
+              label={
+                <Flex
+                  direction="column"
+                  gap={10}
+                  p={5}
+                  justify="flex-start"
+                  onClickCapture={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                  css={css`
+                    pointer-events: all;
+                  `}
+                >
+                  <MultiSelect
+                    onClickCapture={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                    data={categoriesData}
+                    limit={20}
+                    valueComponent={Value}
+                    itemComponent={Item}
+                    searchable
+                    defaultValue={post.categories}
+                    placeholder="Pick countries"
+                    label="Select post categories"
+                  />
+
+                  <Button size="xs" leftIcon={<IconCheck size={16} stroke={1.5} />}>
+                    Save
+                  </Button>
+                </Flex>
+              }
+              arrowPosition="side"
+              position="right-start"
               withArrow
             >
               <ActionIcon
-                onBlurCapture={() => setCategoriesEditPopoverOpened(false)}
+                // TODO onClickOutside
+                // onBlurCapture={() => setCategoriesEditPopoverOpened(false)}
                 radius={999999}
                 size={22}
                 className={`${classes.categoryAction} post-categories-${post.id}`}
