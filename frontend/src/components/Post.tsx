@@ -46,7 +46,7 @@ import {
 import { css } from '@emotion/react'
 import { ArrayElement, PostCategoryNames, PostResponse, PostsGetResponse, RequiredKeys, Union } from 'types'
 import { truncateIntegerToString } from 'src/utils/string'
-import React, { HTMLProps, forwardRef, useEffect, useState } from 'react'
+import React, { HTMLProps, forwardRef, useEffect, useState, useRef } from 'react'
 import { truncate } from 'lodash-es'
 import type { Post, PostCategory, Prisma, User } from 'database' // cant use PostCategory exported const
 import CategoryBadge, {
@@ -565,6 +565,13 @@ function Post(props: PostProps) {
   }
 
   const [categoriesEditPopoverOpened, setCategoriesEditPopoverOpened] = useState(false)
+  const categoryEditRef = useRef(null)
+
+  const handleClickOutside = () => {
+    console.log('clicked outside')
+    setCategoriesEditPopoverOpened(false)
+  }
+  useOnClickOutside(categoryEditRef, handleClickOutside)
 
   function renderCategories() {
     return (
@@ -602,6 +609,7 @@ function Post(props: PostProps) {
               // label={<div onClick={(e) => e.stopPropagation()}>Edit categories multiselect</div>}
               label={
                 <Flex
+                  ref={categoryEditRef}
                   direction="column"
                   gap={10}
                   p={5}

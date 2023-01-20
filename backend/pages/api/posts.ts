@@ -108,16 +108,20 @@ export default async (req: NextRequest) => {
               }),
           },
           include: {
-            likedPosts: {
-              where: {
-                userId: { equals: user?.id },
+            ...(user && {
+              likedPosts: {
+                where: {
+                  userId: { equals: user?.id },
+                },
               },
-            }, // length > 0 if user liked
-            savedPosts: {
-              where: {
-                userId: { equals: user?.id },
+            }), // length > 0 if user liked
+            ...(user && {
+              savedPosts: {
+                where: {
+                  userId: { equals: user?.id },
+                },
               },
-            }, // length > 0 if user saved
+            }), // length > 0 if user saved
             User: {
               select: { id: true, displayName: true, profileImage: true },
             }, // minimal author info to display
