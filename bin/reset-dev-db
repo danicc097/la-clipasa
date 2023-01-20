@@ -1,5 +1,6 @@
 #!/bin/bash
 
 cd packages/database || exit
+# in dev will possibly fail when creating migrations
 pnpm run dev:reset && pnpm run dev:seed
 cd - || exit

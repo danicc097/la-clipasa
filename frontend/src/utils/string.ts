@@ -28,3 +28,9 @@ export function sanitizeContentEditableInput(str: string) {
 export function sanitizeContentEditableInputBeforeSubmit(str: string) {
   return str.replace(/&nbsp;|\u202F|\u00A0/g, ' ').trim()
 }
+
+export function joinWithAnd(arr: string[]) {
+  if (arr.length === 1) return arr[0]
+
+  return arr.slice(0, arr.length - 1).join(', ') + ' and ' + arr[arr.length - 1]
+}

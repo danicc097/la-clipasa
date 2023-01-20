@@ -44,8 +44,16 @@ import {
   IconCheck,
 } from '@tabler/icons'
 import { css } from '@emotion/react'
-import { ArrayElement, PostCategoryNames, PostResponse, PostsGetResponse, RequiredKeys, Union } from 'types'
-import { truncateIntegerToString } from 'src/utils/string'
+import {
+  ArrayElement,
+  PostCategoryNames,
+  PostPatchRequest,
+  PostResponse,
+  PostsGetResponse,
+  RequiredKeys,
+  Union,
+} from 'types'
+import { joinWithAnd, truncateIntegerToString } from 'src/utils/string'
 import React, { HTMLProps, forwardRef, useEffect, useState, useRef } from 'react'
 import { truncate } from 'lodash-es'
 import type { Post, PostCategory, Prisma, User } from 'database' // cant use PostCategory exported const
@@ -54,6 +62,7 @@ import CategoryBadge, {
   PostCategoryKey,
   categoryEmojis,
   uniqueCategoryBackground,
+  uniqueCategories,
 } from 'src/components/CategoryBadge'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
@@ -66,6 +75,11 @@ import { isAuthorized } from 'src/services/authorization'
 import { closeAllModals, openConfirmModal, openContextModal, openModal } from '@mantine/modals'
 import { useUISlice } from 'src/slices/ui'
 import { useOnClickOutside } from 'usehooks-ts'
+import { getMatchingKeys } from 'src/utils/object'
+import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
+import { useForm } from '@mantine/form'
+import { extractErrorMessages } from 'src/utils/errors'
+import { showNotification } from '@mantine/notifications'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -307,6 +321,48 @@ function Post(props: PostProps) {
       },
     )
   }
+
+  const [calloutErrors, setCalloutErrors] = useState([])
+
+  const postPatchForm = useForm<PostPatchRequest>({
+    initialValues: {
+      categories: post.categories,
+    },
+    validateInputOnChange: true,
+    validate: {
+      categories: (categories) => {
+        const formUniqueCategories = getMatchingKeys(categories, uniqueCategories)
+        if (formUniqueCategories.length > 1) {
+          return `Cannot have a post with ${joinWithAnd(formUniqueCategories)} at the same time`
+        }
+      },
+    },
+  })
+
+  // TODO state update on success
+  const onCategoriesEditSubmit = postPatchForm.onSubmit((values) => {
+    postPatchMutation.mutate(
+      {
+        postId: String(post.id),
+        body: { categories: values.categories },
+      },
+      {
+        onError(error: any, variables, context) {
+          setCalloutErrors(extractErrorMessages(error))
+        },
+        onSuccess(data, variables, context) {
+          showNotification({
+            id: 'post-updated',
+            title: 'Post updated',
+            message: 'Post updated successfully',
+            color: 'green',
+            icon: <IconCheck size={18} />,
+            autoClose: 5000,
+          })
+        },
+      },
+    )
+  })
 
   const handleCategoriesEditButtonClick = (e) => {
     e.stopPropagation()
@@ -590,41 +646,42 @@ function Post(props: PostProps) {
 
   function renderCategories() {
     return (
-      post.categories?.length > 0 && (
-        <Group position="left">
-          {post.categories.map((category, i) => (
-            <CategoryBadge
-              className="disable-select"
-              key={i}
-              category={category}
-              css={css`
-                pointer-events: none;
-                box-shadow: 1px 2px 4px ${theme.colorScheme === 'dark' ? '#8786881d' : '#5a5a5a36'};
-                /* :hover {
+      <Group position="left">
+        {post.categories?.map((category, i) => (
+          <CategoryBadge
+            className="disable-select"
+            key={i}
+            category={category}
+            css={css`
+              pointer-events: none;
+              box-shadow: 1px 2px 4px ${theme.colorScheme === 'dark' ? '#8786881d' : '#5a5a5a36'};
+              /* :hover {
                   filter: drop-shadow(0 1mm 1mm #00000030);
                   transform: scale(1.05);
                   transition-duration: 0.5s;
                 } */
-                /* :active {
+              /* :active {
                   filter: opacity(0.6);
                 } */
-              `}
-            />
-          ))}
-          <ProtectedComponent requiredRole="MODERATOR">
-            <Tooltip
-              opened={categoriesEditPopoverOpened} // work around popover positioning shenanigans by using tooltip instead
-              closeDelay={99999999}
-              width={400}
-              withinPortal
-              styles={{
-                tooltip: {
-                  backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
-                },
-              }}
-              // label={<div onClick={(e) => e.stopPropagation()}>Edit categories multiselect</div>}
-              label={
-                <div ref={categoryEditRef}>
+            `}
+          />
+        ))}
+        <ProtectedComponent requiredRole="MODERATOR">
+          <Tooltip
+            opened={categoriesEditPopoverOpened} // work around popover positioning shenanigans by using tooltip instead
+            closeDelay={99999999}
+            width={400}
+            withinPortal
+            styles={{
+              tooltip: {
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
+              },
+            }}
+            // label={<div onClick={(e) => e.stopPropagation()}>Edit categories multiselect</div>}
+            label={
+              <>
+                <ErrorCallout title="Error updating post" errors={calloutErrors} />
+                <form onSubmit={onCategoriesEditSubmit} ref={categoryEditRef}>
                   <Flex
                     direction="column"
                     gap={10}
@@ -637,46 +694,49 @@ function Post(props: PostProps) {
                     `}
                   >
                     <MultiSelect
-                      onClickCapture={(e) => e.stopPropagation()}
-                      onClick={(e) => e.stopPropagation()}
+                      {...postPatchForm.getInputProps('categories')}
+                      searchable
                       data={categoriesData}
                       limit={20}
                       valueComponent={Value}
                       itemComponent={Item}
-                      searchable
-                      defaultValue={post.categories}
-                      placeholder="Pick countries"
+                      placeholder="Pick categories"
                       label="Select post categories"
                     />
 
-                    <Button size="xs" leftIcon={<IconCheck size={16} stroke={1.5} />}>
+                    <Button
+                      loading={postPatchMutation.isLoading}
+                      size="xs"
+                      type="submit"
+                      leftIcon={<IconCheck size={16} stroke={1.5} />}
+                    >
                       Save
                     </Button>
                   </Flex>
-                </div>
-              }
-              arrowPosition="side"
-              position="right-start"
-              withArrow
+                </form>
+              </>
+            }
+            arrowPosition="side"
+            position="right-start"
+            withArrow
+          >
+            <ActionIcon
+              // TODO onClickOutside
+              // onBlurCapture={() => setCategoriesEditPopoverOpened(false)}
+              radius={999999}
+              size={22}
+              className={`${classes.categoryAction} post-categories-${post.id}`}
+              onClick={handleCategoriesEditButtonClick}
             >
-              <ActionIcon
-                // TODO onClickOutside
-                // onBlurCapture={() => setCategoriesEditPopoverOpened(false)}
-                radius={999999}
-                size={22}
-                className={`${classes.categoryAction} post-categories-${post.id}`}
-                onClick={handleCategoriesEditButtonClick}
-              >
-                <IconPlus
-                  color={theme.colorScheme === 'light' ? theme.colors.dark[5] : theme.colors.gray[1]}
-                  size={12}
-                  stroke={1.5}
-                />
-              </ActionIcon>
-            </Tooltip>
-          </ProtectedComponent>
-        </Group>
-      )
+              <IconPlus
+                color={theme.colorScheme === 'light' ? theme.colors.dark[5] : theme.colors.gray[1]}
+                size={12}
+                stroke={1.5}
+              />
+            </ActionIcon>
+          </Tooltip>
+        </ProtectedComponent>
+      </Group>
     )
   }
 
