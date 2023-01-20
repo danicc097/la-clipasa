@@ -9,6 +9,7 @@ import emojiOro from 'src/assets/emoji-oro.png'
 import emojiDiamante from 'src/assets/emoji-diamante.png'
 import emojiWoki from 'src/assets/emoji-woki.png'
 import emojiBongos from 'src/assets/emoji-bongo.png'
+import emojiDormido from 'src/assets/emoji-dormido.png'
 import { PostCategoryNames } from 'types'
 import { IconAlertOctagon, IconVolumeOff } from '@tabler/icons'
 import type { PostCategory } from 'database'
@@ -24,6 +25,7 @@ export const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
   MEH: emojiMeh,
   NO_SE_YO: emojiWoki,
   MEME_ARTESANAL: emojiBongos,
+  SIN_SONIDO: emojiDormido,
 }
 
 const EMOJI_SIZE = 16
@@ -33,7 +35,7 @@ export const categoryPreEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = 
 }
 
 export const categoryPostEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {
-  SIN_SONIDO: <IconVolumeOff size={EMOJI_SIZE} />,
+  // SIN_SONIDO: <IconVolumeOff size={EMOJI_SIZE} />,
   NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
 }
 

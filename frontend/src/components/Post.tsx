@@ -179,6 +179,8 @@ function Value({ value, label, onRemove, classNames, ...others }: MultiSelectVal
     </Box>
   ) : null
 
+  const CB: any = CloseButton // TS2590 workaround
+
   return (
     <div {...others} onClickCapture={(e) => e.stopPropagation()}>
       <Box
@@ -194,7 +196,7 @@ function Value({ value, label, onRemove, classNames, ...others }: MultiSelectVal
       >
         {emoji}
         <Box sx={{ lineHeight: 1, fontSize: 12 }}>{label}</Box>
-        <CloseButton onMouseDown={onRemove} variant="transparent" size={22} iconSize={14} tabIndex={-1} />
+        <CB onMouseDown={onRemove} variant="transparent" size={22} iconSize={14} tabIndex={-1} />
       </Box>
     </div>
   )
