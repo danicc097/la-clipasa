@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "vite",
     "tsc": "tsc",
-    "build": "tsc && vite build",
+    "build": "pnpm run prod:generate && tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ./src",
     "test": "vitest watch",
-    "test:no-watch": "vitest run"
+    "test:no-watch": "vitest run",
+    "prod:generate": "cd ../packages/database && pnpm run prod:generate"
   },
   "dependencies": {
     "@babel/core": "^7.20.7",

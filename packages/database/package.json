@@ -20,6 +20,7 @@
     "dev:migrate": ". ./.env && DATABASE_URL=\"$MIGRATE_DATABASE_URL\" prisma generate --data-proxy && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate dev",
     "prod:rollback": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate resolve --rolled-back ",
     "prod:applied": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate resolve --applied ",
+    "prod:generate": "DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma generate --data-proxy",
     "prod:migrate": "DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma generate --data-proxy && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate deploy",
     "prod:reset": ". ./.env && DATABASE_URL=\"$MIGRATE_PROD_DATABASE_URL\" SHADOW_DATABASE_URL=\"$SHADOW_PROD_DATABASE_URL\" prisma migrate reset",
     "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix ."
