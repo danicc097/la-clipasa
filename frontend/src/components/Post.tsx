@@ -339,7 +339,31 @@ function Post(props: PostProps) {
     },
   })
 
-  // TODO state update on success
+  const onCategoriesEditSuccess = (data, variables, context) => {
+    showNotification({
+      id: 'post-updated',
+      title: 'Post updated',
+      message: 'Post updated successfully',
+      color: 'green',
+      icon: <IconCheck size={18} />,
+      autoClose: 5000,
+    })
+
+    queryClient.setQueryData<InfiniteData<PostsGetResponse>>([`apiGetPosts`, getPostsQueryParams], (data) => ({
+      ...data,
+      pages: data.pages.map((page) => ({
+        ...page,
+        data: page.data.map((p) => {
+          if (p.id === post.id) {
+            console.log('updating react query data')
+            p.categories = postPatchForm.values.categories
+          }
+          return p
+        }),
+      })),
+    }))
+  }
+
   const onCategoriesEditSubmit = postPatchForm.onSubmit((values) => {
     postPatchMutation.mutate(
       {
@@ -350,16 +374,7 @@ function Post(props: PostProps) {
         onError(error: any, variables, context) {
           setCalloutErrors(extractErrorMessages(error))
         },
-        onSuccess(data, variables, context) {
-          showNotification({
-            id: 'post-updated',
-            title: 'Post updated',
-            message: 'Post updated successfully',
-            color: 'green',
-            icon: <IconCheck size={18} />,
-            autoClose: 5000,
-          })
-        },
+        onSuccess: onCategoriesEditSuccess,
       },
     )
   })
@@ -634,7 +649,6 @@ function Post(props: PostProps) {
     }
     setCategoriesEditPopoverOpened(false)
   }
-  // useOnClickOutside(categoryEditRef, handleClickOutside)
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside)
@@ -677,7 +691,6 @@ function Post(props: PostProps) {
                 backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
               },
             }}
-            // label={<div onClick={(e) => e.stopPropagation()}>Edit categories multiselect</div>}
             label={
               <>
                 <ErrorCallout title="Error updating post" errors={calloutErrors} />
@@ -721,8 +734,6 @@ function Post(props: PostProps) {
             withArrow
           >
             <ActionIcon
-              // TODO onClickOutside
-              // onBlurCapture={() => setCategoriesEditPopoverOpened(false)}
               radius={999999}
               size={22}
               className={`${classes.categoryAction} post-categories-${post.id}`}
