@@ -6,5 +6,5 @@
 #    the only workaround. see https://github.com/prisma/prisma/issues/7678
 
 cd packages/database || exit
-pnpm run dev:reset && pnpm run dev:seed
+pnpm run dev:reset --force && pnpm run dev:seed
 cd - || exit

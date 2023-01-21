@@ -57,7 +57,7 @@ export type PostsGetResponse = {
 
 export type UserUpdateOrCreateRequest = Pick<User, 'displayName' | 'isFollower' | 'isSubscriber'>
 
-export type PostCreateRequest = Pick<Post, 'title' | 'content' | 'link'>
+export type PostCreateRequest = Pick<Post, 'title' | 'content' | 'link'> & Partial<Post>
 
 export type PostPatchRequest = Partial<
   Pick<Post, 'title' | 'content' | 'link' | 'isModerated' | 'categories' | 'pinned'> & {

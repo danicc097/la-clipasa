@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { useRouter } from 'next/router'
 import { PostCategory, Prisma, PrismaClient, User } from 'database'
-import { PostCategoryNames, PostQueryParams, PostsGetResponse } from 'types'
+import { PostCategoryNames, PostCreateRequest, PostQueryParams, PostsGetResponse } from 'types'
 import { cursorTo } from 'readline'
 import prisma from 'lib/prisma'
+import { isAuthorized } from 'src/services/authorization'
 
 // TODO https://github.com/prisma/prisma/issues/6219#issuecomment-1264724714
 // https://github.com/prisma/prisma/issues/10305#issuecomment-1148988650
@@ -150,28 +151,30 @@ export default async (req: NextRequest) => {
         if (!headerTwitchId) return new Response('unauthenticated', { status: 401 })
 
         const user = await prisma.user.findFirst({ where: { twitchId: headerTwitchId } })
-
-        if (headerTwitchId !== user?.twitchId) {
-          console.log(`twitch id differs: ${headerTwitchId} - ${user?.twitchId}`)
-          return new Response(JSON.stringify('cannot post as a different user'), { status: 403 })
-        }
+        if (!user) return new Response('unauthenticated', { status: 401 })
 
         // curl -X POST "https://edge-functions-backend.vercel.app/api/posts"  -H 'Authorization: Bearer 1btt566hxkovfzn4qwt2a6h8sdotnk' -H 'Client-Id: r2r4w2bedvlt0qmfexgpnzqvv1ymfq' -d '{"title":"title", "link":"link", "content":"content", "userId": "a32065f5-fc9e-4dfd-b292-4709d211a86c"}'
-        let payload: Prisma.PostUncheckedCreateInput
+        let payload: PostCreateRequest
         try {
           payload = await req.json()
           console.log(payload)
         } catch (error) {
           return new Response('missing payload', { status: 400 })
         }
+
+        // allow mods to restore deleted posts
+        if (payload.userId && payload.userId !== user?.twitchId && !isAuthorized(user, 'MODERATOR')) {
+          return new Response(JSON.stringify('cannot post as a different user'), { status: 403 })
+        }
+
         const post = await prisma.post.create({
           data: {
             link: payload.link,
             title: payload.title,
             content: payload.content,
-            userId: user.id,
+            userId: payload.userId ?? user.id,
           },
-        }) // obviously must explicitly set fields later
+        })
 
         // await discordPostUpload(post)
 

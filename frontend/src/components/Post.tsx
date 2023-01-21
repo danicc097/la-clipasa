@@ -829,6 +829,7 @@ function Post(props: PostProps) {
             onClick={(e) => {
               e.stopPropagation()
               console.log('handle restore ')
+              // TODO postCreateMutation with `post` as is
             }}
             className={`${classes.action} restore-button`}
             size={'lg'}
