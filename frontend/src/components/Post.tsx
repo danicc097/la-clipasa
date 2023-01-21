@@ -68,7 +68,7 @@ import CategoryBadge, {
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import ProtectedComponent from 'src/components/ProtectedComponent'
-import { usePostDeleteMutation, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
+import { API_POSTS_KEY, usePostDeleteMutation, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
 import { showRelativeTimestamp } from 'src/utils/date'
 import { InfiniteData, useQueryClient } from '@tanstack/react-query'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
@@ -298,7 +298,7 @@ function Post(props: PostProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([`apiGetPosts`, getPostsQueryParams], (data) => ({
+      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, getPostsQueryParams], (data) => ({
         ...data,
         pages: data.pages.map((page) => ({
           ...page,
@@ -354,7 +354,7 @@ function Post(props: PostProps) {
       autoClose: 5000,
     })
 
-    queryClient.setQueryData<InfiniteData<PostsGetResponse>>([`apiGetPosts`, getPostsQueryParams], (data) => ({
+    queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, getPostsQueryParams], (data) => ({
       ...data,
       pages: data.pages.map((page) => ({
         ...page,
@@ -400,7 +400,7 @@ function Post(props: PostProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([`apiGetPosts`, getPostsQueryParams], (data) => ({
+      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, getPostsQueryParams], (data) => ({
         ...data,
         pages: data.pages.map((page) => ({
           ...page,
@@ -445,8 +445,13 @@ function Post(props: PostProps) {
         autoClose: 3000,
       })
 
-      setPostDeleted(true)
-      setDeleteButtonLoading(false)
+      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, getPostsQueryParams], (data) => ({
+        ...data,
+        pages: data.pages.map((page) => ({
+          ...page,
+          data: page.data.filter((p) => p.id !== post.id),
+        })),
+      }))
     }
 
     openConfirmModal({
@@ -476,7 +481,7 @@ function Post(props: PostProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([`apiGetPosts`, getPostsQueryParams], (data) => ({
+      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, getPostsQueryParams], (data) => ({
         ...data,
         pages: data.pages.map((page) => ({
           ...page,
@@ -811,7 +816,8 @@ function Post(props: PostProps) {
           }
         }
 
-        * > :not(.restore-button, .restore-button *) {
+        * > :not(.restore-button, .restore-button *),
+        ::before {
           filter: ${postDeleted ? 'grayscale(1)' : 'none'};
           pointer-events: ${postDeleted ? 'none' : 'all'};
         }

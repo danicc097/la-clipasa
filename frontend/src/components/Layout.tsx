@@ -107,6 +107,26 @@ export default function Layout({ children }: LayoutProps) {
     queryClient.invalidateQueries({
       predicate: (query) => query.queryKey[0] === TWITCH_KEY,
     })
+
+    const onBeforeUnload = function (this: Window, e: BeforeUnloadEvent): void {
+      e.preventDefault()
+
+      // to implement client side restore without deletedAt would need to delete posts from react query cache when leaving
+      // so theyre not shown for the moderator/admin
+      // 1. setQueryData filter pages based on deletedPostIds
+      // 2. set state deletedPostIds to []
+      // however there will be inconsistencies since it will have cascaded deletes in the server. so terrible idea. if for some reason we need to add restore functionality just use soft deletes
+
+      // for (let i = 0; i < 100_000; i++) { // debug
+      //   console.log(i)
+      // }
+    }
+
+    window.addEventListener('beforeunload', onBeforeUnload, { capture: true })
+
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload, { capture: true })
+    }
   }, [])
 
   useEffect(() => {
@@ -114,7 +134,7 @@ export default function Layout({ children }: LayoutProps) {
     s.setAttribute('src', 'https://platform.twitter.com/widgets.js') // also see  "react-twitter-embed"
     s.setAttribute('async', 'true')
     document.head.appendChild(s)
-  })
+  }, []) // probably need to remove dep arr
 
   return (
     <>
