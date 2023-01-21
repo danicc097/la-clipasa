@@ -1,6 +1,10 @@
 #!/bin/bash
 
+# troubleshooting:
+#  - in dev will possibly fail when creating migrations
+#  - for "cached plan must not change result type" errors, resetting again until it works seems like
+#    the only workaround. see https://github.com/prisma/prisma/issues/7678
+
 cd packages/database || exit
-# in dev will possibly fail when creating migrations
 pnpm run dev:reset && pnpm run dev:seed
 cd - || exit

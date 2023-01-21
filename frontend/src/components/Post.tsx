@@ -42,6 +42,7 @@ import {
   IconEdit,
   IconPlus,
   IconCheck,
+  IconRefresh,
 } from '@tabler/icons'
 import { css } from '@emotion/react'
 import {
@@ -446,8 +447,6 @@ function Post(props: PostProps) {
 
       setPostDeleted(true)
       setDeleteButtonLoading(false)
-
-      // TODO show button without gray filter to restore
     }
 
     openConfirmModal({
@@ -801,8 +800,6 @@ function Post(props: PostProps) {
         background-color: ${cardBackgroundColor};
         background-clip: padding-box;
 
-        filter: ${postDeleted ? 'grayscale(1)' : 'none'};
-        pointer-events: ${postDeleted ? 'none' : 'auto'};
         animation: 0.4s ease-out 0s 1 animateIn;
 
         @keyframes animateIn {
@@ -813,10 +810,34 @@ function Post(props: PostProps) {
             transition: opacity 0.3s;
           }
         }
+
+        * > :not(.restore-button, .restore-button *) {
+          filter: ${postDeleted ? 'grayscale(1)' : 'none'};
+          pointer-events: ${postDeleted ? 'none' : 'all'};
+        }
       `}
       {...(htmlProps as any)}
     >
       {props.children}
+      {postDeleted && (
+        <Tooltip label="Restore" arrowPosition="center" withArrow>
+          <ActionIcon
+            css={css`
+              position: absolute;
+              right: 20px;
+            `}
+            onClick={(e) => {
+              e.stopPropagation()
+              console.log('handle restore ')
+            }}
+            className={`${classes.action} restore-button`}
+            size={'lg'}
+            p={5}
+          >
+            <IconRefresh color="green" size={32} stroke={1.5} />
+          </ActionIcon>
+        </Tooltip>
+      )}
       {renderCategories()}
       {renderTitle()}
       {renderBody()}
