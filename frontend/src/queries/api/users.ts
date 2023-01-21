@@ -17,6 +17,8 @@ export function useUser() {
     },
     retryDelay: 1000,
     queryFn: async ({ signal }): Promise<User> => {
+      if (!twitchId) return null
+
       const { data } = await axios.get(`${import.meta.env.VITE_URL}/api/users/${twitchId}`, {
         headers: {
           Authorization: `Bearer ${twitchToken}`,

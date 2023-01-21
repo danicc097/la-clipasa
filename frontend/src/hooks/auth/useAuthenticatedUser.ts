@@ -11,6 +11,7 @@ import {
 } from 'src/queries/twitch'
 import { POSTS_SLICE_PERSIST_KEY } from 'src/slices/posts'
 import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY } from 'src/slices/ui'
+import { useIsFirstRender } from 'usehooks-ts'
 
 export default function useAuthenticatedUser() {
   const mountedRef = useMountedRef()
@@ -20,17 +21,18 @@ export default function useAuthenticatedUser() {
   const twitchUserFollower = useTwitchUserFollower()
   const twitchUserSubscriber = useTwitchUserSubscriber()
   const twitchValidateToken = useTwitchValidateToken()
+  const isFirstRender = useIsFirstRender()
 
   const isAuthenticated = !!twitchUser.data?.data?.[0]?.id
   const isSubscriber = !!twitchUserSubscriber.data?.data[0].broadcaster_id
   const isFollower = !!twitchUserFollower.data?.data[0].to_id
 
   useEffect(() => {
-    if (mountedRef.current) {
+    if (mountedRef.current && isFirstRender) {
       console.log('triggered useAuthenticatedUser useEffect')
       if (!twitchValidateToken.isLoading) twitchValidateToken.refetch()
     }
-  }, [twitchUser.data])
+  }, [twitchUser.data, isFirstRender])
 
   return {
     logout,

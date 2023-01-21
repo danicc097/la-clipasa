@@ -264,14 +264,18 @@ function Post(props: PostProps) {
     : cardBackground
     ? cardBackground.color(theme.colorScheme)
     : 'auto'
+  const [deleteButtonLoading, setDeleteButtonLoading] = useState(false)
   const [moderateButtonLoading, setModerateButtonLoading] = useState(false)
   const [lastSeenBeacon, setLastSeenBeacon] = useState(false)
   const [saveBeacon, setSaveBeacon] = useState(false)
   const [likeBeacon, setLikeBeacon] = useState(false)
+  const [postDeleted, setPostDeleted] = useState(false)
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
   const postPatchMutation = usePostPatchMutation()
   const postDeleteMutation = usePostDeleteMutation()
   const usePostsQuery = usePosts()
+  const [categoriesEditPopoverOpened, setCategoriesEditPopoverOpened] = useState(false)
+  const categoryEditRef = useRef(null)
 
   /**
    * TODO background image if lastSeenPostId !== post.id overriding existing one
@@ -404,10 +408,10 @@ function Post(props: PostProps) {
               console.log('updating react query data')
               if (hasLiked) {
                 p.likedPosts = []
-                --post._count.likedPosts
+                p._count.likedPosts = p._count.likedPosts - 1
               } else {
                 p.likedPosts = [{ postId: p.id, userId: p.userId }]
-                ++post._count.likedPosts
+                p._count.likedPosts = p._count.likedPosts + 1
               }
             }
             return p
@@ -429,15 +433,35 @@ function Post(props: PostProps) {
     )
   }
 
-  const openDeleteConfirmModal = () =>
+  const openDeleteConfirmModal = () => {
+    const onSuccess = (data, variables, context) => {
+      showNotification({
+        id: 'post-deleted',
+        title: 'Post deleted',
+        message: 'Post deleted successfully',
+        color: 'yellow',
+        icon: <IconTrash size={18} />,
+        autoClose: 3000,
+      })
+
+      setPostDeleted(true)
+      setDeleteButtonLoading(false)
+
+      // TODO show button without gray filter to restore
+    }
+
     openConfirmModal({
       title: 'Delete post',
       children: <Text size="sm">This action cannot be reversed.</Text>,
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
-      onConfirm: () => console.log('Confirmed'),
+      onConfirm: () => {
+        setDeleteButtonLoading(true)
+        postDeleteMutation.mutate(String(post.id), { onSuccess })
+      },
     })
+  }
 
   const handleDeleteButtonClick = (e) => {
     e.stopPropagation()
@@ -572,7 +596,7 @@ function Post(props: PostProps) {
             </ProtectedComponent>
             {canDeletePost && (
               <Tooltip label="Delete" arrowPosition="center" withArrow>
-                <ActionIcon onClick={handleDeleteButtonClick} className={classes.action}>
+                <ActionIcon onClick={handleDeleteButtonClick} className={classes.action} loading={deleteButtonLoading}>
                   <IconTrash size={16} color={theme.colors.red[6]} stroke={1.5} />
                 </ActionIcon>
               </Tooltip>
@@ -634,9 +658,6 @@ function Post(props: PostProps) {
       </Text>
     )
   }
-
-  const [categoriesEditPopoverOpened, setCategoriesEditPopoverOpened] = useState(false)
-  const categoryEditRef = useRef(null)
 
   const handleClickOutside = (e: MouseEvent) => {
     const dropdown = document.getElementsByClassName('mantine-MultiSelect-dropdown')[0]
@@ -780,6 +801,8 @@ function Post(props: PostProps) {
         background-color: ${cardBackgroundColor};
         background-clip: padding-box;
 
+        filter: ${postDeleted ? 'grayscale(1)' : 'none'};
+        pointer-events: ${postDeleted ? 'none' : 'auto'};
         animation: 0.4s ease-out 0s 1 animateIn;
 
         @keyframes animateIn {
