@@ -14,12 +14,14 @@ import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUse
 import Cookies from 'js-cookie'
 import { broadcaster } from 'src/services/twitch'
 
+export const TWITCH_KEY = 'twitch'
+
 export function useTwitchUser() {
   const { twitchToken } = useUISlice()
 
-  // queryClient.cancelQueries({ queryKey: [`twitchUser-${twitchToken}`] })
+  // queryClient.cancelQueries({ queryKey: [TWITCH_KEY, `User-${twitchToken}`] })
   return useQuery<TwitchUserResponse, AxiosError>({
-    queryKey: [`twitchUser-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [TWITCH_KEY, `User-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
@@ -43,7 +45,7 @@ export function useTwitchUserSubscriber() {
   const twitchId = twitchUser?.data[0].id
 
   return useQuery<TwitchUserSubscriptionResponse, AxiosError>({
-    queryKey: [`twitchUserSubscriber-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [TWITCH_KEY, `UserSubscriber-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
@@ -75,7 +77,7 @@ export function useTwitchUserFollower() {
   const twitchId = twitchUser?.data[0].id
 
   return useQuery<TwitchUserFollowResponse, AxiosError>({
-    queryKey: [`twitchUserFollower-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [TWITCH_KEY, `UserFollower-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
@@ -108,7 +110,7 @@ export function useTwitchValidateToken() {
   const twitchId = twitchUser?.data[0].id
 
   return useQuery<TwitchTokenValidateResponse, AxiosError>({
-    queryKey: [`twitchValidateToken-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [TWITCH_KEY, `ValidateToken-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
@@ -139,7 +141,7 @@ export function useTwitchBroadcasterLive() {
   const twitchId = twitchUser?.data[0].id
 
   return useQuery<TwitchStreamResponse, AxiosError>({
-    queryKey: [`twitchBroadcasterLive-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [TWITCH_KEY, `BroadcasterLive-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response?.status) && failureCount < 3) return true
     },
@@ -171,7 +173,7 @@ export function useTwitchBroadcasterLive() {
 
 //   return useQuery<any, AxiosError>({
 //     enabled: false,
-//     queryKey: [`twitchFollow-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
+//     queryKey: [TWITCH_KEY, `Follow-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
 //     retry: (failureCount, error) => {
 //       if ([401,404].includes(error.response?.status)  && failureCount < 3) return true
 //     },

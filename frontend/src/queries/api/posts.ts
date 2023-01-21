@@ -7,6 +7,8 @@ import type { PostCreateRequest, PostPatchRequest, PostResponse, PostsGetRespons
 import { formatURLWithQueryParams } from 'src/utils/url'
 import { usePostsSlice } from 'src/slices/posts'
 
+export const API_POSTS_KEY = 'api-posts'
+
 /**
  *
  * see infinite scroll: https://tanstack.com/query/v4/docs/react/guides/infinite-queries
@@ -32,7 +34,7 @@ export function usePosts() {
   }
   */
   return useInfiniteQuery<PostsGetResponse, AxiosError>({
-    queryKey: [`apiGetPosts`, getPostsQueryParams], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [API_POSTS_KEY, `Get`, getPostsQueryParams], // any state used inside the queryFn must be part of the queryKey
     retry: false,
     // cacheTime: 1000 * 60 * 60, // 1h
     cacheTime: 0,
@@ -61,7 +63,7 @@ export function usePostById() {
   const twitchId = twitchUser?.data[0].id
 
   return useQuery<Post, AxiosError>({
-    queryKey: [`apiUser-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [API_POSTS_KEY, `GetById-${twitchToken}-${twitchId}`], // any state used inside the queryFn must be part of the queryKey
     retry: (failureCount, error) => {
       if (![401, 404].includes(error.response?.status) && failureCount < 2) return true
     },
@@ -82,7 +84,7 @@ export function usePostCreateMutation() {
   const { twitchToken } = useUISlice()
 
   return useMutation({
-    mutationKey: [`apiPostCreate-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
+    mutationKey: [API_POSTS_KEY, `Create-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
     retry: false,
     mutationFn: async (body: PostCreateRequest): Promise<Post> => {
       const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/posts`, body, {
@@ -97,10 +99,14 @@ export function usePostCreateMutation() {
 
 export function usePostPatchMutation() {
   const { twitchToken } = useUISlice()
+  const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: [`apiPostPatch-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
+    mutationKey: [API_POSTS_KEY, `Patch-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
     retry: false,
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({ predicate: (query) => query.queryKey[0] === API_POSTS_KEY })
+    },
     mutationFn: async ({ body, postId }: { body: PostPatchRequest; postId: string }): Promise<Post> => {
       const { data } = await axios.patch(`${import.meta.env.VITE_URL}/api/posts/${postId}`, body, {
         headers: {
@@ -115,10 +121,14 @@ export function usePostPatchMutation() {
 // will show button if post.userId === user.id or has at least mod role
 export function usePostDeleteMutation() {
   const { twitchToken } = useUISlice()
+  const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: [`apiPostDelete-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
+    mutationKey: [API_POSTS_KEY, `Delete-${twitchToken}`], // any state used inside the queryFn must be part of the queryKey
     retry: false,
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({ predicate: (query) => query.queryKey[0] === API_POSTS_KEY })
+    },
     mutationFn: async (postId: string): Promise<AxiosResponse> => {
       return await axios.delete(`${import.meta.env.VITE_URL}/api/posts/${postId}`, {
         headers: {

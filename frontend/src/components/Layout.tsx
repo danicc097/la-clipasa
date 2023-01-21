@@ -10,6 +10,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useUISlice } from 'src/slices/ui'
 import Footer, { FOOTER_HEIGHT } from 'src/components/Footer'
 import {
+  TWITCH_KEY,
   useTwitchBroadcasterLive,
   useTwitchUser,
   useTwitchUserFollower,
@@ -104,7 +105,7 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      predicate: (query) => (query.queryKey[0] as string).startsWith('twitch'),
+      predicate: (query) => query.queryKey[0] === TWITCH_KEY,
     })
   }, [])
 
