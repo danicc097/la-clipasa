@@ -68,7 +68,7 @@ export default function Home() {
       console.log('fetching next posts page')
       usePostsQuery.fetchNextPage({ pageParam: nextCursor })
     }
-  }, [isLastPostOnScreen, nextCursor])
+  }, [isLastPostOnScreen, nextCursor, usePostsQuery.data])
 
   const renderPosts = () => {
     if (posts?.length === 0)

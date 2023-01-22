@@ -164,7 +164,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const [typedEmote, setTypedEmote] = useState('')
   const [awaitEmoteCompletion, setAwaitEmoteCompletion] = useState(false)
   const [calloutErrors, setCalloutErrors] = useState([])
-  const { isAuthenticated } = useAuthenticatedUser()
+  const { isAuthenticated, user } = useAuthenticatedUser()
 
   const postCreateForm = useForm<PostCreateRequest>({
     initialValues: {
@@ -514,7 +514,19 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                   >
                     Saved posts
                   </Chip>
-                  <Chip defaultChecked variant="filled" color="green" onClick={() => null}>
+                  <Chip
+                    defaultChecked
+                    variant="filled"
+                    color="green"
+                    checked={getPostsQueryParams.authorId !== undefined}
+                    onClick={() =>
+                      setGetPostsQueryParams({
+                        ...getPostsQueryParams,
+                        // no scenario where we want only posts not authorId
+                        authorId: getPostsQueryParams.authorId === undefined ? user.data.id : undefined,
+                      })
+                    }
+                  >
                     My posts
                   </Chip>
                 </Flex>
