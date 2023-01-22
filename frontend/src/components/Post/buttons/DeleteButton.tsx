@@ -3,19 +3,19 @@ import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { IconTrash } from '@tabler/icons'
 import { InfiniteData, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useStyles } from 'src/components/Post/buttons/styles'
+import { PostContext } from 'src/components/Post/Post'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { API_POSTS_KEY, usePostDeleteMutation } from 'src/queries/api/posts'
 import { isAuthorized } from 'src/services/authorization'
 import { usePostsSlice } from 'src/slices/posts'
 import type { PostResponse, PostsGetResponse } from 'types'
 
-interface DeleteButtonButtonProps {
-  post: PostResponse
-}
+interface DeleteButtonButtonProps {}
 
-export default function DeleteButton({ post }: DeleteButtonButtonProps) {
+export default function DeleteButton({}: DeleteButtonButtonProps) {
+  const post = useContext(PostContext)
   const postDeleteMutation = usePostDeleteMutation()
   const queryClient = useQueryClient()
   const { classes, theme } = useStyles()

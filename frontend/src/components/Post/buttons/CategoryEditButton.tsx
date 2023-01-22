@@ -14,10 +14,11 @@ import {
 import { useForm } from '@mantine/form'
 import { IconCheck, IconPlus } from '@tabler/icons'
 import { InfiniteData, useQueryClient } from '@tanstack/react-query'
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { forwardRef, useContext, useEffect, useRef, useState } from 'react'
 import { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadge'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import { useStyles } from 'src/components/Post/buttons/styles'
+import { PostContext } from 'src/components/Post/Post'
 import ProtectedComponent from 'src/components/ProtectedComponent'
 import { API_POSTS_KEY, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
 import { usePostsSlice } from 'src/slices/posts'
@@ -81,11 +82,10 @@ const Item = forwardRef<HTMLDivElement, SelectItemProps>(({ label, value, ...oth
   )
 })
 
-interface CategoryEditButtonProps {
-  post: PostResponse
-}
+interface CategoryEditButtonProps {}
 
-export default function CategoryEditButton({ post }: CategoryEditButtonProps) {
+export default function CategoryEditButton({}: CategoryEditButtonProps) {
+  const post = useContext(PostContext)
   const queryClient = useQueryClient()
   const { classes, theme } = useStyles()
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()

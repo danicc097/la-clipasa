@@ -1,18 +1,18 @@
 import { ActionIcon, Tooltip } from '@mantine/core'
 import { IconBookmark } from '@tabler/icons'
 import { InfiniteData, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useStyles } from 'src/components/Post/buttons/styles'
+import { PostContext } from 'src/components/Post/Post'
 import ProtectedComponent from 'src/components/ProtectedComponent'
 import { API_POSTS_KEY, usePostPatchMutation } from 'src/queries/api/posts'
 import { usePostsSlice } from 'src/slices/posts'
 import type { PostResponse, PostsGetResponse } from 'types'
 
-interface SaveButtonProps {
-  post: PostResponse
-}
+interface SaveButtonProps {}
 
-export default function SaveButton({ post }: SaveButtonProps) {
+export default function SaveButton({}: SaveButtonProps) {
+  const post = useContext(PostContext)
   const queryClient = useQueryClient()
   const { classes, theme } = useStyles()
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()

@@ -6,11 +6,9 @@ import ProtectedComponent from 'src/components/ProtectedComponent'
 import { usePostsSlice } from 'src/slices/posts'
 import type { PostResponse } from 'types'
 
-interface EditButtonProps {
-  post: PostResponse
-}
+interface EditButtonProps {}
 
-export default function EditButton({ post }: EditButtonProps) {
+export default function EditButton({}: EditButtonProps) {
   const queryClient = useQueryClient()
   const { classes, theme } = useStyles()
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()

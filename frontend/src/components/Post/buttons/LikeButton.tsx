@@ -1,19 +1,19 @@
 import { ActionIcon, Button, Tooltip } from '@mantine/core'
 import { IconHeart } from '@tabler/icons'
 import { InfiniteData, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useStyles } from 'src/components/Post/buttons/styles'
+import { PostContext } from 'src/components/Post/Post'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { API_POSTS_KEY, usePostPatchMutation } from 'src/queries/api/posts'
 import { usePostsSlice } from 'src/slices/posts'
 import { truncateIntegerToString } from 'src/utils/string'
 import type { PostResponse, PostsGetResponse } from 'types'
 
-interface LikeButtonProps {
-  post: PostResponse
-}
+interface LikeButtonProps {}
 
-export default function LikeButton({ post }: LikeButtonProps) {
+export default function LikeButton({}: LikeButtonProps) {
+  const post = useContext(PostContext)
   const queryClient = useQueryClient()
   const { classes, theme } = useStyles()
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()

@@ -3,11 +3,9 @@ import { IconShare } from '@tabler/icons'
 import { useStyles } from 'src/components/Post/buttons/styles'
 import type { PostResponse } from 'types'
 
-interface ShareButtonProps {
-  post: PostResponse
-}
+interface ShareButtonProps {}
 
-export default function ShareButton({ post }: ShareButtonProps) {
+export default function ShareButton({}: ShareButtonProps) {
   const { classes, theme } = useStyles()
 
   return (

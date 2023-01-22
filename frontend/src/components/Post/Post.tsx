@@ -14,7 +14,7 @@ import {
 import { IconExternalLink } from '@tabler/icons'
 import { css } from '@emotion/react'
 import type { PostResponse } from 'types'
-import React, { HTMLProps, useState } from 'react'
+import React, { HTMLProps, useContext, useEffect, useMemo, useState } from 'react'
 import { truncate } from 'lodash-es'
 import type { Post } from 'database' // cant use PostCategory exported const
 import CategoryBadge, { CardBackground, uniqueCategoryBackground } from 'src/components/CategoryBadge'
@@ -32,6 +32,7 @@ import LikeButton from 'src/components/Post/buttons/LikeButton'
 import SaveButton from 'src/components/Post/buttons/SaveButton'
 import LastSeenButton from 'src/components/Post/buttons/LastSeenButton'
 import ShareButton from 'src/components/Post/buttons/ShareButton'
+import { usePosts } from 'src/queries/api/posts'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -111,6 +112,8 @@ interface PostProps extends HTMLProps<HTMLButtonElement> {
   footer: JSX.Element
 }
 
+export const PostContext = React.createContext<PostResponse>(null)
+
 /**
  * Interesting possiblities:
  *  - broadcast poll creation per each post if role higher than user
@@ -120,6 +123,7 @@ function Post(props: PostProps) {
   const queryClient = useQueryClient()
   const { post, backgroundImage, footer, className, ...htmlProps } = props
   const { classes, theme } = useStyles()
+  const usePostsQuery = usePosts()
   const cardBackground: CardBackground =
     uniqueCategoryBackground[post.categories.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = backgroundImage ? backgroundImage : cardBackground ? cardBackground.image : 'auto'
@@ -142,13 +146,13 @@ function Post(props: PostProps) {
             {footer}
           </Text>
           <Group spacing={8}>
-            <LikeButton post={post} />
-            <SaveButton post={post} />
-            <LastSeenButton post={post} />
-            <ShareButton post={post} />
-            <ModerateButton post={post} />
-            <EditButton post={post} />
-            <DeleteButton post={post} />
+            <LikeButton />
+            <SaveButton />
+            <LastSeenButton />
+            <ShareButton />
+            <ModerateButton />
+            <EditButton />
+            <DeleteButton />
           </Group>
         </Group>
       </Card.Section>
@@ -229,67 +233,69 @@ function Post(props: PostProps) {
             `}
           />
         ))}
-        <CategoryEditButton post={post} />
+        <CategoryEditButton />
       </Group>
     )
   }
 
   return (
-    <Card
-      p="lg"
-      radius={12}
-      className={`${classes.card} ${className ?? ''}`}
-      onClick={(e) => {
-        openModal({
-          children: (
-            <AspectRatio ratio={16 / 9}>
-              <iframe
-                src="https://www.youtube.com/embed/KY2eBrm5pT4"
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </AspectRatio>
-          ),
-        })
-      }}
-      /* move to classes */
-      css={css`
-        background-repeat: no-repeat;
-        background-size: auto 100%;
-        background-position: right top;
-        background-clip: padding-box;
-        background-image: url(${cardBackgroundImage});
-        background-color: ${cardBackgroundColor};
-        background-clip: padding-box;
+    <PostContext.Provider value={useMemo(() => post, [post])}>
+      <Card
+        p="lg"
+        radius={12}
+        className={`${classes.card} ${className ?? ''}`}
+        onClick={(e) => {
+          openModal({
+            children: (
+              <AspectRatio ratio={16 / 9}>
+                <iframe
+                  src="https://www.youtube.com/embed/KY2eBrm5pT4"
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </AspectRatio>
+            ),
+          })
+        }}
+        /* move to classes */
+        css={css`
+          background-repeat: no-repeat;
+          background-size: auto 100%;
+          background-position: right top;
+          background-clip: padding-box;
+          background-image: url(${cardBackgroundImage});
+          background-color: ${cardBackgroundColor};
+          background-clip: padding-box;
 
-        animation: 0.4s ease-out 0s 1 animateIn;
+          animation: 0.4s ease-out 0s 1 animateIn;
 
-        @keyframes animateIn {
-          0% {
-            transform: translate3d(0px, 15px, 0) scale(0.8);
-            filter: blur(3px);
-            opacity: var(0.7);
-            transition: opacity 0.3s;
+          @keyframes animateIn {
+            0% {
+              transform: translate3d(0px, 15px, 0) scale(0.8);
+              filter: blur(3px);
+              opacity: var(0.7);
+              transition: opacity 0.3s;
+            }
           }
-        }
 
-        * > :not(.restore-button, .restore-button *),
-        ::before {
-          filter: ${postDeleted ? 'grayscale(1)' : 'none'};
-          pointer-events: ${postDeleted ? 'none' : 'all'};
-        }
-      `}
-      {...(htmlProps as any)}
-    >
-      {props.children}
-      {postDeleted && <RestoreButton postId={post.id} />}
-      {renderCategories()}
-      {renderTitle()}
-      {renderBody()}
-      {renderMetadata()}
-      {renderFooter()}
-    </Card>
+          * > :not(.restore-button, .restore-button *),
+          ::before {
+            filter: ${postDeleted ? 'grayscale(1)' : 'none'};
+            pointer-events: ${postDeleted ? 'none' : 'all'};
+          }
+        `}
+        {...(htmlProps as any)}
+      >
+        {props.children}
+        {postDeleted && <RestoreButton postId={post.id} />}
+        {renderCategories()}
+        {renderTitle()}
+        {renderBody()}
+        {renderMetadata()}
+        {renderFooter()}
+      </Card>
+    </PostContext.Provider>
   )
 }
 
