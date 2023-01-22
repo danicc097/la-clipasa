@@ -1,4 +1,3 @@
-import type axios from 'axios'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
 

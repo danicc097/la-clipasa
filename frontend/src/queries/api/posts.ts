@@ -1,9 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
-import { useQuery, useQueryClient, QueryClient, useMutation, useInfiniteQuery } from '@tanstack/react-query'
-import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY, useUISlice } from 'src/slices/ui'
+import { useQuery, useQueryClient, useMutation, useInfiniteQuery } from '@tanstack/react-query'
+import { useUISlice } from 'src/slices/ui'
 import type { Post } from 'database'
 import { useTwitchUser } from 'src/queries/twitch'
-import type { PostCreateRequest, PostPatchRequest, PostResponse, PostsGetResponse } from 'types'
+import type { PostCreateRequest, PostPatchRequest, PostsGetResponse } from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 import { usePostsSlice } from 'src/slices/posts'
 

@@ -1,6 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { useRouter } from 'next/router'
-import { Post, Prisma, PrismaClient } from 'database'
+import { NextRequest } from 'next/server'
 import { UserUpdateOrCreateRequest } from 'types'
 import prisma from 'lib/prisma'
 

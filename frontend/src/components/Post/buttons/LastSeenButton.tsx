@@ -1,14 +1,11 @@
-import { ActionIcon, Text, Tooltip } from '@mantine/core'
-import { openConfirmModal } from '@mantine/modals'
-import { showNotification } from '@mantine/notifications'
-import { IconEdit, IconEye, IconTrash } from '@tabler/icons'
-import { InfiniteData, useQueryClient } from '@tanstack/react-query'
+import { ActionIcon, Tooltip } from '@mantine/core'
+import { IconEye } from '@tabler/icons'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useStyles } from 'src/components/Post/buttons/styles'
-import ProtectedComponent from 'src/components/ProtectedComponent'
 import { usePostsSlice } from 'src/slices/posts'
 import { useUISlice } from 'src/slices/ui'
-import type { PostResponse, PostsGetResponse } from 'types'
+import type { PostResponse } from 'types'
 
 interface LastSeenButtonProps {
   post: PostResponse

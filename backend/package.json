@@ -8,8 +8,7 @@
     "vercel-build": "pnpm run prod:migrate && next build",
     "start": "next start",
     "tsc": "tsc",
-    "lint": "next lint",
-    "lint:fix": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix .",
+    "lint": "eslint --config ./.eslintrc.js --ext .js,.jsx,.ts,.tsx --fix .",
     "prod:migrate": "cd ../packages/database && pnpm run prod:migrate"
   },
   "dependencies": {

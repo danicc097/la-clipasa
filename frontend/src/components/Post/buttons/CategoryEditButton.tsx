@@ -9,21 +9,17 @@ import {
   MultiSelectValueProps,
   SelectItemProps,
   Space,
-  Text,
   Tooltip,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { openConfirmModal } from '@mantine/modals'
-import { showNotification } from '@mantine/notifications'
-import { IconCheck, IconEdit, IconPlus, IconShieldCheck, IconShieldOff, IconTrash } from '@tabler/icons'
+import { IconCheck, IconPlus } from '@tabler/icons'
 import { InfiniteData, useQueryClient } from '@tanstack/react-query'
-import type { PostCategory } from 'database'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadge'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import { useStyles } from 'src/components/Post/buttons/styles'
 import ProtectedComponent from 'src/components/ProtectedComponent'
-import { API_POSTS_KEY, usePostDeleteMutation, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
+import { API_POSTS_KEY, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
 import { usePostsSlice } from 'src/slices/posts'
 import { extractErrorMessages } from 'src/utils/errors'
 import { getMatchingKeys } from 'src/utils/object'

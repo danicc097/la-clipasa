@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
-import { useQuery, useQueryClient, QueryClient, useMutation } from '@tanstack/react-query'
-import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY, useUISlice } from 'src/slices/ui'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import { useUISlice } from 'src/slices/ui'
 import type { User } from 'database'
 import { useTwitchUser } from 'src/queries/twitch'
 import type { UserUpdateOrCreateRequest } from 'types'

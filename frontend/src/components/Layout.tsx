@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Code, Drawer, Flex, Group, Image, ScrollArea, Space, createStyles } from '@mantine/core'
-import { Prism } from '@mantine/prism'
+import { Drawer, Flex, Image, createStyles } from '@mantine/core'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import Header, { HEADER_HEIGHT } from 'src/components/Header'

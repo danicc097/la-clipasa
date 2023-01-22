@@ -1,7 +1,5 @@
-import { css } from '@emotion/react'
 import { createStyles, Container, Group, ActionIcon, Image, Text, Tooltip } from '@mantine/core'
 import { IconBrandTwitter, IconBrandYoutube, IconBrandInstagram, IconBrandTwitch } from '@tabler/icons'
-import { broadcaster } from 'src/services/twitch'
 
 export const FOOTER_HEIGHT = 55
 

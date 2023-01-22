@@ -1,14 +1,9 @@
 import { css } from '@emotion/react'
-import { ActionIcon, Text, Tooltip } from '@mantine/core'
-import { openConfirmModal } from '@mantine/modals'
-import { showNotification } from '@mantine/notifications'
-import { IconEdit, IconRefresh, IconTrash } from '@tabler/icons'
-import { InfiniteData, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { ActionIcon, Tooltip } from '@mantine/core'
+import { IconRefresh } from '@tabler/icons'
+import { useQueryClient } from '@tanstack/react-query'
 import { useStyles } from 'src/components/Post/buttons/styles'
-import ProtectedComponent from 'src/components/ProtectedComponent'
 import { usePostsSlice } from 'src/slices/posts'
-import type { PostsGetResponse } from 'types'
 
 interface RestoreButtonProps {
   postId: number

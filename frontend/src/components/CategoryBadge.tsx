@@ -1,4 +1,4 @@
-import { Badge, ColorScheme, Group, MantineGradient } from '@mantine/core'
+import { Badge, ColorScheme, MantineGradient } from '@mantine/core'
 
 import postDiamante from 'src/assets/post-diamante.png'
 import postOro from 'src/assets/post-oro.png'
@@ -14,8 +14,6 @@ import emojiSusto1 from 'src/assets/emoji-susto1.png'
 import emojiSusto2 from 'src/assets/emoji-susto2.png'
 import emojiTravieso from 'src/assets/emoji-travieso.png'
 import { PostCategoryNames } from 'types'
-import { IconAlertOctagon, IconVolumeOff } from '@tabler/icons'
-import type { PostCategory } from 'database'
 import { Interpolation, Theme, css } from '@emotion/react'
 import type { HTMLProps } from 'react'
 

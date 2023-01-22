@@ -1,6 +1,6 @@
 import { emotesTextToHtml, htmlToEmotesText, imgAttributes } from 'src/services/twitch'
 import emoteSrc from './emotes.json'
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 
 describe('roles and scopes', async () => {
   const size = 20

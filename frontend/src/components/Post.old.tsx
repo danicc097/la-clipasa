@@ -1,5 +1,5 @@
-import { Image, Modal } from '@mantine/core'
-import { useEffect, useState } from 'react'
+import { Image } from '@mantine/core'
+import { useState } from 'react'
 
 function instagramVideoToEmbed(url: string) {
   const videoId = url

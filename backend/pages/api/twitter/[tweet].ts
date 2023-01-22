@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { useRouter } from 'next/router'
+import { NextRequest } from 'next/server'
 
 // can't use shared import
 export const config = {

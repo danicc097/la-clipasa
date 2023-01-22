@@ -1,6 +1,4 @@
 import type { PostCategory } from 'database'
-import Cookies from 'js-cookie'
-import { clone, filter } from 'lodash-es'
 import type { PostQueryParams } from 'types'
 import create from 'zustand'
 import { devtools, persist } from 'zustand/middleware'

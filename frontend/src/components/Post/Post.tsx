@@ -1,7 +1,6 @@
 import {
   createStyles,
   Card,
-  ActionIcon,
   Group,
   Text,
   Avatar,
@@ -10,26 +9,20 @@ import {
   Flex,
   Skeleton,
   CSSObject,
-  Tooltip,
   AspectRatio,
 } from '@mantine/core'
-import { IconHeart, IconBookmark, IconShare, IconExternalLink, IconEye, IconRefresh } from '@tabler/icons'
+import { IconExternalLink } from '@tabler/icons'
 import { css } from '@emotion/react'
-import type { PostResponse, PostsGetResponse } from 'types'
-import { truncateIntegerToString } from 'src/utils/string'
-import React, { HTMLProps, useEffect, useState, useRef } from 'react'
+import type { PostResponse } from 'types'
+import React, { HTMLProps, useState } from 'react'
 import { truncate } from 'lodash-es'
 import type { Post } from 'database' // cant use PostCategory exported const
 import CategoryBadge, { CardBackground, uniqueCategoryBackground } from 'src/components/CategoryBadge'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
-import { API_POSTS_KEY, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
 import { showRelativeTimestamp } from 'src/utils/date'
-import { InfiniteData, useQueryClient } from '@tanstack/react-query'
-import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
-import { isAuthorized } from 'src/services/authorization'
+import { useQueryClient } from '@tanstack/react-query'
 import { openModal } from '@mantine/modals'
-import { useUISlice } from 'src/slices/ui'
 import DeleteButton from 'src/components/Post/buttons/DeleteButton'
 import EditButton from 'src/components/Post/buttons/EditButton'
 import ModerateButton from 'src/components/Post/buttons/ModerateButton'
@@ -43,23 +36,6 @@ import ShareButton from 'src/components/Post/buttons/ShareButton'
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
   const footerBackground = `${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`
-
-  const actionStyle: CSSObject = {
-    border: 0,
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-    color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
-    //   button: {
-    //   backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-    //   color: theme.colorScheme === 'light' ? theme.colors.dark[6] : theme.colors.gray[0],
-    // },
-    ...theme.fn.hover({
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-    }),
-
-    ':disabled': {
-      background: footerBackground,
-    },
-  }
 
   const cardStyle: CSSObject = {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
@@ -122,21 +98,6 @@ const useStyles = createStyles((theme) => {
       padding: `${theme.spacing.xs}px ${theme.spacing.lg}px`,
       marginTop: theme.spacing.md,
       background: footerBackground,
-    },
-
-    action: actionStyle,
-
-    categoryAction: {
-      ...actionStyle,
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3],
-    },
-
-    likedAction: {
-      ...actionStyle,
-      color: theme.colors.red[6] + ' !important',
-      '*': {
-        color: theme.colors.red[6] + ' !important',
-      },
     },
   }
 })

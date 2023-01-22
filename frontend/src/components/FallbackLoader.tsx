@@ -1,14 +1,5 @@
-import { useEffect, useState } from 'react'
-
-import { Code, Image, Loader } from '@mantine/core'
-import { Prism } from '@mantine/prism'
-import { useLocation } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
-import Header from 'src/components/Header'
+import { Loader } from '@mantine/core'
 import { css } from '@emotion/react'
-import { useQueryClient } from '@tanstack/react-query'
-import { useUISlice } from 'src/slices/ui'
-import Footer from 'src/components/Footer'
 
 export default function FallbackLoader() {
   return (

@@ -12,13 +12,10 @@ import {
   Loader,
   Header as MantineHeader,
   Box,
-  Image,
   Tooltip,
   Badge,
-  Skeleton,
 } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import { IconLogout, IconHeart, IconStar, IconSettings, IconChevronDown, IconBookmark } from '@tabler/icons'
+import { IconLogout, IconHeart, IconSettings, IconChevronDown } from '@tabler/icons'
 import LoginTwitchButton from './LoginTwitchButton'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import { useTwitchBroadcasterLive, useTwitchUser } from 'src/queries/twitch'

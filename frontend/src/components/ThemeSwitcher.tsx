@@ -1,7 +1,5 @@
 import { createStyles, UnstyledButton, Text, Center, useMantineColorScheme, Group } from '@mantine/core'
-import { upperFirst } from '@mantine/hooks'
 import { IconMoon, IconSun } from '@tabler/icons'
-import { useEffect } from 'react'
 
 const useStyles = createStyles((theme) => {
   const padding = 4

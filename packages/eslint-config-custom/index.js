@@ -13,6 +13,7 @@ module.exports = {
       },
     },
   ],
+  plugins: ['unused-imports'],
   rules: {
     'react/no-unknown-property': [
       'error',

@@ -1,5 +1,5 @@
 import { createStyles, Title, Text, Button, Container, Group } from '@mantine/core'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { FOOTER_HEIGHT } from 'src/components/Footer'
 import { HEADER_HEIGHT } from 'src/components/Header'
 

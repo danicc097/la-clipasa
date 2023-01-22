@@ -1,8 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { useRouter } from 'next/router'
-import { PostCategory, Prisma, PrismaClient, User } from 'database'
-import { PostCategoryNames, PostCreateRequest, PostQueryParams, PostsGetResponse } from 'types'
-import { cursorTo } from 'readline'
+import { NextRequest } from 'next/server'
+import { PostCategory, User } from 'database'
+import { PostCreateRequest, PostQueryParams, PostsGetResponse } from 'types'
 import prisma from 'lib/prisma'
 import { isAuthorized } from 'src/services/authorization'
 

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTwitch } from '@fortawesome/free-brands-svg-icons'
 import { Button } from '@mantine/core'

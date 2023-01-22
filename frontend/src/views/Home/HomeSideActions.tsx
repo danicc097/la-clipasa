@@ -1,22 +1,16 @@
 import { css } from '@emotion/react'
 import {
   ActionIcon,
-  Badge,
   Button,
   Card,
   Chip,
   Flex,
   Group,
-  Input,
   Loader,
-  MediaQuery,
-  MediaQueryProps,
   Menu,
   Modal,
-  MultiSelect,
   Popover,
   Select,
-  Space,
   Text,
   TextInput,
   Textarea,
@@ -25,32 +19,20 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
-import {
-  IconBookmark,
-  IconCross,
-  IconCrossOff,
-  IconEyeCheck,
-  IconFilterOff,
-  IconHeart,
-  IconSearch,
-  IconSend,
-} from '@tabler/icons'
+import { IconEyeCheck, IconSearch, IconSend } from '@tabler/icons'
 import type { PostCategory } from 'database'
-import { remove, truncate } from 'lodash-es'
-import { HTMLProps, useCallback, useEffect, useRef, useState } from 'react'
-import CategoryBadge, { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadge'
+import { HTMLProps, useEffect, useRef, useState } from 'react'
+import CategoryBadge from 'src/components/CategoryBadge'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import ProtectedComponent from 'src/components/ProtectedComponent'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
-import useDebounce from 'src/hooks/useDebounce'
-import useUndo from 'src/hooks/useUndoRedo'
 import { usePostCreateMutation, usePosts } from 'src/queries/api/posts'
-import { emotesTextToHtml, htmlToEmotesText, anyKnownEmoteRe } from 'src/services/twitch'
+import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import { useUISlice } from 'src/slices/ui'
 import { extractErrorMessages } from 'src/utils/errors'
-import { getCaretCoordinates, getCaretIndex, pasteHtmlAtCaret } from 'src/utils/input'
-import { sanitizeContentEditableInput, sanitizeContentEditableInputBeforeSubmit } from 'src/utils/string'
+import { getCaretCoordinates } from 'src/utils/input'
+import { sanitizeContentEditableInputBeforeSubmit } from 'src/utils/string'
 import { isURL } from 'src/utils/url'
 import { PostCreateRequest, PostCategoryNames } from 'types'
 

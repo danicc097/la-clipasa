@@ -1,4 +1,4 @@
-import { NextFetchEvent, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { validateTwitchToken } from './src/services/authentication'
 import cors from './lib/cors'

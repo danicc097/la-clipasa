@@ -1,5 +1,4 @@
 import type { Role } from 'database'
-import type { ReactNode } from 'react'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import { isAuthorized } from 'src/services/authorization'
 

@@ -1,7 +1,6 @@
 import axios, { AxiosError } from 'axios'
-import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query'
-import { TWITCH_ACCESS_TOKEN_COOKIE, UI_SLICE_PERSIST_KEY, useUISlice } from 'src/slices/ui'
-import { useEffect } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useUISlice } from 'src/slices/ui'
 import type {
   TwitchUserFollowResponse,
   TwitchUserResponse,
@@ -10,8 +9,7 @@ import type {
   TwitchStreamResponse,
 } from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
-import useAuthenticatedUser, { logout } from 'src/hooks/auth/useAuthenticatedUser'
-import Cookies from 'js-cookie'
+import { logout } from 'src/hooks/auth/useAuthenticatedUser'
 import { broadcaster } from 'src/services/twitch'
 
 export const TWITCH_KEY = 'twitch'

@@ -1,33 +1,9 @@
-import { createRef, useEffect, useRef, useState } from 'react'
-import Posts from '../../components/Post.old'
-import Cookies from 'js-cookie'
-import Header, { HEADER_HEIGHT } from '../../components/Header'
-import {
-  Alert,
-  Checkbox,
-  Code,
-  Container,
-  Flex,
-  Group,
-  ScrollArea,
-  Skeleton,
-  Space,
-  Text,
-  TextInput,
-  createStyles,
-  useMantineTheme,
-} from '@mantine/core'
-import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
+import { useEffect, useRef } from 'react'
+import { HEADER_HEIGHT } from '../../components/Header'
+import { Alert, Container, Flex, ScrollArea, Space, createStyles } from '@mantine/core'
 import { css } from '@emotion/react'
-import { showRelativeTimestamp } from 'src/utils/date'
-import dayjs from 'dayjs'
-import { useForm } from '@mantine/form'
-import type { PostCreateRequest, PostQueryParams, PostResponse } from 'types'
-import { capitalize, random } from 'lodash-es'
-import { isURL } from 'src/utils/url'
+import type { PostResponse } from 'types'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
-import { emotesTextToHtml } from 'src/services/twitch'
-import { declareComponentKeys } from 'i18nifty'
 import { usePostsSlice } from 'src/slices/posts'
 import { usePosts } from 'src/queries/api/posts'
 import { IconAlertCircle } from '@tabler/icons'

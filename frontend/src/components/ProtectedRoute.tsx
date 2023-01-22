@@ -1,7 +1,5 @@
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
-import { useEffect, useState } from 'react'
-import { Notification } from '@mantine/core'
 import { IconX } from '@tabler/icons'
 import { showNotification } from '@mantine/notifications'
 import { useTwitchUser } from 'src/queries/twitch'

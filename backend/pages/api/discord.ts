@@ -1,6 +1,5 @@
 import { Prisma } from 'database'
-import { NextRequest, NextResponse } from 'next/server'
-import { TwitchUser } from 'types'
+import { NextRequest } from 'next/server'
 
 // can't use shared import
 export const config = {

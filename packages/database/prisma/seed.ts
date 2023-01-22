@@ -1,6 +1,6 @@
-import { User, PrismaClient, Prisma, Post, PostCategory } from '@prisma/client'
+import { PrismaClient, Prisma, PostCategory } from '@prisma/client'
 import { faker } from '@faker-js/faker'
-import _, { uniq } from 'lodash'
+import _ from 'lodash'
 import crypto from 'crypto'
 
 const prisma = new PrismaClient()

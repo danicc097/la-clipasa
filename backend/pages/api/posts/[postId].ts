@@ -1,9 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { useRouter } from 'next/router'
-import { Post, Prisma, PrismaClient, Role, User } from 'database'
-import { discordPostUpload } from '../../../src/services/discord'
+import { NextRequest } from 'next/server'
+import { Role } from 'database'
 import prisma from 'lib/prisma'
-import { ArrayElement, PostPatchRequest, RequiredKeys } from 'types'
+import { PostPatchRequest } from 'types'
 import { isAuthorized } from 'src/services/authorization'
 
 // can't use shared import
