@@ -28,7 +28,7 @@ const queryClient = new QueryClient({
       // cacheTime: 0,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      staleTime: 0,
+      staleTime: Infinity,
       keepPreviousData: true,
     },
     mutations: {

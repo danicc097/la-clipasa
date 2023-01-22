@@ -345,15 +345,6 @@ function Post(props: PostProps) {
   })
 
   const onCategoriesEditSuccess = (data, variables, context) => {
-    showNotification({
-      id: 'post-updated',
-      title: 'Post updated',
-      message: 'Post updated successfully',
-      color: 'green',
-      icon: <IconCheck size={18} />,
-      autoClose: 5000,
-    })
-
     queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, getPostsQueryParams], (data) => ({
       ...data,
       pages: data.pages.map((page) => ({
