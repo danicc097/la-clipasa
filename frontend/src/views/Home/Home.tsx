@@ -1,6 +1,5 @@
 import { createRef, useEffect, useRef, useState } from 'react'
 import Posts from '../../components/Post.old'
-import Post, { PostSkeleton } from '../../components/Post'
 import Cookies from 'js-cookie'
 import Header, { HEADER_HEIGHT } from '../../components/Header'
 import {
@@ -34,6 +33,7 @@ import { usePosts } from 'src/queries/api/posts'
 import { IconAlertCircle } from '@tabler/icons'
 import useOnScreen from 'src/hooks/useOnScreen'
 import { FOOTER_HEIGHT } from 'src/components/Footer'
+import Post, { PostSkeleton } from 'src/components/Post/Post'
 
 const PADDING_TOP = '2rem'
 const useStyles = createStyles((theme) => ({}))
