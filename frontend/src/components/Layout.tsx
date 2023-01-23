@@ -22,6 +22,7 @@ import banner from 'src/assets/banner-la-clipassa.png'
 import homeBackground from 'src/assets/background-la-clipassa.jpg'
 import { API_POSTS_KEY } from 'src/queries/api/posts'
 import 'react-virtualized/styles.css' // only needs to be imported once
+import { usePostsSlice } from 'src/slices/posts'
 
 const useStyles = createStyles((theme) => ({
   sidebar: {
@@ -59,6 +60,11 @@ export default function Layout({ children }: LayoutProps) {
   const { classes } = useStyles()
   const { burgerOpened, setBurgerOpened } = useUISlice()
   const [updateUserAfterLogin, setUpdateUserAfterLogin] = useState(false)
+  const { getPostsQueryParams, setGetPostsQueryParams } = usePostsSlice()
+
+  useEffect(() => {
+    setGetPostsQueryParams({ ...getPostsQueryParams, cursor: undefined })
+  }, [])
 
   useEffect(() => {
     // the URL hash is processed by the browser only. not available in edge function/backend

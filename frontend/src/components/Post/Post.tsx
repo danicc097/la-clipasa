@@ -123,21 +123,23 @@ export const PostContext = React.createContext<PostResponse>(null)
 function Post(props: PostProps) {
   const queryClient = useQueryClient()
   const { post, backgroundImage, footer, className, ...htmlProps } = props
+
   const { classes, theme } = useStyles()
   const usePostsQuery = usePosts()
+
+  // in case of implementing, will filter global deleted slice array to check if postDeleted
+  const [postDeleted, setPostDeleted] = useState(false)
+
+  const { getPostsQueryParams } = usePostsSlice()
+
   const cardBackground: CardBackground =
-    uniqueCategoryBackground[post.categories.find((c) => uniqueCategoryBackground[c])]
+    uniqueCategoryBackground[post?.categories.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = backgroundImage ? backgroundImage : cardBackground ? cardBackground.image : 'auto'
   const cardBackgroundColor = backgroundImage
     ? 'auto'
     : cardBackground
     ? cardBackground.color(theme.colorScheme)
     : 'auto'
-
-  // in case of implementing, will filter global deleted slice array to check if postDeleted
-  const [postDeleted, setPostDeleted] = useState(false)
-
-  const { getPostsQueryParams } = usePostsSlice()
 
   function renderFooter() {
     return (
@@ -163,11 +165,11 @@ function Post(props: PostProps) {
   function renderMetadata() {
     return (
       <Group mt="lg">
-        <Avatar src={post.User.profileImage} radius="sm" />
+        <Avatar src={post?.User.profileImage} radius="sm" />
         <div>
-          <Text weight={500}>{post.User.displayName}</Text>
+          <Text weight={500}>{post?.User.displayName}</Text>
           <Text size="xs" color="dimmed">
-            {showRelativeTimestamp(post.createdAt.toISOString())}
+            {showRelativeTimestamp(post?.createdAt.toISOString())}
           </Text>
         </div>
       </Group>
@@ -180,7 +182,7 @@ function Post(props: PostProps) {
         weight={700}
         className={classes.title}
         mt="xs"
-        dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post.title, { length: 100 }), 28) }}
+        dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post?.title, { length: 100 }), 28) }}
       ></Text>
     )
   }
@@ -193,19 +195,19 @@ function Post(props: PostProps) {
             e.stopPropagation()
           }}
           component="a"
-          href={post.link}
+          href={post?.link}
           target="_blank"
           variant="subtle"
           m={0}
           size="xs"
           leftIcon={<IconExternalLink size={14} />}
         >
-          {post.link}
+          {post?.link}
         </Button>
         <Text
           size={'sm'}
           dangerouslySetInnerHTML={{
-            __html: emotesTextToHtml(truncate(post.content, { length: 500 }), 20),
+            __html: emotesTextToHtml(truncate(post?.content, { length: 500 }), 20),
           }}
         ></Text>
       </Text>
@@ -215,7 +217,7 @@ function Post(props: PostProps) {
   function renderCategories() {
     return (
       <Group position="left">
-        {post.categories?.map((category, i) => (
+        {post?.categories?.map((category, i) => (
           <CategoryBadge
             className="disable-select"
             key={i}
@@ -251,7 +253,7 @@ function Post(props: PostProps) {
                 mt="xs"
                 size={'sm'}
                 align={'center'}
-                dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post.title, { length: 60 }), 16) }}
+                dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post?.title, { length: 60 }), 16) }}
               ></Text>
             ),
             children: (
@@ -298,7 +300,7 @@ function Post(props: PostProps) {
         {...(htmlProps as any)}
       >
         {props.children}
-        {postDeleted && <RestoreButton postId={post.id} />}
+        {postDeleted && <RestoreButton postId={post?.id} />}
         {renderCategories()}
         {renderTitle()}
         {renderBody()}

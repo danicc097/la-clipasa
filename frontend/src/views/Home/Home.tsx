@@ -50,7 +50,7 @@ export const CellMeasurerCacheContext = createContext<PostCellMeasurerCache>(nul
 export default function Home() {
   const { classes } = useStyles()
   const usePostsQuery = usePosts()
-  const { getPostsQueryParams } = usePostsSlice()
+  const { getPostsQueryParams, setGetPostsQueryParams } = usePostsSlice()
   const ref = useRef(null)
 
   const lastScrollHeight = useRef(null)
@@ -63,21 +63,13 @@ export default function Home() {
   //   }
   // }, [getPostsQueryParams])
 
+  const previousCursor = useRef<string>(null)
+
   const posts = usePostsQuery.data?.pages?.reduce((acc, page) => acc.concat(page.data), [] as PostResponse[])
   const nextCursor = usePostsQuery.data?.pages?.[usePostsQuery.data?.pages?.length - 1].nextCursor
 
   const lastPostRef = useRef<HTMLDivElement>(null)
   const isLastPostOnScreen = useOnScreen(lastPostRef)
-
-  useEffect(() => {
-    console.log({ isLastPostOnScreen, lastPostRef: lastPostRef.current, nextCursor })
-    console.log(nextCursor)
-    // FIXME observer broken after a few fetches
-    if (isLastPostOnScreen && nextCursor && !usePostsQuery.isRefetching) {
-      console.log('fetching next posts page')
-      usePostsQuery.fetchNextPage({ pageParam: nextCursor })
-    }
-  }, [isLastPostOnScreen, nextCursor])
 
   // see https://codesandbox.io/s/material-demo-forked-7bgyzr?file=/demo.js
   const cache = new CellMeasurerCache({
@@ -165,6 +157,8 @@ export default function Home() {
     )
   }
 
+  console.log(posts)
+
   return (
     <>
       <Flex
@@ -228,7 +222,7 @@ export default function Home() {
           >
             <Virtuoso
               // useWindowScroll
-              style={{ height: '100vh' }}
+              style={{ height: '100vh', minWidth: '40vw' }}
               fixedItemHeight={300}
               data={posts}
               atBottomStateChange={(isReached) => {
@@ -236,12 +230,22 @@ export default function Home() {
                   // Fetch more data.
                   // Don't forget to debounce your request (fetch).
                   console.log('bottom reached')
+
+                  if (nextCursor && nextCursor !== previousCursor.current && !usePostsQuery.isRefetching) {
+                    console.log('fetching next posts page')
+                    console.log(nextCursor)
+                    previousCursor.current = nextCursor
+                    setGetPostsQueryParams({ ...getPostsQueryParams, cursor: nextCursor })
+
+                    usePostsQuery.fetchNextPage({ pageParam: nextCursor })
+                    // FIXME duplicated data appended since nextCursor is the same as
+                  }
                 }
               }}
               overscan={{ main: 5, reverse: 3 }}
               itemContent={(index, post) => (
                 <Post post={post} className="post" footer={<div>0 comments</div>}>
-                  {index === posts.length - 1 && <div className={`trigger-post-${index}`} ref={lastPostRef} />}
+                  {index === posts?.length - 1 && <div className={`trigger-post-${index}`} ref={lastPostRef} />}
                 </Post>
               )}
             />

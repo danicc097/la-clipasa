@@ -4,6 +4,7 @@
 #  - in dev will possibly fail when creating migrations
 #  - for "cached plan must not change result type" errors, resetting again until it works seems like
 #    the only workaround. see https://github.com/prisma/prisma/issues/7678
+# if it does not work after 2 tries, restart database (not project) in supabase
 
 cd packages/database || exit
 pnpm run dev:reset --force && pnpm run dev:seed

@@ -1,4 +1,5 @@
 import type { PostCategory } from 'database'
+import { isEqual } from 'lodash-es'
 import type { PostQueryParams } from 'types'
 import create from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
@@ -46,8 +47,16 @@ type PostsAction = (...args: any[]) => Partial<PostsState>
 
 function setGetPostsQueryParams(params: PostQueryParams): PostsAction {
   return (state: PostsState) => {
+    const { cursor: stateCursor, ...otherStateParams } = state.getPostsQueryParams
+    const { cursor, ...otherParams } = params
+
+    const cursorInvalidated = !isEqual(otherStateParams, otherParams)
+
     return {
-      getPostsQueryParams: params,
+      getPostsQueryParams: {
+        ...otherParams,
+        cursor: cursorInvalidated ? undefined : cursor,
+      },
     }
   }
 }

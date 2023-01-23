@@ -41,6 +41,8 @@ export async function main() {
 
   let postId = 0
   const createPost = () => {
+    const createdAt = new Date(new Date().getTime() - postId * 1000 * 3600)
+
     return {
       id: ++postId,
       userId: _.sample(users.slice(8, -1))?.id,
@@ -55,7 +57,8 @@ export async function main() {
           .fill(null)
           .map((e) => _.sample(Object.values(PostCategory)) as PostCategory),
       ),
-      createdAt: new Date(new Date().getTime() + postId * 60), // unique constraint
+      createdAt: createdAt, // unique constraint
+      updatedAt: createdAt,
     } as Prisma.PostCreateArgs['data']
   }
 

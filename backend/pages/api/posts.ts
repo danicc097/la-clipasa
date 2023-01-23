@@ -59,6 +59,7 @@ export default async (req: NextRequest) => {
         // all posts with infinite scroll (https://react-query-v3.tanstack.com/guides/infinite-queries)
         const posts = await prisma.post.findMany({
           take: limit,
+          // take: -limit, // paging backwards
           ...(queryParams.cursor !== undefined && { skip: 1 }), // skip the cursor
           orderBy: {
             createdAt: 'desc',
@@ -66,7 +67,7 @@ export default async (req: NextRequest) => {
           // NOTE: cursor pagination does not use cursors in the underlying database (PostgreSQL).
           ...(queryParams.cursor !== undefined && {
             cursor: {
-              createdAt: queryParams.cursor,
+              createdAt: new Date(queryParams.cursor),
             },
           }),
           where: {
@@ -132,6 +133,7 @@ export default async (req: NextRequest) => {
 
         const resBody: PostsGetResponse = {
           data: posts,
+          // assume there is a next page
           ...(posts.length === limit && { nextCursor: posts[posts.length - 1].createdAt.toISOString() }),
         }
         /**
@@ -139,6 +141,9 @@ export default async (req: NextRequest) => {
           format response as per https://codesandbox.io/s/github/tanstack/query/tree/main/examples/react/load-more-infinite-scroll?from-embed=&file=/pages/index.js:789-806
           and update to useInfiniteQuery and new response type
         */
+
+        console.log('resBody.data.length')
+        console.log(resBody.data.length)
 
         return new Response(JSON.stringify(resBody), {
           status: 200,
