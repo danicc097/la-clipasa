@@ -29,6 +29,7 @@ import {
   ListRowRenderer,
 } from 'react-virtualized'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import { Virtuoso } from 'react-virtuoso'
 
 const List = _List as unknown as FC<ListProps>
 // const AutoSizer = _AutoSizer as unknown as FC<AutoSizerProps>
@@ -98,19 +99,22 @@ export default function Home() {
   )
 
   //  TODO react-virtuoso
+  // https://virtuoso.dev/endless-scrolling/
   const renderPost: ListRowRenderer = ({ index, key, style, parent, columnIndex }) => {
     return (
-      <CellMeasurerCacheContext.Provider value={{ cache, rowIndex: index, columnIndex }}>
-        {/* apparently no hooks available to retrieve in children */}
-        <CellMeasurer cache={cache} columnIndex={columnIndex} key={key} parent={parent} rowIndex={index}>
-          {/* mandatory div */}
-          <div style={style} key={key}>
-            <Post post={posts[index]} className="post" footer={<div>0 comments</div>}>
-              {index === posts.length - 1 && <div className={`trigger-post-${index}`} ref={lastPostRef} />}
-            </Post>
-          </div>
-        </CellMeasurer>
-      </CellMeasurerCacheContext.Provider>
+      // <CellMeasurerCacheContext.Provider value={{ cache, rowIndex: index, columnIndex }}>
+      //   {/* apparently no hooks available to retrieve in children */}
+      //   <CellMeasurer cache={cache} columnIndex={columnIndex} key={key} parent={parent} rowIndex={index}>
+      //     {/* mandatory div */}
+      //     <div style={style} key={key}>
+      //       <Post post={posts[index]} className="post" footer={<div>0 comments</div>}>
+      //         {index === posts.length - 1 && <div className={`trigger-post-${index}`} ref={lastPostRef} />}
+      //       </Post>
+      //     </div>
+      //   </CellMeasurer>
+      // </CellMeasurerCacheContext.Provider>
+
+      <></>
     )
   }
 
@@ -210,7 +214,39 @@ export default function Home() {
             }
           `}
         >
-          {renderPosts()}
+          {/* {renderPosts()} */}
+          <div
+            css={css`
+              height: 100vh;
+              min-width: 40vw;
+              overflow: hidden;
+
+              @media only screen and (max-width: 1200px) {
+                min-width: 100%;
+              }
+            `}
+          >
+            <Virtuoso
+              // useWindowScroll
+              style={{ height: '100vh' }}
+              fixedItemHeight={300}
+              data={posts}
+              atBottomStateChange={(isReached) => {
+                if (isReached) {
+                  // Fetch more data.
+                  // Don't forget to debounce your request (fetch).
+                  console.log('bottom reached')
+                }
+              }}
+              overscan={{ main: 5, reverse: 3 }}
+              itemContent={(index, post) => (
+                <Post post={post} className="post" footer={<div>0 comments</div>}>
+                  {index === posts.length - 1 && <div className={`trigger-post-${index}`} ref={lastPostRef} />}
+                </Post>
+              )}
+            />
+          </div>
+
           {usePostsQuery.status === 'loading' && (
             <>
               <PostSkeleton className="post" />

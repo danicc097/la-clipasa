@@ -98,6 +98,7 @@ importers:
       react-router-dom: ^6.6.1
       react-virtualized: ^9.22.3
       react-virtualized-auto-sizer: ^1.0.7
+      react-virtuoso: ^4.0.3
       react-window: ^1.8.8
       terser: ^5.16.1
       types: workspace:*
@@ -146,6 +147,7 @@ importers:
       react-router-dom: 6.6.1_biqbaboplfbrettd7655fr4n2y
       react-virtualized: 9.22.3_biqbaboplfbrettd7655fr4n2y
       react-virtualized-auto-sizer: 1.0.7_biqbaboplfbrettd7655fr4n2y
+      react-virtuoso: 4.0.3_biqbaboplfbrettd7655fr4n2y
       react-window: 1.8.8_biqbaboplfbrettd7655fr4n2y
       terser: 5.16.1
       types: link:../packages/types
@@ -4006,6 +4008,17 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-lifecycles-compat: 3.0.4
+    dev: false
+
+  /react-virtuoso/4.0.3_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-tyqt8FBWxO+smve/kUgJbhCI2MEOvH2hHgFYPKWBMA2cJmV+cHIDDh1BL/6w4pg/dcCdlHCNVwi6aiztPxWttw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16 || >=17 || >= 18'
+      react-dom: '>=16 || >=17 || >= 18'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react-window/1.8.8_biqbaboplfbrettd7655fr4n2y:
