@@ -4,6 +4,8 @@ import { defineConfig, loadEnv } from 'vite'
 import dotenv from 'dotenv'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { resolve } from 'path'
+import path from 'path'
+import fs from 'fs'
 import dynamicImport from 'vite-plugin-dynamic-import'
 
 dotenv.config()
@@ -24,6 +26,7 @@ export default ({ mode }) => {
       }),
       tsconfigPaths({ root: '.' }),
       dynamicImport({}),
+      reactVirtualized(),
     ],
     server: {
       port: 5143,
@@ -57,4 +60,23 @@ export default ({ mode }) => {
       },
     },
   })
+}
+
+// https://github.com/uber/baseweb/issues/4129#issuecomment-1208168306
+const WRONG_CODE = `import { bpfrpt_proptype_WindowScroller } from "../WindowScroller.js";`
+export function reactVirtualized() {
+  return {
+    name: 'my:react-virtualized',
+    configResolved() {
+      const file = require
+        .resolve('react-virtualized')
+        .replace(
+          path.join('dist', 'commonjs', 'index.js'),
+          path.join('dist', 'es', 'WindowScroller', 'utils', 'onScroll.js'),
+        )
+      const code = fs.readFileSync(file, 'utf-8')
+      const modified = code.replace(WRONG_CODE, '')
+      fs.writeFileSync(file, modified)
+    },
+  }
 }

@@ -33,6 +33,7 @@ import SaveButton from 'src/components/Post/buttons/SaveButton'
 import LastSeenButton from 'src/components/Post/buttons/LastSeenButton'
 import ShareButton from 'src/components/Post/buttons/ShareButton'
 import { usePosts } from 'src/queries/api/posts'
+import { CellMeasurerCacheContext } from 'src/views/Home/Home'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -222,11 +223,9 @@ function Post(props: PostProps) {
             css={css`
               pointer-events: none;
               box-shadow: 1px 2px 4px ${theme.colorScheme === 'dark' ? '#8786881d' : '#5a5a5a36'};
-              /* :hover {
-                  filter: drop-shadow(0 1mm 1mm #00000030);
-                  transform: scale(1.05);
-                  transition-duration: 0.5s;
-                } */
+              :hover {
+                filter: none;
+              }
               /* :active {
                   filter: opacity(0.6);
                 } */
@@ -246,15 +245,26 @@ function Post(props: PostProps) {
         className={`${classes.card} ${className ?? ''}`}
         onClick={(e) => {
           openModal({
+            title: (
+              <Text
+                weight={700}
+                mt="xs"
+                size={'sm'}
+                align={'center'}
+                dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post.title, { length: 60 }), 16) }}
+              ></Text>
+            ),
             children: (
-              <AspectRatio ratio={16 / 9}>
-                <iframe
-                  src="https://www.youtube.com/embed/KY2eBrm5pT4"
-                  title="YouTube video player"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </AspectRatio>
+              <>
+                <AspectRatio ratio={16 / 9}>
+                  <iframe
+                    src="https://www.youtube.com/embed/KY2eBrm5pT4"
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </AspectRatio>
+              </>
             ),
           })
         }}

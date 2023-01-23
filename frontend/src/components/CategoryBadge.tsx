@@ -16,6 +16,7 @@ import emojiTravieso from 'src/assets/emoji-travieso.png'
 import { PostCategoryNames } from 'types'
 import { Interpolation, Theme, css } from '@emotion/react'
 import type { HTMLProps } from 'react'
+import React from 'react'
 
 export type PostCategoryKey = keyof typeof PostCategoryNames
 
@@ -51,8 +52,8 @@ export const categoryColorGradient: Record<PostCategoryKey, MantineGradient> = {
   SIN_SONIDO: { from: 'gray', to: 'gray' },
   NO_SE_YO: { from: 'red', to: 'red' },
   MEH: { from: '#c4a051', to: '#c5781a' },
-  ALERTA_GLONETILLO: { from: '#a051c4', to: '#a051c4' },
-  GRR: { from: '#51c4ab', to: '#51c4ab' },
+  ALERTA_GLONETILLO: { from: '#a051c4', to: '#9a6fae' },
+  GRR: { from: '#51c4ab', to: '#94ccc0' },
 }
 
 /**
@@ -91,7 +92,7 @@ interface CategoryBadgeProps extends HTMLProps<HTMLElement> {
   css?: Interpolation<Theme>
 }
 
-export default function CategoryBadge(props: CategoryBadgeProps) {
+function CategoryBadge(props: CategoryBadgeProps) {
   const { category, css: CSS, ...htmlProps } = props
 
   return (
@@ -131,3 +132,5 @@ export default function CategoryBadge(props: CategoryBadgeProps) {
     </Badge>
   )
 }
+
+export default React.memo(CategoryBadge)

@@ -9,7 +9,12 @@ export default function useOnScreen(ref: RefObject<HTMLElement>) {
     if (!ref.current) return
 
     observer.observe(ref.current)
-    return () => observer.disconnect()
+    console.log('observer setup')
+
+    return () => {
+      observer.disconnect()
+      console.log('observer disconnected')
+    }
   }, [])
 
   return isIntersecting

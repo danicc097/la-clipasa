@@ -20,6 +20,8 @@ import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
 import banner from 'src/assets/banner-la-clipassa.png'
 import homeBackground from 'src/assets/background-la-clipassa.jpg'
+import { API_POSTS_KEY } from 'src/queries/api/posts'
+import 'react-virtualized/styles.css' // only needs to be imported once
 
 const useStyles = createStyles((theme) => ({
   sidebar: {
@@ -107,8 +109,14 @@ export default function Layout({ children }: LayoutProps) {
       predicate: (query) => query.queryKey[0] === TWITCH_KEY,
     })
 
-    const onBeforeUnload = function (this: Window, e: BeforeUnloadEvent): void {
+    const onBeforeUnload = async (e: BeforeUnloadEvent) => {
       e.preventDefault()
+
+      queryClient.removeQueries({
+        predicate: (query) => {
+          return query.queryKey[0] === API_POSTS_KEY
+        },
+      })
 
       // to implement client side restore without deletedAt would need to delete posts from react query cache when leaving
       // so theyre not shown for the moderator/admin
@@ -116,7 +124,9 @@ export default function Layout({ children }: LayoutProps) {
       // 2. set state deletedPostIds to []
       // however there will be inconsistencies since it will have cascaded deletes in the server. so terrible idea. if for some reason we need to add restore functionality just use soft deletes
 
-      // for (let i = 0; i < 100_000; i++) { // debug
+      // for (let i = 0; i < 1_000_000; i++) {
+      //   // debug
+
       //   console.log(i)
       // }
     }

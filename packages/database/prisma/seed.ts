@@ -59,7 +59,7 @@ export async function main() {
     } as Prisma.PostCreateArgs['data']
   }
 
-  const posts = Array(50)
+  const posts = Array(100)
     .fill(null)
     .map(() => createPost())
 

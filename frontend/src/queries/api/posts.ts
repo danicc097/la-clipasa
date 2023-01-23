@@ -6,6 +6,7 @@ import { useTwitchUser } from 'src/queries/twitch'
 import type { PostCreateRequest, PostPatchRequest, PostsGetResponse } from 'types'
 import { formatURLWithQueryParams } from 'src/utils/url'
 import { usePostsSlice } from 'src/slices/posts'
+import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 
 export const API_POSTS_KEY = 'api-posts'
 
@@ -16,7 +17,7 @@ export const API_POSTS_KEY = 'api-posts'
 export function usePosts() {
   const { twitchToken } = useUISlice()
   const { getPostsQueryParams } = usePostsSlice()
-
+  const { isAuthenticated } = useAuthenticatedUser()
   /**
   {
     "pages": [
@@ -47,7 +48,7 @@ export function usePosts() {
         formatURLWithQueryParams(`${import.meta.env.VITE_URL}/api/posts`, getPostsQueryParams),
         {
           headers: {
-            Authorization: `Bearer ${twitchToken}`,
+            ...(isAuthenticated && { Authorization: `Bearer ${twitchToken}` }), // allow caching if not authn'ed
           },
           signal,
         },
