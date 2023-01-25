@@ -59,7 +59,9 @@ export function usePosts() {
       )
       return data
     },
-    getPreviousPageParam: (firstPage) => firstPage.nextCursor ?? undefined, // will ignore
+    // will ignore pageParam, but this is required so that fetchNextPage gets called, since
+    // cursor is not part of the key. Same applies to getPreviousPageParam
+    getNextPageParam: (firstPage) => firstPage.nextCursor ?? undefined,
   })
 }
 
