@@ -218,7 +218,11 @@ export default function Home() {
               overflow: hidden;
 
               @media only screen and (max-width: 1200px) {
-                min-width: 100%;
+                min-width: 80vw;
+              }
+
+              @media only screen and (max-width: 600px) {
+                min-width: 90vw;
               }
             `}
           >
