@@ -14,6 +14,7 @@ import {
   Box,
   Tooltip,
   Badge,
+  useMantineTheme,
 } from '@mantine/core'
 import { IconLogout, IconHeart, IconSettings, IconChevronDown } from '@tabler/icons'
 import LoginTwitchButton from './LoginTwitchButton'
@@ -143,7 +144,11 @@ export default function Header({ tabs }: HeaderProps) {
                 onClick={() => setBurgerOpened(!burgerOpened)}
                 title={title}
               />
-              {broadcasterLive ? renderLiveAvatar(twitchBroadcasterLive?.data?.data?.[0]?.title) : <div></div>}
+              {broadcasterLive ? (
+                <LiveAvatar streamTitle={twitchBroadcasterLive?.data?.data?.[0]?.title}></LiveAvatar>
+              ) : (
+                <div></div>
+              )}
             </Group>
             <Menu
               width={220}
@@ -247,7 +252,9 @@ export default function Header({ tabs }: HeaderProps) {
   )
 }
 
-function renderLiveAvatar(streamTitle: string) {
+function LiveAvatar({ streamTitle }) {
+  const theme = useMantineTheme()
+
   return (
     <Group position="center">
       <Tooltip label={streamTitle}>
@@ -264,7 +271,6 @@ function renderLiveAvatar(streamTitle: string) {
               width={40}
               css={css`
                 max-width: 100%;
-                vertical-align: top;
                 color: #c11a17;
                 border: 0.15rem solid;
                 display: block;
@@ -280,9 +286,11 @@ function renderLiveAvatar(streamTitle: string) {
                 transform: translateX(-50%) scale(0.8);
                 padding: 0.2rem 0.4rem;
                 background-color: #c11a17;
+                border-color: ${theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0]};
+                border-width: 0.1rem;
               `}
               variant="filled"
-              radius={4}
+              radius={5}
               size="xs"
             >
               LIVE

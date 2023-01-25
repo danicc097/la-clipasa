@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { formatURLWithQueryParams } from 'src/utils/url'
 
 // can't use shared import
 export const config = {
@@ -10,16 +11,26 @@ export default async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url)
     const tweet = searchParams.get('tweet')
-    console.log(tweet)
-    const twitterEmbedURL = `https://publish.twitter.com/oembed?url=${encodeURIComponent(tweet ?? '')}`
-    console.log(twitterEmbedURL)
+
+    const theme = searchParams.get('theme')
+    console.log(theme)
+    const twitterEmbedURL = formatURLWithQueryParams('https://publish.twitter.com/oembed', {
+      url: tweet ?? '',
+      theme: theme ?? 'light',
+    })
+
     const res = await fetch(twitterEmbedURL)
 
     const body = await res.json()
 
     console.log(JSON.stringify(body))
 
-    return new Response(JSON.stringify(body.html)) // requires twitter widgets
+    return new Response(JSON.stringify(body.html), {
+      headers: {
+        // TODO enable when working
+        // 'Cache-Control': `public, max-age=${3600 * 24 * 10}, stale-while-revalidate=${3600 * 24 * 30}`,
+      },
+    }) // requires twitter widgets client-side
   } catch (error: any) {
     console.log(JSON.stringify(error))
     return new Response(JSON.stringify(error?.message))

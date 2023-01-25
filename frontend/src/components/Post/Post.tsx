@@ -34,6 +34,7 @@ import LastSeenButton from 'src/components/Post/buttons/LastSeenButton'
 import ShareButton from 'src/components/Post/buttons/ShareButton'
 import { usePosts } from 'src/queries/api/posts'
 import { CellMeasurerCacheContext } from 'src/views/Home/Home'
+import { useTwitterEmbed } from 'src/queries/api/twitter'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -126,11 +127,18 @@ function Post(props: PostProps) {
 
   const { classes, theme } = useStyles()
   const usePostsQuery = usePosts()
+  const useTwitterEmbedQuery = useTwitterEmbed('https://twitter.com/caliebre/status/1608936054819782660')
 
   // in case of implementing, will filter global deleted slice array to check if postDeleted
   const [postDeleted, setPostDeleted] = useState(false)
 
   const { getPostsQueryParams } = usePostsSlice()
+
+  useEffect(() => {
+    if (!window['twttr']) return
+
+    window['twttr'].widgets.load(document.getElementsByClassName('service-content')[0])
+  })
 
   if (!post) return null
 
@@ -259,7 +267,7 @@ function Post(props: PostProps) {
               ></Text>
             ),
             children: (
-              <>
+              <div className="service-content">
                 <AspectRatio ratio={16 / 9}>
                   <iframe
                     src="https://www.youtube.com/embed/KY2eBrm5pT4"
@@ -268,7 +276,8 @@ function Post(props: PostProps) {
                     allowFullScreen
                   />
                 </AspectRatio>
-              </>
+                <div dangerouslySetInnerHTML={{ __html: useTwitterEmbedQuery.data }}></div>
+              </div>
             ),
           })
         }}

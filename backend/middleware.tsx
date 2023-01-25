@@ -13,10 +13,11 @@ export default async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers)
 
   const discord = request.nextUrl.pathname.match(/\/api\/discord*/)
+  const twitter = request.nextUrl.pathname.match(/\/api\/twitter*/)
   const getPost = request.nextUrl.pathname.match(/\/api\/posts*/) && request.method === 'GET'
   const twitchAuth = request.nextUrl.pathname.match(/\/api\/auth*/)
 
-  const publicRoute = getPost || twitchAuth || discord
+  const publicRoute = getPost || twitchAuth || discord || twitter
 
   const token = request.headers.get('Authorization')?.split('Bearer ')[1]
   const twitchId = await validateTwitchToken(token)
