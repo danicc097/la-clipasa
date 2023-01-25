@@ -63,7 +63,7 @@ export default function Home() {
   //   }
   // }, [getPostsQueryParams])
 
-  const previousCursor = useRef<string>(null)
+  const previousCursor = useRef<number>(null)
 
   const posts = usePostsQuery.data?.pages?.reduce((acc, page) => acc.concat(page.data), [] as PostResponse[])
   const nextCursor = usePostsQuery.data?.pages?.[usePostsQuery.data?.pages?.length - 1].nextCursor
@@ -157,6 +157,7 @@ export default function Home() {
     )
   }
 
+  console.log(usePostsQuery.data)
   console.log(posts)
 
   return (
@@ -237,7 +238,7 @@ export default function Home() {
                     previousCursor.current = nextCursor
                     setGetPostsQueryParams({ ...getPostsQueryParams, cursor: nextCursor })
 
-                    usePostsQuery.fetchNextPage({ pageParam: nextCursor })
+                    usePostsQuery.fetchNextPage()
                     // FIXME duplicated data appended since nextCursor is the same as
                   }
                 }

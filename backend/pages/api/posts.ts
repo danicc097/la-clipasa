@@ -39,7 +39,7 @@ export default async (req: NextRequest) => {
         const queryParams: PostQueryParams = {
           titleQuery: searchParams.get('titleQuery') ?? undefined,
           limit: searchParams.get('limit') !== null ? Number(searchParams.get('limit')) : undefined,
-          cursor: searchParams.get('cursor') !== null ? searchParams.get('cursor') ?? undefined : undefined,
+          cursor: searchParams.get('cursor') !== null ? Number(searchParams.get('cursor')) ?? undefined : undefined,
           authorId: searchParams.get('authorId') ?? undefined,
           liked: searchParams.get('liked') !== null ? String(searchParams.get('liked')) === 'true' : undefined,
           saved: searchParams.get('saved') !== null ? String(searchParams.get('saved')) === 'true' : undefined,
@@ -61,13 +61,16 @@ export default async (req: NextRequest) => {
           take: limit,
           // take: -limit, // paging backwards
           ...(queryParams.cursor !== undefined && { skip: 1 }), // skip the cursor
+          // ...(queryParams.cursor === undefined && { // maybe fixes cursor not working
           orderBy: {
             createdAt: 'desc',
           },
+          // }),
           // NOTE: cursor pagination does not use cursors in the underlying database (PostgreSQL).
           ...(queryParams.cursor !== undefined && {
             cursor: {
-              createdAt: new Date(queryParams.cursor),
+              // createdAt: new Date(queryParams.cursor), // requires DateTime
+              id: queryParams.cursor, // requires DateTime
             },
           }),
           where: {
@@ -134,7 +137,7 @@ export default async (req: NextRequest) => {
         const resBody: PostsGetResponse = {
           data: posts,
           // assume there is a next page
-          ...(posts.length === limit && { nextCursor: posts[posts.length - 1].createdAt.toISOString() }),
+          ...(posts.length === limit && { nextCursor: posts[posts.length - 1].id }),
         }
         /**
           TODO:

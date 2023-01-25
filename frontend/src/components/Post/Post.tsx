@@ -132,6 +132,8 @@ function Post(props: PostProps) {
 
   const { getPostsQueryParams } = usePostsSlice()
 
+  if (!post) return null
+
   const cardBackground: CardBackground =
     uniqueCategoryBackground[post?.categories.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = backgroundImage ? backgroundImage : cardBackground ? cardBackground.image : 'auto'
@@ -240,7 +242,7 @@ function Post(props: PostProps) {
   }
 
   return (
-    <PostContext.Provider value={useMemo(() => post, [post])}>
+    <PostContext.Provider value={post}>
       <Card
         p="lg"
         radius={12}
