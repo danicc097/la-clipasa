@@ -13,10 +13,10 @@ export default async (request: NextRequest) => {
     const tweet = searchParams.get('tweet')
 
     const theme = searchParams.get('theme')
-    console.log(theme)
     const twitterEmbedURL = formatURLWithQueryParams('https://publish.twitter.com/oembed', {
       url: tweet ?? '',
       theme: theme ?? 'light',
+      chrome: 'transparent nofooter noborders noheader noscrollbar',
     })
 
     const res = await fetch(twitterEmbedURL)
@@ -27,8 +27,7 @@ export default async (request: NextRequest) => {
 
     return new Response(JSON.stringify(body.html), {
       headers: {
-        // TODO enable when working
-        // 'Cache-Control': `public, max-age=${3600 * 24 * 10}, stale-while-revalidate=${3600 * 24 * 30}`,
+        'Cache-Control': `public, max-age=${3600 * 24 * 10}, stale-while-revalidate=${3600 * 24 * 30}`,
       },
     }) // requires twitter widgets client-side
   } catch (error: any) {

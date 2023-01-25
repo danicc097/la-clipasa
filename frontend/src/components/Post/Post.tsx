@@ -92,6 +92,12 @@ const useStyles = createStyles((theme) => {
 
     card: cardStyle,
 
+    modal: {
+      '.mantine-Modal-modal': {
+        backgroundColor: 'white !important',
+      },
+    },
+
     title: {
       fontSize: '1.5rem',
       paddingRight: '3rem', // for bg decorations
@@ -133,12 +139,6 @@ function Post(props: PostProps) {
   const [postDeleted, setPostDeleted] = useState(false)
 
   const { getPostsQueryParams } = usePostsSlice()
-
-  useEffect(() => {
-    if (!window['twttr']) return
-
-    window['twttr'].widgets.load(document.getElementsByClassName('service-content')[0])
-  })
 
   if (!post) return null
 
@@ -257,8 +257,10 @@ function Post(props: PostProps) {
         className={`${classes.card} ${className ?? ''}`}
         onClick={(e) => {
           openModal({
+            className: classes.modal,
             title: (
               <Text
+                color={'black'}
                 weight={700}
                 mt="xs"
                 size={'sm'}
@@ -276,10 +278,21 @@ function Post(props: PostProps) {
                     allowFullScreen
                   />
                 </AspectRatio>
-                <div dangerouslySetInnerHTML={{ __html: useTwitterEmbedQuery.data }}></div>
+                <div id="twitter-widget-modal" dangerouslySetInnerHTML={{ __html: useTwitterEmbedQuery.data }}></div>
               </div>
             ),
           })
+
+          const s = document.createElement('script')
+          s.setAttribute('src', 'https://platform.twitter.com/widgets.js') // also see  "react-twitter-embed"
+          s.setAttribute('async', 'true')
+          document.head.appendChild(s)
+          setTimeout(() => {
+            document
+              .querySelector('blockquote.twitter-tweet')
+              ?.setAttribute('data-chrome', 'transparent nofooter noborders noheader noscrollbar')
+            window['twttr']?.widgets.load(document.getElementsByClassName('service-content')[0])
+          }, 1000) // onload not enough
         }}
         /* move to classes */
         css={css`
