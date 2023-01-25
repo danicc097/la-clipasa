@@ -28,7 +28,8 @@ export default function LikeButton({}: LikeButtonProps) {
     e.stopPropagation()
 
     const onSuccess = (data, variables, context) => {
-      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, getPostsQueryParams], (data) => ({
+      const { cursor, ...otherParams } = getPostsQueryParams
+      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, otherParams], (data) => ({
         ...data,
         pages: data.pages.map((page) => ({
           ...page,

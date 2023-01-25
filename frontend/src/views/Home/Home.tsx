@@ -64,7 +64,8 @@ export default function Home() {
   // }, [getPostsQueryParams])
 
   const previousCursor = useRef<number>(null)
-
+  console.log('usePostsQuery.data?.pages')
+  console.log(usePostsQuery.data?.pages)
   const posts = usePostsQuery.data?.pages?.reduce((acc, page) => acc.concat(page.data), [] as PostResponse[])
   const nextCursor = usePostsQuery.data?.pages?.[usePostsQuery.data?.pages?.length - 1].nextCursor
 
@@ -232,14 +233,17 @@ export default function Home() {
                   // Don't forget to debounce your request (fetch).
                   console.log('bottom reached')
 
+                  setGetPostsQueryParams({ ...getPostsQueryParams, cursor: nextCursor })
+
+                  usePostsQuery.fetchNextPage()
+
                   if (nextCursor && nextCursor !== previousCursor.current && !usePostsQuery.isRefetching) {
-                    console.log('fetching next posts page')
-                    console.log(nextCursor)
+                    console.log(`fetching next posts page with cursor ${nextCursor}`)
                     previousCursor.current = nextCursor
                     setGetPostsQueryParams({ ...getPostsQueryParams, cursor: nextCursor })
 
                     usePostsQuery.fetchNextPage()
-                    // FIXME duplicated data appended since nextCursor is the same as
+                    // FIXME previous pages getting lost if using getPostsQueryParams in query key but wont fetch without it
                   }
                 }
               }}

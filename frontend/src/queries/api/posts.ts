@@ -34,16 +34,20 @@ export function usePosts() {
     ]
   }
   */
+
+  const { cursor, ...otherParams } = getPostsQueryParams
+
   return useInfiniteQuery<PostsGetResponse, AxiosError>({
-    queryKey: [API_POSTS_KEY, `Get`, getPostsQueryParams], // any state used inside the queryFn must be part of the queryKey
+    queryKey: [API_POSTS_KEY, `Get`, otherParams],
     retry: false,
-    // cacheTime: 1000 * 60 * 60, // 1h
-    cacheTime: 0,
+    cacheTime: 1000 * 60 * 60, // 1h
+    // cacheTime: 0,
     staleTime: Infinity,
     enabled: getPostsQueryParams !== null,
     queryFn: async ({ signal, pageParam }): Promise<PostsGetResponse> => {
       if (!getPostsQueryParams) return
 
+      // using custom logic for cursor, ignoring pageParam
       const { data } = await axios.get(
         formatURLWithQueryParams(`${import.meta.env.VITE_URL}/api/posts`, getPostsQueryParams),
         {
@@ -55,6 +59,7 @@ export function usePosts() {
       )
       return data
     },
+    getPreviousPageParam: (firstPage) => firstPage.nextCursor ?? undefined, // will ignore
   })
 }
 

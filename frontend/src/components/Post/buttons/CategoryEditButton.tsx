@@ -15,7 +15,13 @@ import { useForm } from '@mantine/form'
 import { IconCheck, IconPlus } from '@tabler/icons'
 import { InfiniteData, useQueryClient } from '@tanstack/react-query'
 import { forwardRef, useContext, useEffect, useRef, useState } from 'react'
-import { categoryEmojis, uniqueCategories } from 'src/components/CategoryBadge'
+import {
+  categoryDoubleEmojis,
+  categoryEmojis,
+  categoryPostEmojis,
+  categoryPreEmojis,
+  uniqueCategories,
+} from 'src/components/CategoryBadge'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import { useStyles } from 'src/components/Post/buttons/styles'
 import { PostContext } from 'src/components/Post/Post'
@@ -121,7 +127,8 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
   })
 
   const onCategoriesEditSuccess = (data, variables, context) => {
-    queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, getPostsQueryParams], (data) => ({
+    const { cursor, ...otherParams } = getPostsQueryParams
+    queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, otherParams], (data) => ({
       ...data,
       pages: data.pages.map((page) => ({
         ...page,

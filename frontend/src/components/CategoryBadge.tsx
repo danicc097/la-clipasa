@@ -20,6 +20,17 @@ import React from 'react'
 
 export type PostCategoryKey = keyof typeof PostCategoryNames
 
+export const categoryDoubleEmojis: Partial<Record<PostCategoryKey, string>> = {
+  DIAMANTE: emojiDiamante,
+  RANA: emojiRana,
+  ORO: emojiOro,
+  MEH: emojiMeh,
+  NO_SE_YO: emojiWoki,
+  MEME_ARTESANAL: emojiBongos,
+  SIN_SONIDO: emojiDormido,
+  GRR: emojiTravieso,
+}
+
 export const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
   DIAMANTE: emojiDiamante,
   RANA: emojiRana,
@@ -29,6 +40,7 @@ export const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
   MEME_ARTESANAL: emojiBongos,
   SIN_SONIDO: emojiDormido,
   GRR: emojiTravieso,
+  ALERTA_GLONETILLO: emojiSusto1,
 }
 
 const EMOJI_SIZE = 16
@@ -123,11 +135,15 @@ function CategoryBadge(props: CategoryBadgeProps) {
           gap: 3px;
         `}
       >
-        {categoryEmojis[category] && <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />}
+        {categoryDoubleEmojis[category] && (
+          <img src={categoryDoubleEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
+        )}
         {categoryPreEmojis[category]}
         <div>{PostCategoryNames[category] ?? category}</div>
         {categoryPostEmojis[category]}
-        {categoryEmojis[category] && <img src={categoryEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />}
+        {categoryDoubleEmojis[category] && (
+          <img src={categoryDoubleEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
+        )}
       </div>
     </Badge>
   )
