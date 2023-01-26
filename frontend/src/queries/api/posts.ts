@@ -40,8 +40,8 @@ export function usePosts() {
   return useInfiniteQuery<PostsGetResponse, AxiosError>({
     queryKey: [API_POSTS_KEY, `Get`, otherParams],
     retry: false,
-    cacheTime: 1000 * 60 * 60, // 1h
-    // cacheTime: 0,
+    // cacheTime: 1000 * 60 * 60, // 1h
+    cacheTime: 0,
     staleTime: Infinity,
     enabled: getPostsQueryParams !== null,
     queryFn: async ({ signal, pageParam }): Promise<PostsGetResponse> => {

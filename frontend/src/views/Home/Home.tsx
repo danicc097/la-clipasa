@@ -7,7 +7,7 @@
 
 import { createContext, FC, useEffect, useRef } from 'react'
 import { HEADER_HEIGHT } from '../../components/Header'
-import { Alert, Container, Flex, ScrollArea, Space, createStyles } from '@mantine/core'
+import { Alert, Container, Flex, ScrollArea, Space, createStyles, Text, LoadingOverlay } from '@mantine/core'
 import { css } from '@emotion/react'
 import type { Cursor, PostResponse } from 'types'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
@@ -79,47 +79,38 @@ export default function Home() {
     minHeight: 280, // attempt to fix call stack exceeded https://github.com/bvaughn/react-virtualized/issues/1606
   })
 
-  const renderNoPosts = () => (
-    <Alert
-      css={css`
-        min-width: 100%;
-      `}
-      icon={<IconAlertCircle size={16} />}
-      color="red"
-    >
-      No posts found
-    </Alert>
-  )
+  console.log(usePostsQuery.data)
+  console.log(posts)
 
-  //  TODO react-virtuoso
-  // https://virtuoso.dev/endless-scrolling/
-  const renderPost: ListRowRenderer = ({ index, key, style, parent, columnIndex }) => {
+  function renderPosts() {
+    if (usePostsQuery.isFetching && !usePostsQuery.isFetchingNextPage) {
+      return (
+        <div
+          css={css`
+            min-width: 40vw;
+          `}
+        >
+          <PostSkeleton className="post" />
+          <PostSkeleton className="post" />
+        </div>
+      )
+    }
+
+    if (posts?.length === 0) {
+      return (
+        <Alert
+          css={css`
+            min-width: 100%;
+          `}
+          icon={<IconAlertCircle size={16} />}
+          color="red"
+        >
+          No posts found
+        </Alert>
+      )
+    }
+
     return (
-      // <CellMeasurerCacheContext.Provider value={{ cache, rowIndex: index, columnIndex }}>
-      //   {/* apparently no hooks available to retrieve in children */}
-      //   <CellMeasurer cache={cache} columnIndex={columnIndex} key={key} parent={parent} rowIndex={index}>
-      //     {/* mandatory div */}
-      //     <div style={style} key={key}>
-      //       <Post post={posts[index]} className="post" footer={<div>0 comments</div>}>
-      //         {index === posts.length - 1 && <div className={`trigger-post-${index}`} ref={lastPostRef} />}
-      //       </Post>
-      //     </div>
-      //   </CellMeasurer>
-      // </CellMeasurerCacheContext.Provider>
-
-      <></>
-    )
-  }
-
-  const renderPosts = () => {
-    return (
-      // TODO find a way to auto fit instead of variadic width based on media:
-      // https://codesandbox.io/s/3vnx878jk5?file=/index.js:117-171
-      // see https://github.com/bvaughn/react-virtualized/blob/master/docs/List.md
-      // see https://github.com/bvaughn/react-virtualized/blob/master/docs/usingAutoSizer.md
-      // TODO investigate https://github.com/bvaughn/react-virtualized/blob/master/docs/WindowScroller.md
-      // for scrollToIndex on page refreshing
-      // TODO rerender on viewport event https://stackoverflow.com/questions/19014250/rerender-view-on-browser-resize-with-react
       <div
         css={css`
           height: 100vh;
@@ -127,39 +118,46 @@ export default function Home() {
           overflow: hidden;
 
           @media only screen and (max-width: 1200px) {
-            min-width: 100%;
+            min-width: 80vw;
+          }
+
+          @media only screen and (max-width: 600px) {
+            min-width: 90vw;
           }
         `}
       >
-        <AutoSizer
-          css={css`
-            min-width: 40vw;
+        {/* <LoadingOverlay visible={usePostsQuery.isFetchingNextPage} overlayBlur={2} /> */}
+        <Virtuoso
+          // useWindowScroll
+          style={{ height: '100vh', minWidth: '40vw' }}
+          fixedItemHeight={300}
+          data={posts}
+          atBottomStateChange={(isReached) => {
+            if (isReached) {
+              // Fetch more data.
+              // Don't forget to debounce your request (fetch).
+              console.log('bottom reached')
 
-            @media only screen and (max-width: 1200px) {
-              min-width: 95vw;
+              if (nextCursor && nextCursor !== previousCursor.current && !usePostsQuery.isFetching) {
+                console.log(`fetching next posts page with cursor ${nextCursor}`)
+                previousCursor.current = nextCursor
+                setGetPostsQueryParams({ ...getPostsQueryParams, cursor: nextCursor })
+
+                usePostsQuery.fetchNextPage()
+              }
             }
-          `}
-        >
-          {({ height, width }) => (
-            // FIXME  Maximum update depth exceeded.
-            <List
-              width={width}
-              height={height}
-              rowCount={posts?.length ?? 0}
-              rowHeight={cache.rowHeight}
-              deferredMeasurementCache={cache}
-              noRowsRenderer={renderNoPosts}
-              rowRenderer={renderPost}
-              overscanRowCount={5}
-            />
+          }}
+          overscan={{ main: 5, reverse: 3 }}
+          itemContent={(index, post) => (
+            <Post post={post} className="post" footer={<div>0 comments</div>}>
+              {index === posts?.length - 1 && <div className={`trigger-post-${index}`} ref={lastPostRef} />}
+            </Post>
           )}
-        </AutoSizer>
+        />
+        {usePostsQuery.isFetchingNextPage && <Text className="post">Loading more...</Text>}
       </div>
     )
   }
-
-  console.log(usePostsQuery.data)
-  console.log(posts)
 
   return (
     <>
@@ -210,61 +208,7 @@ export default function Home() {
             }
           `}
         >
-          {/* {renderPosts()} */}
-          <div
-            css={css`
-              height: 100vh;
-              min-width: 40vw;
-              overflow: hidden;
-
-              @media only screen and (max-width: 1200px) {
-                min-width: 80vw;
-              }
-
-              @media only screen and (max-width: 600px) {
-                min-width: 90vw;
-              }
-            `}
-          >
-            <Virtuoso
-              // useWindowScroll
-              style={{ height: '100vh', minWidth: '40vw' }}
-              fixedItemHeight={300}
-              data={posts}
-              atBottomStateChange={(isReached) => {
-                if (isReached) {
-                  // Fetch more data.
-                  // Don't forget to debounce your request (fetch).
-                  console.log('bottom reached')
-
-                  setGetPostsQueryParams({ ...getPostsQueryParams, cursor: nextCursor })
-
-                  usePostsQuery.fetchNextPage()
-
-                  if (nextCursor && nextCursor !== previousCursor.current && !usePostsQuery.isRefetching) {
-                    console.log(`fetching next posts page with cursor ${nextCursor}`)
-                    previousCursor.current = nextCursor
-                    setGetPostsQueryParams({ ...getPostsQueryParams, cursor: nextCursor })
-
-                    usePostsQuery.fetchNextPage()
-                  }
-                }
-              }}
-              overscan={{ main: 5, reverse: 3 }}
-              itemContent={(index, post) => (
-                <Post post={post} className="post" footer={<div>0 comments</div>}>
-                  {index === posts?.length - 1 && <div className={`trigger-post-${index}`} ref={lastPostRef} />}
-                </Post>
-              )}
-            />
-          </div>
-
-          {usePostsQuery.status === 'loading' && (
-            <>
-              <PostSkeleton className="post" />
-              <PostSkeleton className="post" />
-            </>
-          )}
+          {renderPosts()}
         </Container>
         {/* </ScrollArea> */}
         <Space p={5} />
