@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Catamaran:wght@300;400;600&display=swap');
 
 body {
-  overflow: scroll;
+  overflow: none;
 }
 ::-webkit-scrollbar {
   width: 0px;

@@ -189,11 +189,17 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
       <Tooltip
         opened={categoriesEditPopoverOpened} // work around popover positioning shenanigans by using tooltip instead
         closeDelay={99999999}
-        width={400}
+        width={250}
         withinPortal
         styles={{
           tooltip: {
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
+            flexWrap: 'nowrap',
+            width: '400px',
+
+            [theme.fn.smallerThan('sm')]: {
+              width: '60vw',
+            },
           },
         }}
         label={
@@ -209,6 +215,9 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
                 onClick={(e) => e.stopPropagation()}
                 css={css`
                   pointer-events: all;
+                  word-wrap: break-word;
+                  white-space: pre-wrap;
+                  word-break: break-word;
                 `}
               >
                 <MultiSelect
@@ -234,8 +243,8 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
             </form>
           </>
         }
-        arrowPosition="side"
-        position="right-start"
+        // arrowPosition="center"
+        position="bottom"
         withArrow
       >
         <ActionIcon
