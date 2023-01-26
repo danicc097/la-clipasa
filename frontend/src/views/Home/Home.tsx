@@ -247,7 +247,6 @@ export default function Home() {
                     setGetPostsQueryParams({ ...getPostsQueryParams, cursor: nextCursor })
 
                     usePostsQuery.fetchNextPage()
-                    // FIXME previous pages getting lost if using getPostsQueryParams in query key but wont fetch without it
                   }
                 }
               }}

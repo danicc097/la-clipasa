@@ -117,7 +117,6 @@ export default function Layout({ children }: LayoutProps) {
 
     const onBeforeUnload = async (e: BeforeUnloadEvent) => {
       e.preventDefault()
-
       queryClient.removeQueries({
         predicate: (query) => {
           return query.queryKey[0] === API_POSTS_KEY

@@ -110,7 +110,7 @@ export default async (req: NextRequest) => {
               }),
             ...(queryParams.saved !== undefined &&
               user && {
-                savedPost: {
+                savedPosts: {
                   some: {
                     userId: { equals: user.id },
                   },
