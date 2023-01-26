@@ -56,6 +56,11 @@ export default async (req: NextRequest) => {
           limit = 50
         }
 
+        if (queryParams.authorId && user?.id && queryParams.authorId === user?.id) {
+          // so that a user can see posts pending moderation
+          queryParams.moderated = undefined
+        }
+
         const posts = await prisma.post.findMany({
           take: limit,
           // take: -limit, // paging backwards

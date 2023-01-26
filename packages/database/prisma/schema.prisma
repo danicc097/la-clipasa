@@ -79,20 +79,21 @@ model User {
 }
 
 model Post {
-  id          Int            @id @default(autoincrement())
-  pinned      Boolean        @default(false)
-  userId      String         @db.Uuid
-  title       String
+  id                Int            @id @default(autoincrement())
+  pinned            Boolean        @default(false)
+  userId            String         @db.Uuid
+  title             String
   // discordMessageId String? // zero value added
-  content     String? // if null, use link
-  link        String // store link in case discord is gone. We only care about this in the end
-  isModerated Boolean        @default(false)
-  createdAt   DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
-  categories  PostCategory[]
-  likedPosts  LikedPost[]
-  savedPosts  SavedPost[]
-  User        User           @relation(fields: [userId], references: [id])
+  content           String? // if null, use link
+  link              String // store link in case discord is gone. We only care about this in the end
+  moderationComment String?
+  isModerated       Boolean        @default(false)
+  createdAt         DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
+  categories        PostCategory[]
+  likedPosts        LikedPost[]
+  savedPosts        SavedPost[]
+  User              User           @relation(fields: [userId], references: [id])
 
   textsearchable_index_col Unsupported("tsvector")? @default(dbgenerated("''::tsvector"))
 

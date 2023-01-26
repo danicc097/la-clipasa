@@ -7,7 +7,7 @@ x-logging: &default-logging
 
 services:
   db:
-    image: postgres:13.3
+    image: postgres:15
     container_name: postgres_db_discord_twitch_app
     shm_size: 2g
     networks:
@@ -16,11 +16,11 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/data
     volumes:
-      - discord_twitch_app_pg_data:/var/lib/postgresql/data/
+      - la-clipassa-dev:/var/lib/postgresql/data/
     ports:
       - 6543:5432
     env_file:
-      - .env.development
+      - .env
     restart: unless-stopped
     logging: *default-logging
 
@@ -29,5 +29,5 @@ networks:
     internal: false
 
 volumes:
-  discord_twitch_app_pg_data:
-    name: discord_twitch_app_pg_data
+  la-clipassa-dev:
+    name: la-clipassa-dev

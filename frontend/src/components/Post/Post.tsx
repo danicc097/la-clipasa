@@ -11,7 +11,7 @@ import {
   CSSObject,
   AspectRatio,
 } from '@mantine/core'
-import { IconExternalLink } from '@tabler/icons'
+import { IconExternalLink, IconInfoCircle } from '@tabler/icons'
 import { css } from '@emotion/react'
 import type { PostResponse } from 'types'
 import React, { HTMLProps, useContext, useEffect, useMemo, useState } from 'react'
@@ -36,6 +36,8 @@ import { usePosts } from 'src/queries/api/posts'
 import { CellMeasurerCacheContext } from 'src/views/Home/Home'
 import { useTwitterEmbed } from 'src/queries/api/twitter'
 import { CardBackground, uniqueCategoryBackground } from 'src/services/categories'
+import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
+import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -135,6 +137,7 @@ function Post(props: PostProps) {
   const { classes, theme } = useStyles()
   const usePostsQuery = usePosts()
   const useTwitterEmbedQuery = useTwitterEmbed('https://twitter.com/caliebre/status/1608936054819782660')
+  const { isAuthenticated, user } = useAuthenticatedUser()
 
   // in case of implementing, will filter global deleted slice array to check if postDeleted
   const [postDeleted, setPostDeleted] = useState(false)
@@ -250,6 +253,21 @@ function Post(props: PostProps) {
     )
   }
 
+  function renderCallout(): React.ReactNode {
+    const messages = ['Pending moderation']
+    if (post.moderationComment) messages.push(post.moderationComment)
+
+    return (
+      !post.isModerated &&
+      getPostsQueryParams.authorId === user.data.id && (
+        <>
+          <Space mb={10} />
+          <ErrorCallout title="Unpublished" errors={messages} />
+        </>
+      )
+    )
+  }
+
   return (
     <PostContext.Provider value={post}>
       <Card
@@ -327,6 +345,7 @@ function Post(props: PostProps) {
         {props.children}
         {postDeleted && <RestoreButton postId={post?.id} />}
         {renderCategories()}
+        {renderCallout()}
         {renderTitle()}
         {renderBody()}
         {renderMetadata()}
