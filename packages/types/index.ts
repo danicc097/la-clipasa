@@ -1,4 +1,5 @@
 export * from './utils'
+
 import type {
   PostCategory as DatabasePostCategory,
   LikedPost,
@@ -9,6 +10,17 @@ import type {
   UserAward,
 } from 'database'
 import type { Role as DatabaseRole } from 'database'
+
+export type UniqueCategories = Pick<typeof PostCategoryNames, 'DIAMANTE' | 'ORO' | 'RANA'>
+
+/**
+ * Restricted to 1 per post.
+ */
+export const uniqueCategories: UniqueCategories = {
+  DIAMANTE: '',
+  ORO: '',
+  RANA: '',
+}
 
 // due to some obscure typescript shenanigans I don't really care about
 // we can't use the const enum exported directly from prisma or reexported from the types package

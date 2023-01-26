@@ -51,6 +51,12 @@ export default async (req: NextRequest) => {
               : undefined,
         }
 
+        // TODO shared paackage "validation"
+        // if (queryParams.categories) {
+        //   const postCategoriesError = validatePostCategories(queryParams.categories)
+        //   if (postCategoriesError !== null) return new Response(postCategoriesError, { status: 422 })
+        // }
+
         let limit = queryParams.limit ?? DEFAULT_LIMIT
         if (limit > 50) {
           limit = 50

@@ -28,13 +28,12 @@ import { useStyles } from 'src/components/Post/buttons/styles'
 import { PostContext } from 'src/components/Post/Post'
 import ProtectedComponent from 'src/components/ProtectedComponent'
 import { API_POSTS_KEY, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
-import { uniqueCategories } from 'src/services/categories'
 import { usePostsSlice } from 'src/slices/posts'
 import { extractErrorMessages } from 'src/utils/errors'
 import { getMatchingKeys } from 'src/utils/object'
 import { joinWithAnd } from 'src/utils/string'
 import { CellMeasurerCacheContext } from 'src/views/Home/Home'
-import { PostCategoryNames, PostPatchRequest, PostResponse, PostsGetResponse } from 'types'
+import { PostCategoryNames, PostPatchRequest, PostResponse, PostsGetResponse, uniqueCategories } from 'types'
 
 const categoriesData = Object.entries(PostCategoryNames).map(([k, v]) => ({ label: v, value: k }))
 
