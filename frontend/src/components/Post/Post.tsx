@@ -17,7 +17,7 @@ import type { PostResponse } from 'types'
 import React, { HTMLProps, useContext, useEffect, useMemo, useState } from 'react'
 import { truncate } from 'lodash-es'
 import type { Post } from 'database' // cant use PostCategory exported const
-import CategoryBadge, { CardBackground, uniqueCategoryBackground } from 'src/components/CategoryBadge'
+import CategoryBadge from 'src/components/CategoryBadge'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import { showRelativeTimestamp } from 'src/utils/date'
@@ -35,6 +35,7 @@ import ShareButton from 'src/components/Post/buttons/ShareButton'
 import { usePosts } from 'src/queries/api/posts'
 import { CellMeasurerCacheContext } from 'src/views/Home/Home'
 import { useTwitterEmbed } from 'src/queries/api/twitter'
+import { CardBackground, uniqueCategoryBackground } from 'src/services/categories'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'

@@ -1,8 +1,5 @@
 import { Badge, ColorScheme, MantineGradient } from '@mantine/core'
 
-import postDiamante from 'src/assets/post-diamante.png'
-import postOro from 'src/assets/post-oro.png'
-import postRana from 'src/assets/post-rana.png'
 import emojiMeh from 'src/assets/emoji-meh.png'
 import emojiRana from 'src/assets/emoji-rana.png'
 import emojiOro from 'src/assets/emoji-oro.png'
@@ -66,37 +63,6 @@ export const categoryColorGradient: Record<PostCategoryKey, MantineGradient> = {
   MEH: { from: '#c4a051', to: '#c5781a' },
   ALERTA_GLONETILLO: { from: '#a051c4', to: '#9a6fae' },
   GRR: { from: '#51c4ab', to: '#94ccc0' },
-}
-
-/**
- * Restricted to 1 per post.
- */
-export const uniqueCategories = {
-  DIAMANTE: true,
-  ORO: true,
-  RANA: true,
-}
-
-export type UniqueCategoriesKeys<T extends object> = Extract<keyof T, keyof typeof uniqueCategories>
-
-export type CardBackground = {
-  image: string
-  color: (theme: ColorScheme) => string
-}
-
-export const uniqueCategoryBackground: Record<UniqueCategoriesKeys<typeof PostCategoryNames>, CardBackground> = {
-  DIAMANTE: {
-    image: postDiamante,
-    color: (theme: ColorScheme) => (theme === 'light' ? '#b5d6e2' : '#36525a'),
-  },
-  RANA: {
-    image: postRana,
-    color: (theme: ColorScheme) => (theme === 'light' ? '#b4dbbd' : '#334838'),
-  },
-  ORO: {
-    image: postOro,
-    color: (theme: ColorScheme) => (theme === 'light' ? '#d9d3a1' : '#2f2b22'),
-  },
 }
 
 interface CategoryBadgeProps extends HTMLProps<HTMLElement> {

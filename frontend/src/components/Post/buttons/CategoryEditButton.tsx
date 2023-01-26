@@ -20,13 +20,13 @@ import {
   categoryEmojis,
   categoryPostEmojis,
   categoryPreEmojis,
-  uniqueCategories,
 } from 'src/components/CategoryBadge'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import { useStyles } from 'src/components/Post/buttons/styles'
 import { PostContext } from 'src/components/Post/Post'
 import ProtectedComponent from 'src/components/ProtectedComponent'
 import { API_POSTS_KEY, usePostPatchMutation, usePosts } from 'src/queries/api/posts'
+import { uniqueCategories } from 'src/services/categories'
 import { usePostsSlice } from 'src/slices/posts'
 import { extractErrorMessages } from 'src/utils/errors'
 import { getMatchingKeys } from 'src/utils/object'

@@ -47,12 +47,14 @@ export type PostResponse = {
   }
 } & Post
 
+export type Cursor = string
+
 export type PostsGetResponse = {
   data: PostResponse[]
   /**
    * createdAt cursor
    */
-  nextCursor?: number
+  nextCursor?: Cursor
 }
 
 export type UserUpdateOrCreateRequest = Pick<User, 'displayName' | 'isFollower' | 'isSubscriber'>
@@ -71,7 +73,7 @@ export type PostQueryParams = {
   /**
    * createdAt cursor
    */
-  cursor: number | undefined
+  cursor: Cursor | undefined
   titleQuery: string | undefined
   authorId: string | undefined
   liked: boolean | undefined

@@ -9,7 +9,7 @@ import { createContext, FC, useEffect, useRef } from 'react'
 import { HEADER_HEIGHT } from '../../components/Header'
 import { Alert, Container, Flex, ScrollArea, Space, createStyles } from '@mantine/core'
 import { css } from '@emotion/react'
-import type { PostResponse } from 'types'
+import type { Cursor, PostResponse } from 'types'
 import HomeSideActions from 'src/views/Home/HomeSideActions'
 import { usePostsSlice } from 'src/slices/posts'
 import { usePosts } from 'src/queries/api/posts'
@@ -63,7 +63,7 @@ export default function Home() {
   //   }
   // }, [getPostsQueryParams])
 
-  const previousCursor = useRef<number>(null)
+  const previousCursor = useRef<Cursor>(null)
   console.log('usePostsQuery.data?.pages')
   console.log(usePostsQuery.data?.pages)
   const posts = usePostsQuery.data?.pages?.reduce((acc, page) => acc.concat(page.data), [] as PostResponse[])
