@@ -9,6 +9,8 @@ import {
   MultiSelectValueProps,
   SelectItemProps,
   Space,
+  Textarea,
+  TextInput,
   Tooltip,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
@@ -114,6 +116,7 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
   const postPatchForm = useForm<PostPatchRequest>({
     initialValues: {
       categories: post.categories,
+      moderationComment: post.moderationComment,
     },
     validateInputOnChange: true,
     validate: {
@@ -136,6 +139,7 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
           if (p.id === post.id) {
             console.log('updating react query data')
             p.categories = postPatchForm.values.categories
+            p.moderationComment = postPatchForm.values.moderationComment
           }
           return p
         }),
@@ -147,7 +151,7 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
     postPatchMutation.mutate(
       {
         postId: String(post.id),
-        body: { categories: values.categories },
+        body: values,
       },
       {
         onError(error: any, variables, context) {
@@ -229,6 +233,13 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
                   itemComponent={Item}
                   placeholder="Pick categories"
                   label="Select post categories"
+                />
+                <Textarea
+                  {...postPatchForm.getInputProps('moderationComment')}
+                  autosize
+                  minRows={2}
+                  label="Moderation comment"
+                  disabled={post.isModerated}
                 />
 
                 <Button

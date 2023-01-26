@@ -8,4 +8,5 @@
 
 cd packages/database || exit
 pnpm run dev:reset --force && pnpm run dev:seed
+pnpm run dev:generate
 cd - || exit

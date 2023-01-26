@@ -105,7 +105,7 @@ export default function Header({ tabs }: HeaderProps) {
   const [userMenuOpened, setUserMenuOpened] = useState(false)
   const twitchUser = useTwitchUser()
   const { isFollower, isSubscriber } = useAuthenticatedUser()
-
+  const [loginOut, setLoginOut] = useState(false)
   const username = twitchUser.data?.data[0].display_name
   const avatarUrl = twitchUser.data?.data[0].profile_image_url
 
@@ -119,6 +119,32 @@ export default function Header({ tabs }: HeaderProps) {
 
   const { burgerOpened, setBurgerOpened } = useUISlice()
   const title = burgerOpened ? 'Close navigation' : 'Open navigation'
+
+  const onLogout = async () => {
+    setLoginOut(true)
+    await logout(queryClient)
+  }
+
+  function renderAvatarMenu() {
+    return twitchUser.isLoading || loginOut ? (
+      <Group spacing={7} align="center">
+        <Loader size={'sm'} variant="dots"></Loader>
+        {loginOut ? 'Login out...' : 'Login in...'}
+      </Group>
+    ) : avatarUrl ? (
+      <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
+        <Group spacing={7}>
+          <Avatar src={avatarUrl} alt={username} radius="xl" size={25} />
+          <Text className="display-name" weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
+            {username}
+          </Text>
+          <IconChevronDown size={12} stroke={1.5} />
+        </Group>
+      </UnstyledButton>
+    ) : (
+      <LoginTwitchButton />
+    )
+  }
 
   return (
     <>
@@ -159,26 +185,7 @@ export default function Header({ tabs }: HeaderProps) {
                 if (twitchUser.data) setUserMenuOpened(true)
               }}
             >
-              <Menu.Target>
-                {twitchUser.isLoading ? (
-                  <Group spacing={7} align="center">
-                    <Loader size={'sm'} variant="dots"></Loader>
-                    Login in...
-                  </Group>
-                ) : avatarUrl ? (
-                  <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
-                    <Group spacing={7}>
-                      <Avatar src={avatarUrl} alt={username} radius="xl" size={25} />
-                      <Text className="display-name" weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                        {username}
-                      </Text>
-                      <IconChevronDown size={12} stroke={1.5} />
-                    </Group>
-                  </UnstyledButton>
-                ) : (
-                  <LoginTwitchButton />
-                )}
-              </Menu.Target>
+              <Menu.Target>{renderAvatarMenu()}</Menu.Target>
               <Menu.Dropdown
                 css={css`
                   p {
@@ -227,7 +234,7 @@ export default function Header({ tabs }: HeaderProps) {
                 <Menu.Label>Settings</Menu.Label>
                 <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>Account settings</Menu.Item>
                 <Menu.Divider />
-                <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} onClick={() => logout(queryClient)}>
+                <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} onClick={onLogout}>
                   Logout
                 </Menu.Item>
               </Menu.Dropdown>

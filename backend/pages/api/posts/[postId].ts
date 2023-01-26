@@ -10,7 +10,7 @@ export const config = {
   regions: ['cdg1', 'gru1', 'iad1'],
 }
 
-const moderatorFields: Array<keyof PostPatchRequest> = ['pinned', 'isModerated', 'categories']
+const moderatorFields: Array<keyof PostPatchRequest> = ['pinned', 'isModerated', 'categories', 'moderationComment']
 
 export default async (req: NextRequest) => {
   const { searchParams } = new URL(req.url)
