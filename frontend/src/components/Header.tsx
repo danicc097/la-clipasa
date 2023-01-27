@@ -129,7 +129,7 @@ export default function Header({ tabs }: HeaderProps) {
     return twitchUser.isLoading || loginOut ? (
       <Group spacing={7} align="center">
         <Loader size={'sm'} variant="dots"></Loader>
-        {loginOut ? 'Login out...' : 'Login in...'}
+        {loginOut ? 'Logging out...' : 'Logging in...'}
       </Group>
     ) : avatarUrl ? (
       <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
