@@ -66,6 +66,42 @@ export async function main() {
     .fill(null)
     .map(() => createPost())
 
+  let createdAt = new Date(new Date().getTime() - postId * 1000 * 1)
+  posts.push({
+    id: ++postId,
+    userId: _.sample(users.slice(8, -1))?.id,
+    title: 'calie13 Twitter test',
+    isModerated: true,
+    link: 'https://twitter.com/Animalesybichos/status/1612982747685081088',
+    categories: ['MEH'],
+    createdAt: createdAt, // unique constraint
+    updatedAt: createdAt,
+  } as Prisma.PostCreateArgs['data'])
+
+  createdAt = new Date(new Date().getTime() - postId * 1000 * 2)
+  posts.push({
+    id: ++postId,
+    userId: _.sample(users.slice(8, -1))?.id,
+    title: 'calie13 Youtube test',
+    isModerated: true,
+    link: 'https://www.youtube.com/watch?v=KY2eBrm5pT4&t=1s',
+    categories: ['MEH'],
+    createdAt: createdAt, // unique constraint
+    updatedAt: createdAt,
+  } as Prisma.PostCreateArgs['data'])
+
+  createdAt = new Date(new Date().getTime() - postId * 1000 * 3)
+  posts.push({
+    id: ++postId,
+    userId: _.sample(users.slice(8, -1))?.id,
+    title: 'calie13 Instagram test',
+    isModerated: true,
+    link: 'https://www.instagram.com/p/CjxXTbmISOd/',
+    categories: ['MEH'],
+    createdAt: createdAt, // unique constraint
+    updatedAt: createdAt,
+  } as Prisma.PostCreateArgs['data'])
+
   await prisma.post.createMany({
     data: posts as any,
   })
