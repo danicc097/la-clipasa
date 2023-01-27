@@ -1,4 +1,4 @@
-import { Badge, ColorScheme, MantineGradient } from '@mantine/core'
+import { Badge, ColorScheme, MantineGradient, useMantineTheme } from '@mantine/core'
 
 import emojiMeh from 'src/assets/emoji-meh.png'
 import emojiRana from 'src/assets/emoji-rana.png'
@@ -10,10 +10,13 @@ import emojiDormido from 'src/assets/emoji-dormido.png'
 import emojiSusto1 from 'src/assets/emoji-susto1.png'
 import emojiSusto2 from 'src/assets/emoji-susto2.png'
 import emojiTravieso from 'src/assets/emoji-travieso.png'
+import spiderWeb from 'src/assets/icon-spider-web.svg'
+import ear from 'src/assets/icon-ear.svg'
 import { PostCategoryNames } from 'types'
 import { Interpolation, Theme, css } from '@emotion/react'
 import type { HTMLProps } from 'react'
 import React from 'react'
+import type { PostCategory } from 'database'
 
 export type PostCategoryKey = keyof typeof PostCategoryNames
 
@@ -26,6 +29,7 @@ export const categoryDoubleEmojis: Partial<Record<PostCategoryKey, string>> = {
   MEME_ARTESANAL: emojiBongos,
   SIN_SONIDO: emojiDormido,
   GRR: emojiTravieso,
+  RAGUUUL: spiderWeb,
 }
 
 export const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
@@ -38,31 +42,39 @@ export const categoryEmojis: Partial<Record<PostCategoryKey, string>> = {
   SIN_SONIDO: emojiDormido,
   GRR: emojiTravieso,
   ALERTA_GLONETILLO: emojiSusto1,
+  RAGUUUL: spiderWeb,
+  ENSORDECEDOR: ear,
+}
+
+export const emojiInversion: Partial<Record<PostCategoryKey, true>> = {
+  RAGUUUL: true,
+  ENSORDECEDOR: true,
 }
 
 const EMOJI_SIZE = 16
 
-export const categoryPreEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {
-  ALERTA_GLONETILLO: <img src={emojiSusto1} height={EMOJI_SIZE} width={EMOJI_SIZE} />,
+export const categoryPreEmojis: Partial<Record<PostCategoryKey, string>> = {
+  ALERTA_GLONETILLO: emojiSusto1,
   // NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
 }
 
-export const categoryPostEmojis: Partial<Record<PostCategoryKey, JSX.Element>> = {
-  // SIN_SONIDO: <IconVolumeOff size={EMOJI_SIZE} />,
-  ALERTA_GLONETILLO: <img src={emojiSusto2} height={EMOJI_SIZE} width={EMOJI_SIZE} />,
-  // NO_SE_YO: <IconAlertOctagon size={EMOJI_SIZE} />,
+export const categoryPostEmojis: Partial<Record<PostCategoryKey, string>> = {
+  ALERTA_GLONETILLO: emojiSusto2,
+  ENSORDECEDOR: ear,
 }
 
 export const categoryColorGradient: Record<PostCategoryKey, MantineGradient> = {
   MEME_ARTESANAL: { from: 'teal', to: 'lime' },
   DIAMANTE: { from: '#1c95b1', to: '#16758b' },
-  RANA: { from: 'teal', to: 'lime' },
-  ORO: { from: 'yellow', to: 'yellow' },
-  SIN_SONIDO: { from: 'gray', to: 'gray' },
+  RANA: { from: '#c38d64', to: 'lime', deg: 45 },
+  ORO: { from: 'yellow', to: '#b9bd32' },
+  SIN_SONIDO: { from: '#727272', to: '#878585' },
   NO_SE_YO: { from: 'red', to: 'red' },
   MEH: { from: '#c4a051', to: '#c5781a' },
   ALERTA_GLONETILLO: { from: '#a051c4', to: '#9a6fae' },
   GRR: { from: '#51c4ab', to: '#94ccc0' },
+  ENSORDECEDOR: { from: '#963429', to: '#dc4439' },
+  RAGUUUL: { from: '#92946d', to: '#5d5d1f' },
 }
 
 interface CategoryBadgeProps extends HTMLProps<HTMLElement> {
@@ -72,6 +84,7 @@ interface CategoryBadgeProps extends HTMLProps<HTMLElement> {
 
 function CategoryBadge(props: CategoryBadgeProps) {
   const { category, css: CSS, ...htmlProps } = props
+  const theme = useMantineTheme()
 
   return (
     <Badge
@@ -101,18 +114,29 @@ function CategoryBadge(props: CategoryBadgeProps) {
           gap: 3px;
         `}
       >
-        {categoryDoubleEmojis[category] && (
-          <img src={categoryDoubleEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
-        )}
-        {categoryPreEmojis[category]}
+        {renderEmoji(categoryDoubleEmojis)}
+        {renderEmoji(categoryPreEmojis)}
         <div>{PostCategoryNames[category] ?? category}</div>
-        {categoryPostEmojis[category]}
-        {categoryDoubleEmojis[category] && (
-          <img src={categoryDoubleEmojis[category]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
-        )}
+        {renderEmoji(categoryPostEmojis)}
+        {renderEmoji(categoryDoubleEmojis)}
       </div>
     </Badge>
   )
+
+  function renderEmoji(emojis): React.ReactNode {
+    return (
+      emojis[category] && (
+        <img
+          css={css`
+            filter: ${emojiInversion[category] && 'invert(100%)'};
+          `}
+          src={emojis[category]}
+          height={EMOJI_SIZE}
+          width={EMOJI_SIZE}
+        />
+      )
+    )
+  }
 }
 
 export default React.memo(CategoryBadge)

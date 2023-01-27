@@ -12,6 +12,7 @@ import {
   Textarea,
   TextInput,
   Tooltip,
+  useMantineTheme,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { IconCheck, IconPlus } from '@tabler/icons'
@@ -22,6 +23,7 @@ import {
   categoryEmojis,
   categoryPostEmojis,
   categoryPreEmojis,
+  emojiInversion,
 } from 'src/components/CategoryBadge'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import { useStyles } from 'src/components/Post/buttons/styles'
@@ -40,9 +42,17 @@ const categoriesData = Object.entries(PostCategoryNames).map(([k, v]) => ({ labe
 const EMOJI_SIZE = 16
 
 function Value({ value, label, onRemove, classNames, ...others }: MultiSelectValueProps & { value: string }) {
+  const theme = useMantineTheme()
   const emoji = categoryEmojis[value] ? (
     <Box mr={10}>
-      <img src={categoryEmojis[value]} height={EMOJI_SIZE} width={EMOJI_SIZE} />{' '}
+      <img
+        css={css`
+          filter: ${emojiInversion[value] && theme.colorScheme === 'dark' && 'invert(100%)'};
+        `}
+        src={categoryEmojis[value]}
+        height={EMOJI_SIZE}
+        width={EMOJI_SIZE}
+      />{' '}
     </Box>
   ) : null
 
@@ -70,10 +80,18 @@ function Value({ value, label, onRemove, classNames, ...others }: MultiSelectVal
 }
 
 const Item = forwardRef<HTMLDivElement, SelectItemProps>(({ label, value, ...others }, ref) => {
+  const theme = useMantineTheme()
   const emoji = (
     <Box mr={10}>
       {categoryEmojis[value] ? (
-        <img src={categoryEmojis[value]} height={EMOJI_SIZE} width={EMOJI_SIZE} />
+        <img
+          css={css`
+            filter: ${emojiInversion[value] && theme.colorScheme === 'dark' && 'invert(100%)'};
+          `}
+          src={categoryEmojis[value]}
+          height={EMOJI_SIZE}
+          width={EMOJI_SIZE}
+        />
       ) : (
         <Space w={EMOJI_SIZE} />
       )}

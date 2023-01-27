@@ -38,6 +38,8 @@ export const PostCategoryNames: Record<DatabasePostCategory, string> = {
   MEH: 'MEH',
   ALERTA_GLONETILLO: 'ALERTA GLONETILLO',
   GRR: 'GRR',
+  ENSORDECEDOR: 'ENSORDECEDOR',
+  RAGUUUL: 'RAGUUUL',
 }
 
 export const RoleNames: Record<DatabaseRole, string> = {

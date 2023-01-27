@@ -17,7 +17,7 @@ import type { PostResponse } from 'types'
 import React, { HTMLProps, useContext, useEffect, useMemo, useState } from 'react'
 import { truncate } from 'lodash-es'
 import type { Post } from 'database' // cant use PostCategory exported const
-import CategoryBadge from 'src/components/CategoryBadge'
+import CategoryBadge, { emojiInversion } from 'src/components/CategoryBadge'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import { showRelativeTimestamp } from 'src/utils/date'
@@ -336,8 +336,8 @@ function Post(props: PostProps) {
 
           * > :not(.restore-button, .restore-button *),
           ::before {
-            filter: ${postDeleted ? 'grayscale(1)' : 'none'};
-            pointer-events: ${postDeleted ? 'none' : 'all'};
+            filter: ${postDeleted ? 'grayscale(1)' : 'auto'};
+            pointer-events: ${postDeleted ? 'none' : 'auto'};
           }
         `}
         {...(htmlProps as any)}

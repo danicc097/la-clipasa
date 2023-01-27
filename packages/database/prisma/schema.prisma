@@ -25,6 +25,8 @@ enum PostCategory {
   MEH
   ALERTA_GLONETILLO
   GRR
+  ENSORDECEDOR
+  RAGUUUL
 
   @@schema("public")
 }
