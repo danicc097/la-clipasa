@@ -3,7 +3,7 @@ import type { PostCategory } from 'database'
 import postDiamante from 'src/assets/post-diamante.png'
 import postOro from 'src/assets/post-oro.png'
 import postRana from 'src/assets/post-rana.png'
-import type { PostCategoryNames } from 'types'
+import type { PostCategoryNames, UniqueCategories } from 'types'
 
 export type CardBackground = {
   image: string
