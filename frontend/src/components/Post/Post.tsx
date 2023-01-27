@@ -22,7 +22,7 @@ import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import { showRelativeTimestamp } from 'src/utils/date'
 import { useQueryClient } from '@tanstack/react-query'
-import { openModal } from '@mantine/modals'
+import { closeAllModals, openModal } from '@mantine/modals'
 import DeleteButton from 'src/components/Post/buttons/DeleteButton'
 import EditButton from 'src/components/Post/buttons/EditButton'
 import ModerateButton from 'src/components/Post/buttons/ModerateButton'
@@ -38,6 +38,8 @@ import { useTwitterEmbed } from 'src/queries/api/twitter'
 import { CardBackground, uniqueCategoryBackground } from 'src/services/categories'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
+import { InstagramEmbed, TwitterEmbed, YouTubeEmbed } from 'react-social-media-embed'
+import { getServiceAndId } from 'src/services/services'
 
 const useStyles = createStyles((theme) => {
   const shadowColor = theme.colorScheme === 'dark' ? '0deg 0% 10%' : '0deg 0% 50%'
@@ -95,12 +97,6 @@ const useStyles = createStyles((theme) => {
 
     card: cardStyle,
 
-    modal: {
-      '.mantine-Modal-modal': {
-        backgroundColor: 'white !important',
-      },
-    },
-
     title: {
       fontSize: '1.5rem',
       paddingRight: '3rem', // for bg decorations
@@ -148,7 +144,7 @@ function Post(props: PostProps) {
   if (!post) return null
 
   const cardBackground: CardBackground =
-    uniqueCategoryBackground[post?.categories.find((c) => uniqueCategoryBackground[c])]
+    uniqueCategoryBackground[post.categories.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = backgroundImage ? backgroundImage : cardBackground ? cardBackground.image : 'auto'
   const cardBackgroundColor = backgroundImage
     ? 'auto'
@@ -179,12 +175,12 @@ function Post(props: PostProps) {
 
   function renderMetadata() {
     return (
-      <Group mt="lg">
-        <Avatar src={post?.User.profileImage} radius="sm" />
+      <Group>
+        <Avatar src={post.User.profileImage} radius="sm" />
         <div>
-          <Text weight={500}>{post?.User.displayName}</Text>
+          <Text weight={500}>{post.User.displayName}</Text>
           <Text size="xs" color="dimmed">
-            {showRelativeTimestamp(post?.createdAt.toISOString())}
+            {showRelativeTimestamp(post.createdAt.toISOString())}
           </Text>
         </div>
       </Group>
@@ -197,7 +193,7 @@ function Post(props: PostProps) {
         weight={700}
         className={classes.title}
         mt="xs"
-        dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post?.title, { length: 100 }), 28) }}
+        dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post.title, { length: 100 }), 28) }}
       ></Text>
     )
   }
@@ -210,19 +206,19 @@ function Post(props: PostProps) {
             e.stopPropagation()
           }}
           component="a"
-          href={post?.link}
+          href={post.link}
           target="_blank"
           variant="subtle"
           m={0}
           size="xs"
           leftIcon={<IconExternalLink size={14} />}
         >
-          {post?.link}
+          {truncate(post.link, { length: 40 })}
         </Button>
         <Text
           size={'sm'}
           dangerouslySetInnerHTML={{
-            __html: emotesTextToHtml(truncate(post?.content, { length: 500 }), 20),
+            __html: emotesTextToHtml(truncate(post.content, { length: 500 }), 20),
           }}
         ></Text>
       </Text>
@@ -232,7 +228,7 @@ function Post(props: PostProps) {
   function renderCategories() {
     return (
       <Group position="left">
-        {post?.categories?.map((category, i) => (
+        {post.categories?.map((category, i) => (
           <CategoryBadge
             className="disable-select"
             key={i}
@@ -276,8 +272,24 @@ function Post(props: PostProps) {
         radius={12}
         className={`${classes.card} ${className ?? ''}`}
         onClick={(e) => {
+          const postModalContent = renderPostModal()
+          if (!postModalContent) return
+
           openModal({
-            className: classes.modal,
+            styles: {
+              modal: {
+                // width: '70%',
+                [theme.fn.smallerThan('sm')]: {
+                  width: '90vw',
+                },
+              },
+              root: {
+                zIndex: 10000,
+                '.mantine-Modal-modal': {
+                  backgroundColor: 'white',
+                },
+              },
+            },
             title: (
               <Text
                 color={'black'}
@@ -285,34 +297,11 @@ function Post(props: PostProps) {
                 mt="xs"
                 size={'sm'}
                 align={'center'}
-                dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post?.title, { length: 60 }), 16) }}
+                dangerouslySetInnerHTML={{ __html: emotesTextToHtml(truncate(post.title, { length: 60 }), 16) }}
               ></Text>
             ),
-            children: (
-              <div className="service-content">
-                <AspectRatio ratio={16 / 9}>
-                  <iframe
-                    src="https://www.youtube.com/embed/KY2eBrm5pT4"
-                    title="YouTube video player"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </AspectRatio>
-                <div id="twitter-widget-modal" dangerouslySetInnerHTML={{ __html: useTwitterEmbedQuery.data }}></div>
-              </div>
-            ),
+            children: postModalContent,
           })
-
-          const s = document.createElement('script')
-          s.setAttribute('src', 'https://platform.twitter.com/widgets.js') // also see  "react-twitter-embed"
-          s.setAttribute('async', 'true')
-          document.head.appendChild(s)
-          setTimeout(() => {
-            document
-              .querySelector('blockquote.twitter-tweet')
-              ?.setAttribute('data-chrome', 'transparent nofooter noborders noheader noscrollbar')
-            window['twttr']?.widgets.load(document.getElementsByClassName('service-content')[0])
-          }, 1000) // onload not enough
         }}
         /* move to classes */
         css={css`
@@ -344,7 +333,7 @@ function Post(props: PostProps) {
         {...(htmlProps as any)}
       >
         {props.children}
-        {postDeleted && <RestoreButton postId={post?.id} />}
+        {postDeleted && <RestoreButton postId={post.id} />}
         {renderCategories()}
         {renderCallout()}
         {renderTitle()}
@@ -354,6 +343,66 @@ function Post(props: PostProps) {
       </Card>
     </PostContext.Provider>
   )
+
+  function renderPostModal(): React.ReactNode {
+    const { id, service } = getServiceAndId(post.link)
+
+    let element = null
+
+    switch (service) {
+      case 'instagram':
+        element = (
+          <InstagramEmbed
+            url={post.link}
+            width={'100%'}
+            height={800}
+            // {...{ style: { maxWidth: '900px', minHeight: '60vh' } }}
+          />
+        )
+        break
+      case 'twitter':
+        element = (
+          <TwitterEmbed
+            url={post.link}
+            width={'100%'}
+            height={800}
+            // {...{ style: { maxWidth: '900px', minHeight: '60vh' } }}
+          />
+        )
+        break
+      case 'youtube':
+        element = (
+          <YouTubeEmbed
+            url={post.link}
+            width={'100%'}
+            height={300}
+            // {...{ style: { maxWidth: '1400px', minHeight: '60vh' } }}
+          />
+        )
+        break
+      case 'unknown':
+        window.open(post.link, '_blank').focus()
+      default:
+        break
+    }
+
+    if (!element) return
+
+    return (
+      <div
+        className="service-content"
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          textAlign: '-webkit-center' as any,
+          maxHeight: '70vh',
+          overflow: 'scroll',
+        }}
+      >
+        {element}
+      </div>
+    )
+  }
 }
 
 export function PostSkeleton(props: Partial<PostProps>) {

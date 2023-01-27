@@ -20,13 +20,15 @@ import {
 import { useForm } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
 import { IconEyeCheck, IconSearch, IconSend } from '@tabler/icons'
-import type { PostCategory } from 'database'
+import { InfiniteData, useQueryClient } from '@tanstack/react-query'
+import type { Post, PostCategory } from 'database'
+import { isEqual, set } from 'lodash-es'
 import { HTMLProps, useEffect, useRef, useState } from 'react'
 import CategoryBadge from 'src/components/CategoryBadge'
 import ErrorCallout from 'src/components/ErrorCallout/ErrorCallout'
 import ProtectedComponent from 'src/components/ProtectedComponent'
 import useAuthenticatedUser from 'src/hooks/auth/useAuthenticatedUser'
-import { usePostCreateMutation, usePosts } from 'src/queries/api/posts'
+import { API_POSTS_KEY, usePostCreateMutation, usePosts } from 'src/queries/api/posts'
 import { emotesTextToHtml } from 'src/services/twitch'
 import { usePostsSlice } from 'src/slices/posts'
 import { useUISlice } from 'src/slices/ui'
@@ -34,7 +36,7 @@ import { extractErrorMessages } from 'src/utils/errors'
 import { getCaretCoordinates } from 'src/utils/input'
 import { sanitizeContentEditableInputBeforeSubmit } from 'src/utils/string'
 import { isURL } from 'src/utils/url'
-import { PostCreateRequest, PostCategoryNames } from 'types'
+import { PostCreateRequest, PostCategoryNames, PostsGetResponse } from 'types'
 
 const tooltipWithPx = 40
 
@@ -137,6 +139,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams, setGetPostsQueryParams } = usePostsSlice()
   const { burgerOpened, setBurgerOpened } = useUISlice()
   const usePostsQuery = usePosts()
+  const queryClient = useQueryClient()
 
   const [titleQuery, setTitleQuery] = useState(getPostsQueryParams?.titleQuery)
   const [newPostModalOpened, setNewPostModalOpened] = useState(false)
@@ -191,24 +194,42 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   }, [postCreateForm.values])
 
   const handleSubmit = postCreateForm.onSubmit((values) => {
+    const onPostSubmitSuccess = (resData, variables, context) => {
+      setNewPostModalOpened(false)
+      setBurgerOpened(false)
+      showNotification({
+        id: 'post-created',
+        title: 'Post submitted',
+        message: 'New post created successfully',
+        color: 'green',
+        icon: <IconSend size={18} />,
+        autoClose: 5000,
+      })
+
+      const { cursor, ...otherParams } = getPostsQueryParams
+
+      console.log(resData)
+
+      set(resData, 'User', user.data)
+      set(resData, '_count.likedPosts', 0)
+      set(resData, '_count.savedPosts', 0)
+
+      queryClient.setQueryData<InfiniteData<PostsGetResponse>>([API_POSTS_KEY, `Get`, otherParams], (data) => ({
+        ...data,
+        pages: data.pages.map((page, pageIdx) => ({
+          ...page,
+          data: pageIdx === 0 ? [resData].concat(data) : page.data,
+        })),
+      }))
+    }
+
     values.title = sanitizeContentEditableInputBeforeSubmit(values.title)
 
     postCreateMutation.mutate(values, {
       onError(error: any, variables, context) {
         setCalloutErrors(extractErrorMessages(error))
       },
-      onSuccess(data, variables, context) {
-        setNewPostModalOpened(false)
-        setBurgerOpened(false)
-        showNotification({
-          id: 'post-created',
-          title: 'Post submitted',
-          message: 'New post created successfully',
-          color: 'green',
-          icon: <IconSend size={18} />,
-          autoClose: 5000,
-        })
-      },
+      onSuccess: onPostSubmitSuccess,
     })
   })
 

@@ -17,6 +17,9 @@ export function getServiceAndId(url: string): URLMetadata {
   if (url.includes('youtube.com')) {
     service = 'youtube'
     id = url.split('v=')[1].split('&')[0]
+  } else if (url.includes('youtu.be')) {
+    service = 'youtube'
+    id = url.split('youtu.be/')[1].split('?')[0]
   } else if (url.includes('instagram.com')) {
     service = 'instagram'
     const segments = url.split('/')
