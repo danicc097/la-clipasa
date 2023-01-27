@@ -35,7 +35,6 @@ import { usePostsSlice } from 'src/slices/posts'
 import { extractErrorMessages } from 'src/utils/errors'
 import { getMatchingKeys } from 'src/utils/object'
 import { joinWithAnd } from 'src/utils/string'
-import { CellMeasurerCacheContext } from 'src/views/Home/Home'
 import { PostCategoryNames, PostPatchRequest, PostResponse, PostsGetResponse, uniqueCategories } from 'types'
 
 const categoriesData = Object.entries(PostCategoryNames).map(([k, v]) => ({ label: v, value: k }))
@@ -123,13 +122,6 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
 
   const [categoriesEditPopoverOpened, setCategoriesEditPopoverOpened] = useState(false)
   const [calloutErrors, setCalloutErrors] = useState([])
-
-  // const PostCellMeasurerCache = useContext(CellMeasurerCacheContext)
-
-  // useEffect(() => {
-  //   PostCellMeasurerCache.cache.clear(PostCellMeasurerCache.rowIndex, PostCellMeasurerCache.columnIndex)
-  //   PostCellMeasurerCache.cache.clear(PostCellMeasurerCache.rowIndex + 1, PostCellMeasurerCache.columnIndex)
-  // }, [])
 
   const postPatchForm = useForm<PostPatchRequest>({
     initialValues: {

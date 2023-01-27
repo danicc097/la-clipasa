@@ -7,7 +7,6 @@ import { resolve } from 'path'
 import path from 'path'
 import fs from 'fs'
 import dynamicImport from 'vite-plugin-dynamic-import'
-// import { esbuildCommonjs, viteCommonjs } from '@originjs/vite-plugin-commonjs'
 
 dotenv.config()
 
@@ -16,11 +15,6 @@ export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
   return defineConfig({
-    // optimizeDeps: {
-    //   esbuildOptions: {
-    //     plugins: [viteCommonjs() as any],
-    //   },
-    // },
     base: '/',
     plugins: [
       react({
@@ -46,6 +40,7 @@ export default ({ mode }) => {
       'process.env.NODE_ENV': `"${mode}"`,
     },
     build: {
+      // see https://github.com/vitejs/vite/issues/3409 for more workarounds
       commonjsOptions: {
         transformMixedEsModules: true // react social embed
       },

@@ -17,35 +17,10 @@ import { IconAlertCircle } from '@tabler/icons'
 import useOnScreen from 'src/hooks/useOnScreen'
 import { FOOTER_HEIGHT } from 'src/components/Footer'
 import Post, { PostSkeleton } from 'src/components/Post/Post'
-import {
-  CellMeasurer as _CellMeasurer,
-  CellMeasurerCache,
-  List as _List,
-  ListProps,
-  AutoSizerProps,
-  CellMeasurerProps,
-  WindowScroller as _WindowScroller,
-  WindowScrollerProps,
-  ListRowRenderer,
-} from 'react-virtualized'
-import AutoSizer from 'react-virtualized-auto-sizer'
 import { Virtuoso } from 'react-virtuoso'
-
-const List = _List as unknown as FC<ListProps>
-// const AutoSizer = _AutoSizer as unknown as FC<AutoSizerProps>
-const CellMeasurer = _CellMeasurer as unknown as FC<CellMeasurerProps>
-const WindowScroller = _WindowScroller as unknown as FC<WindowScrollerProps>
 
 const PADDING_TOP = '2rem'
 const useStyles = createStyles((theme) => ({}))
-
-type PostCellMeasurerCache = {
-  cache: CellMeasurerCache
-  rowIndex: number
-  columnIndex: number
-}
-
-export const CellMeasurerCacheContext = createContext<PostCellMeasurerCache>(null)
 
 export default function Home() {
   const { classes } = useStyles()
@@ -70,14 +45,6 @@ export default function Home() {
   const nextCursor = usePostsQuery.data?.pages?.[usePostsQuery.data?.pages?.length - 1].nextCursor
 
   const lastPostRef = useRef<HTMLDivElement>(null)
-  const isLastPostOnScreen = useOnScreen(lastPostRef)
-
-  // see https://codesandbox.io/s/material-demo-forked-7bgyzr?file=/demo.js
-  const cache = new CellMeasurerCache({
-    defaultHeight: 280,
-    fixedWidth: true,
-    minHeight: 280, // attempt to fix call stack exceeded https://github.com/bvaughn/react-virtualized/issues/1606
-  })
 
   console.log(usePostsQuery.data)
   console.log(posts)
