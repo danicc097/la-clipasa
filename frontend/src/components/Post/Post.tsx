@@ -256,7 +256,7 @@ function Post(props: PostProps) {
 
     return (
       !post.isModerated &&
-      getPostsQueryParams.authorId === user.data.id && (
+      getPostsQueryParams.authorId === user.data?.id && (
         <>
           <Space mb={10} />
           <ErrorCallout title="Unpublished" errors={messages} />
