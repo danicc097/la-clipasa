@@ -11,7 +11,7 @@ export default function ShareButton({}: ShareButtonProps) {
   return (
     <Tooltip label="Share" arrowPosition="center" withArrow>
       <ActionIcon
-        className={classes.action}
+        className={`${classes.action} `}
         onClick={(e) => {
           e.stopPropagation()
         }}
