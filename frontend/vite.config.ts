@@ -7,6 +7,7 @@ import { resolve } from 'path'
 import path from 'path'
 import fs from 'fs'
 import dynamicImport from 'vite-plugin-dynamic-import'
+import { esbuildCommonjs } from '@originjs/vite-plugin-commonjs'
 
 dotenv.config()
 
@@ -15,6 +16,11 @@ export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
   return defineConfig({
+    optimizeDeps: {
+      esbuildOptions: {
+        plugins: [esbuildCommonjs(['react-social-media-embed'])],
+      },
+    },
     base: '/',
     plugins: [
       react({
@@ -27,7 +33,6 @@ export default ({ mode }) => {
       tsconfigPaths({ root: '.' }),
       dynamicImport({}),
       reactVirtualized(),
-      reactTwitterEmbed(),
     ],
     server: {
       port: 5143,
@@ -77,26 +82,6 @@ export function reactVirtualized() {
         )
       const code = fs.readFileSync(file, 'utf-8')
       const modified = code.replace(WRONG_CODE, '')
-      fs.writeFileSync(file, modified)
-    },
-  }
-}
-
-// https://github.com/uber/baseweb/issues/4129#issuecomment-1208168306
-export function reactTwitterEmbed() {
-  return {
-    name: 'my:react-virtualized',
-    configResolved() {
-      const file = require
-        .resolve('react-virtualized')
-        .replace(
-          path.join('dist', 'commonjs', 'index.js'),
-          path.join('dist', 'es', 'WindowScroller', 'utils', 'onScroll.js'),
-        )
-      const code = fs.readFileSync(file, 'utf-8')
-      const modified = code
-        .replace(`require("scriptjs")`, `import('scriptjs')`)
-        .replace(`require('scriptjs')`, `import('scriptjs')`)
       fs.writeFileSync(file, modified)
     },
   }
