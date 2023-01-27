@@ -7,7 +7,7 @@ import { resolve } from 'path'
 import path from 'path'
 import fs from 'fs'
 import dynamicImport from 'vite-plugin-dynamic-import'
-import { esbuildCommonjs } from '@originjs/vite-plugin-commonjs'
+import { esbuildCommonjs, viteCommonjs } from '@originjs/vite-plugin-commonjs'
 
 dotenv.config()
 
@@ -18,7 +18,7 @@ export default ({ mode }) => {
   return defineConfig({
     optimizeDeps: {
       esbuildOptions: {
-        plugins: [esbuildCommonjs(['react-social-media-embed'])],
+        plugins: [viteCommonjs() as any],
       },
     },
     base: '/',
