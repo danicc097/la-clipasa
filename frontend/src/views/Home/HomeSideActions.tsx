@@ -403,8 +403,8 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                   <Loader size={18} />
                 ) : (
                   <ActionIcon
-                    variant="gradient"
-                    gradient={{ from: '#3257b0', to: '#5f7dc3', deg: 45 }}
+                    variant="filled"
+                    bg={theme.colors.blue[9]}
                     opacity={'80%'}
                     onClick={(e) => {
                       changeTitleQueryParam()
@@ -536,7 +536,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
           {isAuthenticated && (
             <Group mt="xs">
               <Button
-                bg={'#3257b0'}
+                bg={theme.colors.blue[9]}
                 leftIcon={<IconSend size={20} stroke={1.5} />}
                 radius="md"
                 style={{ flex: 1 }}

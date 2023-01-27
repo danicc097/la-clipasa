@@ -9,6 +9,7 @@ import {
   MultiSelectValueProps,
   SelectItemProps,
   Space,
+  Text,
   Textarea,
   TextInput,
   Tooltip,
@@ -251,16 +252,23 @@ export default function CategoryEditButton({}: CategoryEditButtonProps) {
                   placeholder="Pick categories"
                   label="Select post categories"
                 />
-                <Textarea
-                  {...postPatchForm.getInputProps('moderationComment')}
-                  autosize
-                  minRows={2}
-                  label="Moderation comment"
-                  disabled={post.isModerated}
-                />
+                {!post.isModerated && (
+                  <div>
+                    <Textarea
+                      {...postPatchForm.getInputProps('moderationComment')}
+                      autosize
+                      minRows={2}
+                      label="Moderation comment"
+                    />
+                    <Text size={'xs'} opacity={'60%'}>
+                      Leave a message to the post author.
+                    </Text>
+                  </div>
+                )}
 
                 <Button
                   loading={postPatchMutation.isLoading}
+                  bg={theme.colors.blue[9]}
                   size="xs"
                   type="submit"
                   leftIcon={<IconCheck size={16} stroke={1.5} />}
