@@ -100,7 +100,7 @@ export default function Home() {
           fixedItemHeight={300}
           data={posts}
           atBottomStateChange={(isReached) => {
-            if (isReached && posts.length > 0 && !usePostsQuery.isFetching && usePostsQuery.status !== 'loading') {
+            if (isReached && posts?.length > 0 && !usePostsQuery.isFetching && usePostsQuery.status !== 'loading') {
               // Fetch more data.
               // Don't forget to debounce your request (fetch).
               console.log('bottom reached')

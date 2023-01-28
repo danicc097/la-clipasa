@@ -36,7 +36,7 @@ import { extractErrorMessages } from 'src/utils/errors'
 import { getCaretCoordinates } from 'src/utils/input'
 import { sanitizeContentEditableInputBeforeSubmit } from 'src/utils/string'
 import { isURL } from 'src/utils/url'
-import { PostCreateRequest, PostCategoryNames, PostsGetResponse } from 'types'
+import { PostCreateRequest, PostCategoryNames, PostsGetResponse, PostQueryParamsSort } from 'types'
 
 const tooltipWithPx = 40
 
@@ -136,7 +136,8 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const { ...htmlProps } = props
   const postCreateMutation = usePostCreateMutation()
   const [titlePreviewPopoverOpened, setTitlePreviewPopoverOpened] = useState(false)
-  const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams, setGetPostsQueryParams } = usePostsSlice()
+  const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams, setGetPostsQueryParams, setSort } =
+    usePostsSlice()
   const { burgerOpened, setBurgerOpened } = useUISlice()
   const usePostsQuery = usePosts()
   const queryClient = useQueryClient()
@@ -389,6 +390,17 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
     </>
   )
 
+  const sortSelectData: { value: PostQueryParamsSort; label: string }[] = [
+    {
+      value: PostQueryParamsSort.DescendingCreationDate,
+      label: 'Descending creation date',
+    },
+    {
+      value: PostQueryParamsSort.AscendingCreationDateByLastSeen,
+      label: 'Ascending creation date from last seen',
+    },
+  ]
+
   return (
     <div {...(htmlProps as any)}>
       {renderNewPostModal()}
@@ -536,14 +548,23 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                 <Text mt="md" className={classes.label} color="dimmed">
                   SEARCH SETTINGS
                 </Text>
-                <Flex mt={10} gap="md" justify="center" align="center" direction="row" wrap={'wrap'}>
-                  {/*
+                {/*
                   TODO if lastSeen checked, cursor starts at last seen value but we go backwards (need orderby asc in prisma and reverse pages)
                   also show a notification saying "Showing posts in ascending order"
+                  we should store lastSeen in user.lastSeenPost DateTime db.timestamp (like Post.createdAt)
                   */}
-                  <Chip variant="filled" color="green" disabled onClick={() => null}>
-                    Ascending creation date from last seen
-                  </Chip>
+                <Flex mt={10} gap="md" justify="space-between" align="center" direction="row" wrap={'wrap'}>
+                  <Text className={classes.sideLabel} color="dimmed">
+                    Sort
+                  </Text>
+                  <Select
+                    data={sortSelectData}
+                    onChange={(value: PostQueryParamsSort) => {
+                      setSort(value)
+                    }}
+                    placeholder="Select post ordering"
+                    defaultValue={PostQueryParamsSort.DescendingCreationDate}
+                  />
                 </Flex>
               </Card.Section>
             </Menu>

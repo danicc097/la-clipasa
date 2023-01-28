@@ -1,6 +1,6 @@
 import type { PostCategory } from 'database'
 import { isEqual } from 'lodash-es'
-import type { PostQueryParams } from 'types'
+import type { PostQueryParams, PostQueryParamsSort } from 'types'
 import create from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
@@ -11,6 +11,7 @@ interface PostsState {
   setGetPostsQueryParams: (params: PostQueryParams) => void
   addCategoryFilter: (category: PostCategory) => void
   removeCategoryFilter: (category: PostCategory) => void
+  setSort: (setting: PostQueryParamsSort) => void
 }
 
 const usePostsSlice = create<PostsState>()(
@@ -27,10 +28,12 @@ const usePostsSlice = create<PostsState>()(
             categories: undefined,
             cursor: undefined,
             moderated: true,
+            sort: undefined,
           },
           setGetPostsQueryParams: (params: PostQueryParams) =>
             set(setGetPostsQueryParams(params), false, `setGetPostsQueryParams`),
           addCategoryFilter: (category: PostCategory) => set(addCategoryFilter(category), false, `addCategoryFilter`),
+          setSort: (setting: PostQueryParamsSort) => set(setSort(setting), false, `setSort`),
           removeCategoryFilter: (category: PostCategory) =>
             set(removeCategoryFilter(category), false, `removeCategoryFilter`),
         }
@@ -91,6 +94,17 @@ function addCategoryFilter(category: PostCategory): PostsAction {
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         categories,
+      },
+    }
+  }
+}
+
+function setSort(sort: PostQueryParamsSort): PostsAction {
+  return (state: PostsState) => {
+    return {
+      getPostsQueryParams: {
+        ...state.getPostsQueryParams,
+        sort,
       },
     }
   }

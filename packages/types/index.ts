@@ -82,6 +82,11 @@ export type PostPatchRequest = Partial<
   }
 >
 
+export enum PostQueryParamsSort {
+  DescendingCreationDate = 'DescendingCreationDate',
+  AscendingCreationDateByLastSeen = 'AscendingCreationDateByLastSeen',
+}
+
 export type PostQueryParams = {
   limit: number | undefined
   /**
@@ -94,6 +99,7 @@ export type PostQueryParams = {
   saved: boolean | undefined
   moderated: boolean | undefined
   categories: PostCategory[] | undefined
+  sort: PostQueryParamsSort
 }
 
 export interface HTTPValidationError {
