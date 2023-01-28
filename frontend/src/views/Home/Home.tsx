@@ -82,7 +82,7 @@ export default function Home() {
         css={css`
           height: 100vh;
           min-width: 40vw;
-          overflow: hidden;
+          overflow: scroll;
 
           @media only screen and (max-width: 1200px) {
             min-width: 80vw;
