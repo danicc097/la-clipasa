@@ -58,8 +58,8 @@ export default async (req: NextRequest) => {
         // }
 
         let limit = queryParams.limit ?? DEFAULT_LIMIT
-        if (limit > 50) {
-          limit = 50
+        if (limit > 20) {
+          limit = 20
         }
 
         if (queryParams.authorId && user?.id && queryParams.authorId === user?.id) {
@@ -68,25 +68,26 @@ export default async (req: NextRequest) => {
         }
 
         const posts = await prisma.post.findMany({
-          take: limit,
+          take: limit + 1,
           // take: -limit, // paging backwards
-          ...(queryParams.cursor !== undefined && { skip: 1 }), // skip the cursor
+          // ...(queryParams.cursor !== undefined && { skip: 1 }), // skip the cursor`
+          skip: 0,
           orderBy: {
             createdAt: 'desc',
           },
           // NOTE: cursor pagination does not use cursors in the underlying database (PostgreSQL).
           // also `cursor` will only work with `id`, but need gt/lt workaround for dates, even if unique
-          // ...(queryParams.cursor !== undefined && {
-          //   cursor: {
-          //     createdAt: new Date(queryParams.cursor),
-          //   },
-          // }),
+          ...(queryParams.cursor !== undefined && {
+            cursor: {
+              createdAt: new Date(queryParams.cursor),
+            },
+          }),
           where: {
-            ...(queryParams.cursor !== undefined && {
-              createdAt: {
-                lt: new Date(queryParams.cursor), // older records (less than)
-              },
-            }),
+            // ...(queryParams.cursor !== undefined && {
+            //   createdAt: {
+            //     lt: new Date(queryParams.cursor), // older records (less than)
+            //   },
+            // }),
             ...(queryParams.moderated !== undefined && {
               isModerated: queryParams.moderated,
             }),
@@ -108,7 +109,7 @@ export default async (req: NextRequest) => {
             }),
             ...(queryParams.liked !== undefined &&
               user && {
-                likedPost: {
+                likedPosts: {
                   some: {
                     userId: { equals: user.id },
                   },
@@ -147,10 +148,20 @@ export default async (req: NextRequest) => {
           },
         })
 
+        let prevCursor: Date | undefined = undefined
+        const hasNextPage = posts.length > limit
+        if (hasNextPage) {
+          // there's at least 1 more post
+          const lastExtra = posts.pop()
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          prevCursor = lastExtra!.createdAt
+          console.log(JSON.stringify(lastExtra))
+        }
+
         const resBody: PostsGetResponse = {
           data: posts,
           // assume there is a next page
-          ...(posts.length === limit && { nextCursor: posts[posts.length - 1].createdAt.toISOString() }),
+          ...(hasNextPage && prevCursor && { nextCursor: prevCursor.toISOString() }),
         }
         /**
           TODO:

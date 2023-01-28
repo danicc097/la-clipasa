@@ -21,7 +21,6 @@ import HomeSideActions from 'src/views/Home/HomeSideActions'
 import banner from 'src/assets/banner-la-clipassa.png'
 import homeBackground from 'src/assets/background-la-clipassa.jpg'
 import { API_POSTS_KEY } from 'src/queries/api/posts'
-import 'react-virtualized/styles.css' // only needs to be imported once
 import { usePostsSlice } from 'src/slices/posts'
 
 const useStyles = createStyles((theme) => ({

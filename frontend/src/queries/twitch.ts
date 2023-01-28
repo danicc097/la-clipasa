@@ -25,6 +25,8 @@ export function useTwitchUser() {
     },
     retryDelay: 500,
     queryFn: async ({ signal }): Promise<TwitchUserResponse> => {
+      if (!twitchToken) return null
+
       const { data } = await axios.get('https://api.twitch.tv/helix/users', {
         headers: {
           Authorization: `Bearer ${twitchToken}`,
