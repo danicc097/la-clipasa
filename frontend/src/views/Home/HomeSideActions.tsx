@@ -417,8 +417,10 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
     },
     {
       value: PostQueryParamsSort.LastSeenCreationDate,
-      label: `Creation date from last seen ${
-        getPostsQueryParams.sortDirection === SortDirection.ASC ? '(newest last)' : '(newest first)'
+      label: `From last seen ${
+        getPostsQueryParams.sortDirection === SortDirection.ASC
+          ? '(ascending creation date)'
+          : '(descending creation date)'
       }`,
     },
   ]
