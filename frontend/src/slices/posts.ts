@@ -141,12 +141,17 @@ function setSort(sort: PostQueryParamsSort): PostsAction {
 
 function setSortDirection(sortDirection: SortDirection): PostsAction {
   return (state: PostsState) => {
+    let cursor // invalidate cursor by default
+    if (state.getPostsQueryParams.sort === PostQueryParamsSort.LastSeenCreationDate) {
+      cursor = state.lastSeenCursor
+    }
     return {
       ...state,
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         sortDirection,
-        cursor: undefined, // invalidate
+        // invalidate
+        cursor,
       },
     }
   }

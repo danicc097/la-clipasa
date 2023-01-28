@@ -70,9 +70,7 @@ export default async (req: NextRequest) => {
         }
 
         const posts = await prisma.post.findMany({
-          take: limit + 1,
-          // take: -limit, // paging backwards
-          // ...(queryParams.cursor !== undefined && { skip: 1 }), // skip the cursor`
+          take: queryParams.sortDirection === SortDirection.DESC ? limit + 1 : -(limit + 1),
           skip: 0,
           orderBy: {
             createdAt: queryParams.sortDirection,
@@ -87,7 +85,10 @@ export default async (req: NextRequest) => {
           where: {
             ...(queryParams.cursor !== undefined && {
               createdAt: {
-                lte: new Date(queryParams.cursor), // older records (less than/equal). equal accounts for cursor
+                // equal accounts for cursor
+                ...(queryParams.sortDirection === SortDirection.DESC
+                  ? { lte: new Date(queryParams.cursor) } // older records (less than/equal). )
+                  : { gte: new Date(queryParams.cursor) }),
               },
             }),
             ...(queryParams.moderated !== undefined && {
@@ -150,20 +151,25 @@ export default async (req: NextRequest) => {
           },
         })
 
-        let prevCursor: Date | undefined = undefined
+        let nextCursor: Date | undefined = undefined
         const hasNextPage = posts.length > limit
         if (hasNextPage) {
           // there's at least 1 more post
-          const lastExtra = posts.pop()
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          prevCursor = lastExtra!.createdAt
-          console.log(JSON.stringify(lastExtra))
+          if (queryParams.sortDirection === SortDirection.DESC) {
+            const lastExtra = posts.pop()
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            nextCursor = lastExtra!.createdAt
+          } else {
+            const lastExtra = posts.shift()
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            nextCursor = lastExtra!.createdAt
+          }
         }
 
         const resBody: PostsGetResponse = {
           data: posts,
           // assume there is a next page
-          ...(hasNextPage && prevCursor && { nextCursor: prevCursor.toISOString() }),
+          ...(hasNextPage && nextCursor && { nextCursor: nextCursor.toISOString() }),
         }
         /**
           TODO:
