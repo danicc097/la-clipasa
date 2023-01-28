@@ -51,7 +51,7 @@ export default function DeleteButton({}: DeleteButtonButtonProps) {
 
     openConfirmModal({
       title: 'Delete post',
-      children: <Text size="sm">This action cannot be reversed.</Text>,
+      children: <Text size="sm">This action is irreversible.</Text>,
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),

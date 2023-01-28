@@ -110,10 +110,14 @@ export default function Layout({ children }: LayoutProps) {
   ])
 
   useEffect(() => {
-    queryClient.invalidateQueries({
+    queryClient.removeQueries({
       predicate: (query) => query.queryKey[0] === TWITCH_KEY,
     })
-
+    queryClient.removeQueries({
+      predicate: (query) => {
+        return query.queryKey[0] === API_POSTS_KEY
+      },
+    })
     const onBeforeUnload = async (e: BeforeUnloadEvent) => {
       e.preventDefault()
       queryClient.removeQueries({

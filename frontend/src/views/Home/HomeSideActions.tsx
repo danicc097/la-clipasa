@@ -455,7 +455,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                 <Text mt="md" className={classes.label} color="dimmed">
                   Moderation filters
                 </Text>
-                <Flex mih={50} gap="md" justify="space-between" align="center" direction="row" wrap={'wrap'}>
+                <Flex mt={10} gap="md" justify="space-between" align="center" direction="row" wrap={'wrap'}>
                   <Text className={classes.sideLabel} color="dimmed">
                     Status
                   </Text>
@@ -484,9 +484,8 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                 <Text mt="md" className={classes.label} color="dimmed">
                   Personal filters
                 </Text>
-                <Flex mih={50} gap="md" justify="center" align="center" direction="row" wrap={'wrap'}>
+                <Flex mt={10} gap="md" justify="center" align="center" direction="row" wrap={'wrap'}>
                   <Chip
-                    defaultChecked
                     variant="filled"
                     color="green"
                     checked={getPostsQueryParams.liked === true}
@@ -502,7 +501,6 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     Liked posts
                   </Chip>
                   <Chip
-                    defaultChecked
                     variant="filled"
                     color="green"
                     checked={getPostsQueryParams.saved === true}
@@ -518,7 +516,6 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     Saved posts
                   </Chip>
                   <Chip
-                    defaultChecked
                     variant="filled"
                     color="green"
                     checked={getPostsQueryParams.authorId !== undefined}
@@ -531,6 +528,21 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     }
                   >
                     My posts
+                  </Chip>
+                </Flex>
+              </Card.Section>
+
+              <Card.Section className={classes.section}>
+                <Text mt="md" className={classes.label} color="dimmed">
+                  SEARCH SETTINGS
+                </Text>
+                <Flex mt={10} gap="md" justify="center" align="center" direction="row" wrap={'wrap'}>
+                  {/*
+                  TODO if lastSeen checked, cursor starts at last seen value but we go backwards (need orderby asc in prisma and reverse pages)
+                  also show a notification saying "Showing posts in ascending order"
+                  */}
+                  <Chip variant="filled" color="green" disabled onClick={() => null}>
+                    Ascending creation date from last seen
                   </Chip>
                 </Flex>
               </Card.Section>

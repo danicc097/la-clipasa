@@ -105,7 +105,7 @@ export default async (req: NextRequest) => {
             ...(queryParams.authorId !== undefined && {
               userId: {
                 equals: queryParams.authorId,
-              }, // filter by arbitrary user and "Edit my posts"
+              }, // filter by arbitrary user and "My posts"
             }),
             ...(queryParams.liked !== undefined &&
               user && {

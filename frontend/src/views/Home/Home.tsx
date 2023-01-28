@@ -100,11 +100,12 @@ export default function Home() {
           fixedItemHeight={300}
           data={posts}
           atBottomStateChange={(isReached) => {
-            if (isReached) {
+            if (isReached && posts.length > 0 && !usePostsQuery.isFetching && usePostsQuery.status !== 'loading') {
               // Fetch more data.
               // Don't forget to debounce your request (fetch).
               console.log('bottom reached')
 
+              // FIXME is being called twice at start since it detects its at bottom
               if (nextCursor && nextCursor !== previousCursor.current && !usePostsQuery.isFetching) {
                 console.log(`fetching next posts page with cursor ${nextCursor}`)
                 previousCursor.current = nextCursor
