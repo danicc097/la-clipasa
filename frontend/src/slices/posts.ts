@@ -27,7 +27,7 @@ const usePostsSlice = create<PostsState>()(
             set(setLastSeenCursor(cursor), false, `setLastSeenCursor`),
           getPostsQueryParams: {
             titleQuery: undefined,
-            limit: undefined,
+            limit: 30,
             authorId: undefined,
             liked: undefined,
             saved: undefined,
@@ -47,7 +47,7 @@ const usePostsSlice = create<PostsState>()(
             set(removeCategoryFilter(category), false, `removeCategoryFilter`),
         }
       },
-      { version: 2, name: POSTS_SLICE_PERSIST_KEY },
+      { version: 3, name: POSTS_SLICE_PERSIST_KEY },
     ),
     { enabled: true },
   ),
