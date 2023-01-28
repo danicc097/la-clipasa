@@ -150,7 +150,6 @@ function setSortDirection(sortDirection: SortDirection): PostsAction {
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         sortDirection,
-        // invalidate
         cursor,
       },
     }

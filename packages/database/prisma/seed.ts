@@ -41,7 +41,7 @@ export async function main() {
 
   let postId = 0
   const createPost = () => {
-    const createdAt = new Date(new Date().getTime() - postId * 1000 * 3600)
+    const createdAt = new Date(new Date().getTime() - (postId + 1) * 1000 * 3600 * 24)
 
     return {
       id: ++postId,

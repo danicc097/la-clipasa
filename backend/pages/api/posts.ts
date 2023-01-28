@@ -168,14 +168,8 @@ export default async (req: NextRequest) => {
 
         const resBody: PostsGetResponse = {
           data: posts,
-          // assume there is a next page
-          ...(hasNextPage && nextCursor && { nextCursor: nextCursor.toISOString() }),
+          ...(hasNextPage && nextCursor && { nextCursor: nextCursor.toISOString() }), // there is definitely a next page
         }
-        /**
-          TODO:
-          format response as per https://codesandbox.io/s/github/tanstack/query/tree/main/examples/react/load-more-infinite-scroll?from-embed=&file=/pages/index.js:789-806
-          and update to useInfiniteQuery and new response type
-        */
 
         console.log('resBody.data.length')
         console.log(resBody.data.length)
