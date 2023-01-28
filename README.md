@@ -20,6 +20,12 @@ Check out the progress over at: https://laclipasa.vercel.app
 
 ## TODO
 
+- Audio normalizer with `DynamicsCompressorNode` API. Should find a way to apply
+  to any source that is being played:
+    - see
+      https://stackoverflow.com/questions/52168962/adjusting-the-volume-of-music-ingame
+
+
 - Discord as a CDN
 
 - [prisma data proxy cannot be used in local development

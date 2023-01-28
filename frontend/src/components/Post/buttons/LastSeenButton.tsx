@@ -16,23 +16,27 @@ export default function LastSeenButton({}: LastSeenButtonProps) {
   const queryClient = useQueryClient()
   const { isAuthenticated } = useAuthenticatedUser()
   const { classes, theme } = useStyles()
-  const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams } = usePostsSlice()
-
   /**
-   * TODO background image if lastSeenPostId !== post.id overriding existing one (or some kind of filter)
+   * TODO background image if lastSeenCursor !== post.id overriding existing one (or some kind of filter)
    */
-  const { lastSeenPostId, setLastSeenPostId } = useUISlice()
+  const { setLastSeenCursor, lastSeenCursor } = usePostsSlice()
+
   const [lastSeenBeacon, setLastSeenBeacon] = useState(false)
 
   const handleLastSeenButtonClick = (e) => {
     e.stopPropagation()
 
-    setLastSeenPostId(post.id)
+    setLastSeenCursor(post.createdAt.toISOString())
   }
-  if (lastSeenPostId !== post.id || !isAuthenticated) return null
+
+  if (lastSeenCursor === post.createdAt.toISOString() || !isAuthenticated) return null
 
   return (
-    <Tooltip label={lastSeenPostId === post.id ? '' : 'Mark as last seen'} arrowPosition="center" withArrow>
+    <Tooltip
+      label={lastSeenCursor === post.createdAt.toISOString() ? '' : 'Mark as last seen'}
+      arrowPosition="center"
+      withArrow
+    >
       <ActionIcon
         className={`${classes.action} ${lastSeenBeacon ? 'beacon' : ''}`}
         onClick={handleLastSeenButtonClick}

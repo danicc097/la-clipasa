@@ -7,6 +7,8 @@ import { devtools, persist } from 'zustand/middleware'
 export const POSTS_SLICE_PERSIST_KEY = 'posts-slice'
 
 interface PostsState {
+  lastSeenCursor: PostQueryParams['cursor']
+  setLastSeenCursor: (cursor: PostsState['lastSeenCursor']) => void
   getPostsQueryParams: PostQueryParams
   setGetPostsQueryParams: (params: PostQueryParams) => void
   addCategoryFilter: (category: PostCategory) => void
@@ -20,6 +22,9 @@ const usePostsSlice = create<PostsState>()(
     persist(
       (set) => {
         return {
+          lastSeenCursor: undefined,
+          setLastSeenCursor: (cursor: PostsState['lastSeenCursor']) =>
+            set(setLastSeenCursor(cursor), false, `setLastSeenCursor`),
           getPostsQueryParams: {
             titleQuery: undefined,
             limit: undefined,
@@ -52,6 +57,15 @@ export { usePostsSlice }
 
 type PostsAction = (...args: any[]) => Partial<PostsState>
 
+function setLastSeenCursor(cursor: PostsState['lastSeenCursor']): PostsAction {
+  return (state: PostsState) => {
+    return {
+      ...state,
+      lastSeenCursor: cursor,
+    }
+  }
+}
+
 function setGetPostsQueryParams(params: PostQueryParams): PostsAction {
   return (state: PostsState) => {
     const { cursor: stateCursor, ...stateOtherParams } = state.getPostsQueryParams
@@ -60,6 +74,7 @@ function setGetPostsQueryParams(params: PostQueryParams): PostsAction {
     const cursorInvalidated = !isEqual(stateOtherParams, otherParams)
 
     return {
+      ...state,
       getPostsQueryParams: {
         ...otherParams,
         cursor: cursorInvalidated ? undefined : cursor,
@@ -77,6 +92,7 @@ function removeCategoryFilter(category: PostCategory): PostsAction {
     categories = categories.filter((c) => c !== category)
 
     return {
+      ...state,
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         categories,
@@ -96,6 +112,7 @@ function addCategoryFilter(category: PostCategory): PostsAction {
     if (categories.indexOf(category) === -1) categories.push(category)
 
     return {
+      ...state,
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         categories,
@@ -107,11 +124,16 @@ function addCategoryFilter(category: PostCategory): PostsAction {
 
 function setSort(sort: PostQueryParamsSort): PostsAction {
   return (state: PostsState) => {
+    let cursor // invalidate cursor by default
+    if (sort === PostQueryParamsSort.LastSeenCreationDate) {
+      cursor = state.lastSeenCursor
+    }
     return {
+      ...state,
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         sort,
-        cursor: undefined, // invalidate
+        cursor,
       },
     }
   }
@@ -120,6 +142,7 @@ function setSort(sort: PostQueryParamsSort): PostsAction {
 function setSortDirection(sortDirection: SortDirection): PostsAction {
   return (state: PostsState) => {
     return {
+      ...state,
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         sortDirection,

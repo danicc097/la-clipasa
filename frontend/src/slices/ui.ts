@@ -7,8 +7,6 @@ export const TWITCH_ACCESS_TOKEN_COOKIE = 'twitchAccessToken'
 export const UI_SLICE_PERSIST_KEY = 'ui-slice'
 
 interface UIState {
-  lastSeenPostId: number
-  setLastSeenPostId: (id: number) => void
   twitchToken: string
   setTwitchToken: (token: string) => void
   burgerOpened: boolean
@@ -20,8 +18,6 @@ const useUISlice = create<UIState>()(
     persist(
       (set) => {
         return {
-          lastSeenPostId: null,
-          setLastSeenPostId: (id: number) => set(setLastSeenPostId(id), false, `setLastSeenPostId`),
           twitchToken: Cookies.get(TWITCH_ACCESS_TOKEN_COOKIE),
           setTwitchToken: (token: string) => set(setTwitchToken(token), false, `setTwitchToken`),
           burgerOpened: false,
@@ -37,14 +33,6 @@ const useUISlice = create<UIState>()(
 export { useUISlice }
 
 type UIAction = (...args: any[]) => Partial<UIState>
-
-function setLastSeenPostId(id: number): UIAction {
-  return (state: UIState) => {
-    return {
-      lastSeenPostId: id,
-    }
-  }
-}
 
 function setTwitchToken(token: string): UIAction {
   return (state: UIState) => {

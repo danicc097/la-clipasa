@@ -132,7 +132,7 @@ function Post(props: PostProps) {
   const { classes, theme } = useStyles()
   const usePostsQuery = usePosts()
   // TODO we will have to use regular fetch for this, on modal opened
-  const useTwitterEmbedQuery = useTwitterEmbed('https://twitter.com/caliebre/status/1608936054819782660')
+  // const useTwitterEmbedQuery = useTwitterEmbed('https://twitter.com/caliebre/status/1608936054819782660')
   const { isAuthenticated, user } = useAuthenticatedUser()
 
   // in case of implementing, will filter global deleted slice array to check if postDeleted

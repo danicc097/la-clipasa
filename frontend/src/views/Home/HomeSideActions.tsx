@@ -593,6 +593,12 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     `}
                     data={sortSelectData}
                     onChange={(value: PostQueryParamsSort) => {
+                      queryClient.removeQueries({
+                        predicate: (query) => {
+                          return query.queryKey[0] === API_POSTS_KEY
+                        },
+                      })
+
                       setSort(value)
                     }}
                     rightSection={
@@ -600,6 +606,12 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                         <ActionIcon
                           onClick={(e) => {
                             e.stopPropagation()
+
+                            queryClient.removeQueries({
+                              predicate: (query) => {
+                                return query.queryKey[0] === API_POSTS_KEY
+                              },
+                            })
                             setSortDirection(
                               getPostsQueryParams.sortDirection === SortDirection.ASC
                                 ? SortDirection.DESC
@@ -619,7 +631,7 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                       </Tooltip>
                     }
                     placeholder="Select post ordering"
-                    defaultValue={PostQueryParamsSort.CreationDate}
+                    value={getPostsQueryParams.sort}
                   />
                 </Flex>
               </Card.Section>

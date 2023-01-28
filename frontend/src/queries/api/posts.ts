@@ -16,7 +16,7 @@ export const API_POSTS_KEY = 'api-posts'
  */
 export function usePosts() {
   const { twitchToken } = useUISlice()
-  const { getPostsQueryParams } = usePostsSlice()
+  const { getPostsQueryParams, lastSeenCursor } = usePostsSlice()
   const { isAuthenticated } = useAuthenticatedUser()
   /**
   {
