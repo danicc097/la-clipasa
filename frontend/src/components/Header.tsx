@@ -166,6 +166,10 @@ export default function Header({ tabs }: HeaderProps) {
               <Burger
                 className={classes.burger}
                 size={'sm'}
+                // TODO should allow hiding side actions and showing burger regardless of viewport
+                // css={css`
+                //   display: block !important;
+                // `}
                 opened={burgerOpened}
                 onClick={() => setBurgerOpened(!burgerOpened)}
                 title={title}

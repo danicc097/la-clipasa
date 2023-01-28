@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { PostCategory, User } from 'database'
-import { PostCreateRequest, PostQueryParams, PostsGetResponse } from 'types'
+import { PostCreateRequest, PostQueryParams, PostQueryParamsSort, PostsGetResponse } from 'types'
 import prisma from 'lib/prisma'
 import { isAuthorized } from 'src/services/authorization'
 
@@ -49,6 +49,7 @@ export default async (req: NextRequest) => {
             searchParams.getAll('categories')?.length > 0
               ? (searchParams.getAll('categories').filter((c) => (PostCategory as any)[c]) as PostCategory[])
               : undefined,
+          sort: (searchParams.get('sort') as PostQueryParamsSort) ?? undefined,
         }
 
         // TODO shared paackage "validation"
