@@ -77,17 +77,17 @@ export default async (req: NextRequest) => {
           },
           // NOTE: cursor pagination does not use cursors in the underlying database (PostgreSQL).
           // also `cursor` will only work with `id`, but need gt/lt workaround for dates, even if unique
-          ...(queryParams.cursor !== undefined && {
-            cursor: {
-              createdAt: new Date(queryParams.cursor),
-            },
-          }),
+          // ...(queryParams.cursor !== undefined && {
+          //   cursor: {
+          //     createdAt: queryParams.cursor, // wont work since cursor is not matching any rows --> we're using Timestamptz
+          //   },
+          // }),
           where: {
-            // ...(queryParams.cursor !== undefined && {
-            //   createdAt: {
-            //     lt: new Date(queryParams.cursor), // older records (less than)
-            //   },
-            // }),
+            ...(queryParams.cursor !== undefined && {
+              createdAt: {
+                lte: new Date(queryParams.cursor), // older records (less than/equal). equal accounts for cursor
+              },
+            }),
             ...(queryParams.moderated !== undefined && {
               isModerated: queryParams.moderated,
             }),
