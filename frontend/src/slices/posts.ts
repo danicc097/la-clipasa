@@ -1,6 +1,6 @@
 import type { PostCategory } from 'database'
 import { isEqual } from 'lodash-es'
-import type { PostQueryParams, PostQueryParamsSort } from 'types'
+import { PostQueryParams, PostQueryParamsSort, SortDirection } from 'types'
 import create from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
@@ -12,6 +12,7 @@ interface PostsState {
   addCategoryFilter: (category: PostCategory) => void
   removeCategoryFilter: (category: PostCategory) => void
   setSort: (setting: PostQueryParamsSort) => void
+  setSortDirection: (setting: SortDirection) => void
 }
 
 const usePostsSlice = create<PostsState>()(
@@ -28,12 +29,15 @@ const usePostsSlice = create<PostsState>()(
             categories: undefined,
             cursor: undefined,
             moderated: true,
-            sort: undefined,
+            sort: PostQueryParamsSort.CreationDate,
+            sortDirection: SortDirection.DESC,
           },
           setGetPostsQueryParams: (params: PostQueryParams) =>
             set(setGetPostsQueryParams(params), false, `setGetPostsQueryParams`),
           addCategoryFilter: (category: PostCategory) => set(addCategoryFilter(category), false, `addCategoryFilter`),
-          setSort: (setting: PostQueryParamsSort) => set(setSort(setting), false, `setSort`),
+          setSort: (sort: PostQueryParamsSort) => set(setSort(sort), false, `setSort`),
+          setSortDirection: (sortDirection: SortDirection) =>
+            set(setSortDirection(sortDirection), false, `setSortDirection`),
           removeCategoryFilter: (category: PostCategory) =>
             set(removeCategoryFilter(category), false, `removeCategoryFilter`),
         }
@@ -50,10 +54,10 @@ type PostsAction = (...args: any[]) => Partial<PostsState>
 
 function setGetPostsQueryParams(params: PostQueryParams): PostsAction {
   return (state: PostsState) => {
-    const { cursor: stateCursor, ...otherStateParams } = state.getPostsQueryParams
+    const { cursor: stateCursor, ...stateOtherParams } = state.getPostsQueryParams
     const { cursor, ...otherParams } = params
 
-    const cursorInvalidated = !isEqual(otherStateParams, otherParams)
+    const cursorInvalidated = !isEqual(stateOtherParams, otherParams)
 
     return {
       getPostsQueryParams: {
@@ -76,6 +80,7 @@ function removeCategoryFilter(category: PostCategory): PostsAction {
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         categories,
+        cursor: undefined, // invalidate
       },
     }
   }
@@ -94,6 +99,7 @@ function addCategoryFilter(category: PostCategory): PostsAction {
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         categories,
+        cursor: undefined, // invalidate
       },
     }
   }
@@ -105,6 +111,19 @@ function setSort(sort: PostQueryParamsSort): PostsAction {
       getPostsQueryParams: {
         ...state.getPostsQueryParams,
         sort,
+        cursor: undefined, // invalidate
+      },
+    }
+  }
+}
+
+function setSortDirection(sortDirection: SortDirection): PostsAction {
+  return (state: PostsState) => {
+    return {
+      getPostsQueryParams: {
+        ...state.getPostsQueryParams,
+        sortDirection,
+        cursor: undefined, // invalidate
       },
     }
   }

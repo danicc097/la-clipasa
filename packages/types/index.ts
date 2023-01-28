@@ -83,14 +83,20 @@ export type PostPatchRequest = Partial<
 >
 
 export enum PostQueryParamsSort {
-  DescendingCreationDate = 'DescendingCreationDate',
-  AscendingCreationDateByLastSeen = 'AscendingCreationDateByLastSeen',
+  CreationDate = 'CreationDate',
+  LastSeenCreationDate = 'LastSeenCreationDate',
+}
+
+export enum SortDirection {
+  ASC = 'asc',
+  DESC = 'desc',
 }
 
 export type PostQueryParams = {
   limit: number | undefined
   /**
-   * createdAt cursor
+     createdAt cursor.
+     If LastSeenCreationDate, it should be the cursor of the last seen post.
    */
   cursor: Cursor | undefined
   titleQuery: string | undefined
@@ -100,6 +106,7 @@ export type PostQueryParams = {
   moderated: boolean | undefined
   categories: PostCategory[] | undefined
   sort: PostQueryParamsSort
+  sortDirection: SortDirection
 }
 
 export interface HTTPValidationError {

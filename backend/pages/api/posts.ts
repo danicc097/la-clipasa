@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { PostCategory, User } from 'database'
-import { PostCreateRequest, PostQueryParams, PostQueryParamsSort, PostsGetResponse } from 'types'
+import { PostCreateRequest, PostQueryParams, PostQueryParamsSort, PostsGetResponse, SortDirection } from 'types'
 import prisma from 'lib/prisma'
 import { isAuthorized } from 'src/services/authorization'
 
@@ -50,6 +50,7 @@ export default async (req: NextRequest) => {
               ? (searchParams.getAll('categories').filter((c) => (PostCategory as any)[c]) as PostCategory[])
               : undefined,
           sort: (searchParams.get('sort') as PostQueryParamsSort) ?? undefined,
+          sortDirection: (searchParams.get('sortDirection') as SortDirection) ?? SortDirection.DESC,
         }
 
         // TODO shared paackage "validation"
@@ -74,7 +75,7 @@ export default async (req: NextRequest) => {
           // ...(queryParams.cursor !== undefined && { skip: 1 }), // skip the cursor`
           skip: 0,
           orderBy: {
-            createdAt: 'desc',
+            createdAt: queryParams.sortDirection,
           },
           // NOTE: cursor pagination does not use cursors in the underlying database (PostgreSQL).
           // also `cursor` will only work with `id`, but need gt/lt workaround for dates, even if unique

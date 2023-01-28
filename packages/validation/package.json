@@ -1,5 +1,5 @@
 {
-  "name": "types",
+  "name": "validation",
   "version": "1.1.0",
   "description": "",
   "main": "index.ts",

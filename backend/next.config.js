@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: { externalDir: true }, // allow import
   // cors http status not ok
   // async headers() {
   //   return [

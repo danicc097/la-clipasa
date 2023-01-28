@@ -46,11 +46,13 @@ importers:
       next: 13.1.1
       types: workspace:*
       typescript: 4.9.4
+      validation: workspace:*
     dependencies:
       database: link:../packages/database
       next: 13.1.1_biqbaboplfbrettd7655fr4n2y
       types: link:../packages/types
       typescript: 4.9.4
+      validation: link:../packages/validation
     devDependencies:
       '@types/node': 18.11.18
       '@types/react': 18.0.26
@@ -185,7 +187,15 @@ importers:
     specifiers:
       database: workspace:*
       eslint-config-custom: workspace:*
-    devDependencies:
+    dependencies:
+      database: link:../database
+      eslint-config-custom: link:../eslint-config-custom
+
+  packages/validation:
+    specifiers:
+      database: workspace:*
+      eslint-config-custom: workspace:*
+    dependencies:
       database: link:../database
       eslint-config-custom: link:../eslint-config-custom
 

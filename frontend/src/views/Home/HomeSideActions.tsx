@@ -19,7 +19,7 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
-import { IconEyeCheck, IconSearch, IconSend } from '@tabler/icons'
+import { IconEyeCheck, IconSearch, IconSend, IconSortAscending, IconSortDescending } from '@tabler/icons'
 import { InfiniteData, useQueryClient } from '@tanstack/react-query'
 import type { Post, PostCategory } from 'database'
 import { isEqual, set } from 'lodash-es'
@@ -36,7 +36,14 @@ import { extractErrorMessages } from 'src/utils/errors'
 import { getCaretCoordinates } from 'src/utils/input'
 import { sanitizeContentEditableInputBeforeSubmit } from 'src/utils/string'
 import { isURL } from 'src/utils/url'
-import { PostCreateRequest, PostCategoryNames, PostsGetResponse, PostQueryParamsSort } from 'types'
+import {
+  PostCreateRequest,
+  PostCategoryNames,
+  PostsGetResponse,
+  PostQueryParamsSort,
+  SortDirection,
+  PostQueryParams,
+} from 'types'
 
 const tooltipWithPx = 40
 
@@ -136,8 +143,14 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
   const { ...htmlProps } = props
   const postCreateMutation = usePostCreateMutation()
   const [titlePreviewPopoverOpened, setTitlePreviewPopoverOpened] = useState(false)
-  const { addCategoryFilter, removeCategoryFilter, getPostsQueryParams, setGetPostsQueryParams, setSort } =
-    usePostsSlice()
+  const {
+    addCategoryFilter,
+    removeCategoryFilter,
+    getPostsQueryParams,
+    setGetPostsQueryParams,
+    setSort,
+    setSortDirection,
+  } = usePostsSlice()
   const { burgerOpened, setBurgerOpened } = useUISlice()
   const usePostsQuery = usePosts()
   const queryClient = useQueryClient()
@@ -390,15 +403,30 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
     </>
   )
 
-  const sortSelectData: { value: PostQueryParamsSort; label: string }[] = [
+  type SelectData<T> = {
+    value: T
+    label: string
+  }[]
+
+  const sortSelectData: SelectData<PostQueryParamsSort> = [
     {
-      value: PostQueryParamsSort.DescendingCreationDate,
-      label: 'Descending creation date',
+      value: PostQueryParamsSort.CreationDate,
+      label: `Creation date ${
+        getPostsQueryParams.sortDirection === SortDirection.ASC ? '(newest last)' : '(newest first)'
+      }`,
     },
     {
-      value: PostQueryParamsSort.AscendingCreationDateByLastSeen,
-      label: 'Ascending creation date from last seen',
+      value: PostQueryParamsSort.LastSeenCreationDate,
+      label: `Creation date from last seen ${
+        getPostsQueryParams.sortDirection === SortDirection.ASC ? '(newest last)' : '(newest first)'
+      }`,
     },
+  ]
+
+  const statusSelectData: SelectData<string> = [
+    { value: undefined, label: 'All' },
+    { value: 'true', label: 'Moderated' },
+    { value: 'false', label: 'Not moderated' },
   ]
 
   return (
@@ -472,11 +500,11 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                     Status
                   </Text>
                   <Select
-                    data={[
-                      { value: undefined, label: 'All' },
-                      { value: 'true', label: 'Moderated' },
-                      { value: 'false', label: 'Not moderated' },
-                    ]}
+                    css={css`
+                      flex-grow: 10;
+                      max-width: 70%;
+                    `}
+                    data={statusSelectData}
                     onChange={(value: string) => {
                       const moderated = value ? value === 'true' : undefined
                       setGetPostsQueryParams({ ...getPostsQueryParams, moderated })
@@ -551,19 +579,47 @@ export default function HomeSideActions(props: HomeSideActionsProps) {
                 {/*
                   TODO if lastSeen checked, cursor starts at last seen value but we go backwards (need orderby asc in prisma and reverse pages)
                   also show a notification saying "Showing posts in ascending order"
-                  we should store lastSeen in user.lastSeenPost DateTime db.timestamp (like Post.createdAt)
+                  dont store lastSeen in user.lastSeenPost. not worth the extra calls every time and
+                  dealing with cache.
                   */}
                 <Flex mt={10} gap="md" justify="space-between" align="center" direction="row" wrap={'wrap'}>
                   <Text className={classes.sideLabel} color="dimmed">
                     Sort
                   </Text>
                   <Select
+                    css={css`
+                      flex-grow: 10;
+                      max-width: 70%;
+                    `}
                     data={sortSelectData}
                     onChange={(value: PostQueryParamsSort) => {
                       setSort(value)
                     }}
+                    rightSection={
+                      <Tooltip label="Toggle sort direction">
+                        <ActionIcon
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSortDirection(
+                              getPostsQueryParams.sortDirection === SortDirection.ASC
+                                ? SortDirection.DESC
+                                : SortDirection.ASC,
+                            )
+                          }}
+                          variant="subtle"
+                          radius={0}
+                          size={36}
+                        >
+                          {getPostsQueryParams.sortDirection === SortDirection.ASC ? (
+                            <IconSortAscending size={20} stroke={1.5} />
+                          ) : (
+                            <IconSortDescending size={20} stroke={1.5} />
+                          )}
+                        </ActionIcon>
+                      </Tooltip>
+                    }
                     placeholder="Select post ordering"
-                    defaultValue={PostQueryParamsSort.DescendingCreationDate}
+                    defaultValue={PostQueryParamsSort.CreationDate}
                   />
                 </Flex>
               </Card.Section>
