@@ -1,0 +1,26 @@
+name: Keepalive
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: '0 0 */3 * *'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - uses: ./.github/actions/setup
+
+      # source .envrc instead of direnv setup
+      - name: Setup
+        run: |
+          pnpm --workspace-root i puppeteer
+
+      - name: Run keepalive
+        run: |
+          pnpm --workspace-root run keepalive

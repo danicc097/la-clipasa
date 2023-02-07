@@ -18,7 +18,8 @@
     "local:push": "turbo local:push",
     "local:seed": "turbo local:seed",
     "kill": "fuser -k 5143/tcp 3000/tcp",
-    "psql": "docker exec -it postgres_db_discord_twitch_app psql"
+    "psql": "docker exec -it postgres_db_discord_twitch_app psql",
+    "keepalive": "node bin/scripts/keepalive.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.47.1",

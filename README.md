@@ -11,20 +11,20 @@ using:
 
 Check out the progress over at: https://laclipasa.vercel.app
 
-## Alternatives
+## Alternative deployments
 
-- https://firebase.google.com/docs/firestore/quotas#free-quota
 - fly.io
 - GCP micro instance
 - https://workers.cloudflare.com/ with honojs
 
 ## TODO
 
+- i18n
+
 - Audio normalizer with `DynamicsCompressorNode` API. Should find a way to apply
   to any source that is being played:
     - see
       https://stackoverflow.com/questions/52168962/adjusting-the-volume-of-music-ingame
-
 
 - Discord as a CDN
 
