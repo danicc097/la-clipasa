@@ -180,7 +180,7 @@ function Post(props: PostProps) {
         <div>
           <Text weight={500}>{post.User?.displayName}</Text>
           <Text size="xs" color="dimmed">
-            {showRelativeTimestamp(post.createdAt.toISOString())}
+            {showRelativeTimestamp(post.createdAt?.toISOString())}
           </Text>
         </div>
       </Group>
