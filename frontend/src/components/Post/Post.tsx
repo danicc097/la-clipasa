@@ -140,16 +140,17 @@ function Post(props: PostProps) {
 
   const { getPostsQueryParams } = usePostsSlice()
 
-  if (!post) return null
-
   const cardBackground: CardBackground =
-    uniqueCategoryBackground[post.categories.find((c) => uniqueCategoryBackground[c])]
+    uniqueCategoryBackground[post?.categories.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = backgroundImage ? backgroundImage : cardBackground ? cardBackground.image : 'auto'
   const cardBackgroundColor = backgroundImage
     ? 'auto'
     : cardBackground
-    ? cardBackground.color(theme.colorScheme)
-    : 'auto'
+      ? cardBackground.color(theme.colorScheme)
+      : 'auto'
+
+  if (!post) return null
+
 
   function renderFooter() {
     return (
@@ -355,7 +356,7 @@ function Post(props: PostProps) {
             url={post.link}
             width={'100%'}
             height={800}
-            // {...{ style: { maxWidth: '900px', minHeight: '60vh' } }}
+          // {...{ style: { maxWidth: '900px', minHeight: '60vh' } }}
           />
         )
         break
@@ -365,7 +366,7 @@ function Post(props: PostProps) {
             url={post.link}
             width={'100%'}
             height={800}
-            // {...{ style: { maxWidth: '900px', minHeight: '60vh' } }}
+          // {...{ style: { maxWidth: '900px', minHeight: '60vh' } }}
           />
         )
         break
@@ -375,7 +376,7 @@ function Post(props: PostProps) {
             url={post.link}
             width={'100%'}
             height={300}
-            // {...{ style: { maxWidth: '1400px', minHeight: '60vh' } }}
+          // {...{ style: { maxWidth: '1400px', minHeight: '60vh' } }}
           />
         )
         break
