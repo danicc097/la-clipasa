@@ -176,9 +176,9 @@ function Post(props: PostProps) {
   function renderMetadata() {
     return (
       <Group>
-        <Avatar src={post.User.profileImage} radius="sm" />
+        <Avatar src={post.User?.profileImage} radius="sm" />
         <div>
-          <Text weight={500}>{post.User.displayName}</Text>
+          <Text weight={500}>{post.User?.displayName}</Text>
           <Text size="xs" color="dimmed">
             {showRelativeTimestamp(post.createdAt.toISOString())}
           </Text>
