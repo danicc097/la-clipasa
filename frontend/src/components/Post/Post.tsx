@@ -141,7 +141,7 @@ function Post(props: PostProps) {
   const { getPostsQueryParams } = usePostsSlice()
 
   const cardBackground: CardBackground =
-    uniqueCategoryBackground[post?.categories.find((c) => uniqueCategoryBackground[c])]
+    uniqueCategoryBackground[post?.categories?.find((c) => uniqueCategoryBackground[c])]
   const cardBackgroundImage = backgroundImage ? backgroundImage : cardBackground ? cardBackground.image : 'auto'
   const cardBackgroundColor = backgroundImage
     ? 'auto'
