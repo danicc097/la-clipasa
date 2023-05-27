@@ -9,9 +9,9 @@ import { usePostsSlice } from 'src/slices/posts'
 import { useUISlice } from 'src/slices/ui'
 import type { PostResponse } from 'types'
 
-interface LastSeenButtonProps {}
+interface LastSeenButtonProps { }
 
-export default function LastSeenButton({}: LastSeenButtonProps) {
+export default function LastSeenButton({ }: LastSeenButtonProps) {
   const post = useContext(PostContext)
   const queryClient = useQueryClient()
   const { isAuthenticated } = useAuthenticatedUser()
@@ -26,14 +26,14 @@ export default function LastSeenButton({}: LastSeenButtonProps) {
   const handleLastSeenButtonClick = (e) => {
     e.stopPropagation()
 
-    setLastSeenCursor(post.createdAt.toISOString())
+    setLastSeenCursor(post.createdAt?.toISOString())
   }
 
-  if (lastSeenCursor === post.createdAt.toISOString() || !isAuthenticated) return null
+  if (lastSeenCursor === post.createdAt?.toISOString() || !isAuthenticated) return null
 
   return (
     <Tooltip
-      label={lastSeenCursor === post.createdAt.toISOString() ? '' : 'Mark as last seen'}
+      label={lastSeenCursor === post.createdAt?.toISOString() ? '' : 'Mark as last seen'}
       arrowPosition="center"
       withArrow
     >

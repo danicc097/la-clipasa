@@ -10,9 +10,9 @@ import { usePostsSlice } from 'src/slices/posts'
 import { truncateIntegerToString } from 'src/utils/string'
 import type { PostResponse, PostsGetResponse } from 'types'
 
-interface LikeButtonProps {}
+interface LikeButtonProps { }
 
-export default function LikeButton({}: LikeButtonProps) {
+export default function LikeButton({ }: LikeButtonProps) {
   const post = useContext(PostContext)
   const queryClient = useQueryClient()
   const { classes, theme } = useStyles()
@@ -83,7 +83,7 @@ export default function LikeButton({}: LikeButtonProps) {
           />
         }
       >
-        <ActionIcon component="div">{truncateIntegerToString(post._count.likedPosts)}</ActionIcon>
+        <ActionIcon component="div">{truncateIntegerToString(post._count?.likedPosts)}</ActionIcon>
       </Button>
     </Tooltip>
   )
