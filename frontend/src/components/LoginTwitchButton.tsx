@@ -8,16 +8,19 @@ export default function LoginTwitchButton() {
 
   return (
     <>
-      <form
-        action={`https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${
-          import.meta.env.VITE_TWITCH_CLIENT_ID
-        }&redirect_uri=${redirectURI}&scope=${encodeURI('user_read+user_subscriptions')}`}
-        method="POST"
-      >
+      <form>
         <Button
           type="submit"
           style={{
             backgroundColor: '#a970ff',
+          }}
+          onClick={(e) => {
+            e.preventDefault()
+            location.href = `https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${
+              import.meta.env.VITE_TWITCH_CLIENT_ID
+            }&redirect_uri=${redirectURI}&scope=${encodeURI(
+              'user:read:subscriptions+user:read:follows+user:read:email',
+            )}`
           }}
           leftIcon={<FontAwesomeIcon icon={faTwitch} size="xl" />}
         >
