@@ -9,7 +9,7 @@ export default function LoginTwitchButton() {
   return (
     <>
       <form
-        action={`https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=${
+        action={`https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${
           import.meta.env.VITE_TWITCH_CLIENT_ID
         }&redirect_uri=${redirectURI}&scope=${encodeURI('user_read+user_subscriptions')}`}
         method="POST"
