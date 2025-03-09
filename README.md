@@ -1,8 +1,6 @@
 # La Clipasa
 
-*Work in progress*
-![](.github/landing-page.png)
-
+## This project has been rewritten and migrated to https://github.com/caliecode/la-clipasa.
 
 Migration of the weekly meme subreddit Twitch stream of https://www.reddit.com/r/Caliebre/
 using:
